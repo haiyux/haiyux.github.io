@@ -1,0 +1,691 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> Go并发 - haiyux's blog </title>
+<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
+<meta name=author content="haiyux">
+<meta property="og:title" content="Go并发">
+<meta property="og:site_name" content="haiyux's blog">
+<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
+<meta name=title content="Go并发 - haiyux's blog">
+<meta name=description content="欢迎来到haiyux的博客">
+<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
+<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
+<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>haiyux's blog</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-active">
+<a href=/post/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav> </div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-concurrent/ itemprop=url>
+Go并发
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-pushdate>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2019-02-08">
+2019-02-08
+</time>
+</span>
+<span class=post-category>
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a class=post-category-a href=/categories/go itemprop=url rel=index>
+<span itemprop=name>go</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span class=post-wordcount>
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>4049 字</span>
+</span>
+<span class=post-readtime>
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>9分钟</span>
+</span>
+<span id=/post/go/go-concurrent/ class="leancloud_visitors post-visitor" data-flag-title=Go并发>
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=goroutine>goroutine</h2>
+<p>goroutine是Go并行设计的核心。goroutine说到底其实就是线程，但是它比线程更小，十几个goroutine可能体现在底层就是五六个线程，Go语言内部帮你实现了这些goroutine之间的内存共享。执行goroutine只需极少的栈内存(大概是4~5KB)，当然会根据相应的数据伸缩。也正因为如此，可同时运行成千上万个并发任务。goroutine比thread更易用、更高效、更轻便。</p>
+<p>goroutine是通过Go的runtime管理的一个线程管理器。goroutine通过go关键字实现了，其实就是一个普通的函数。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>go</span> <span style=color:#00a000>hello</span>(a, b, c)
+</code></pre></div><p>通过关键字go就启动了一个goroutine。我们来看一个例子</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;fmt&#34;</span>
+    <span style=color:#b44>&#34;runtime&#34;</span>
+)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>say</span>(s <span style=color:#0b0;font-weight:700>string</span>) {
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; <span style=color:#666>5</span>; i<span style=color:#666>++</span> {
+        runtime.<span style=color:#00a000>Gosched</span>()
+        fmt.<span style=color:#00a000>Println</span>(s)
+    }
+}
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    <span style=color:#a2f;font-weight:700>go</span> <span style=color:#00a000>say</span>(<span style=color:#b44>&#34;world&#34;</span>) <span style=color:#080;font-style:italic>//开一个新的Goroutines执行
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#00a000>say</span>(<span style=color:#b44>&#34;hello&#34;</span>) <span style=color:#080;font-style:italic>//当前Goroutines执行
+</span><span style=color:#080;font-style:italic></span>}
+<span style=color:#080;font-style:italic>// 以上程序执行后将输出：
+</span><span style=color:#080;font-style:italic>// hello
+</span><span style=color:#080;font-style:italic>// world
+</span><span style=color:#080;font-style:italic>// hello
+</span><span style=color:#080;font-style:italic>// world
+</span><span style=color:#080;font-style:italic>// hello
+</span><span style=color:#080;font-style:italic>// world
+</span><span style=color:#080;font-style:italic>// hello
+</span><span style=color:#080;font-style:italic>// world
+</span><span style=color:#080;font-style:italic>// hello
+</span></code></pre></div><p>我们可以看到go关键字很方便的就实现了并发编程。 上面的多个goroutine运行在同一个进程里面，共享内存数据，不过设计上我们要遵循：不要通过共享来通信，而要通过通信来共享。</p>
+<h3 id=goroutine的调度机制>goroutine的调度机制</h3>
+<p>Go runtime的调度器：
+在了解Go的运行时的scheduler之前，需要先了解为什么需要它，因为我们可能会想，OS内核不是已经有一个线程scheduler了嘛？
+熟悉POSIX API的人都知道，POSIX的方案在很大程度上是对Unix process进场模型的一个逻辑描述和扩展，两者有很多相似的地方。 Thread有自己的信号掩码，CPU affinity等。但是很多特征对于Go程序来说都是累赘。 尤其是context上下文切换的耗时。另一个原因是Go的垃圾回收需要所有的goroutine停止，使得内存在一个一致的状态。垃圾回收的时间点是不确定的，如果依靠OS自身的scheduler来调度，那么会有大量的线程需要停止工作。</p>
+<p>单独的开发一个GO得调度器，可以是其知道在什么时候内存状态是一致的，也就是说，当开始垃圾回收时，运行时只需要为当时正在CPU核上运行的那个线程等待即可，而不是等待所有的线程。</p>
+<p>用户空间线程和内核空间线程之间的映射关系有：N:1,1:1和M:N
+N:1是说，多个（N）用户线程始终在一个内核线程上跑，context上下文切换确实很快，但是无法真正的利用多核。
+1：1是说，一个用户线程就只在一个内核线程上跑，这时可以利用多核，但是上下文switch很慢。
+M:N是说， 多个goroutine在多个内核线程上跑，这个看似可以集齐上面两者的优势，但是无疑增加了调度的难度。</p>
+<p><img src=/images/2344773-20210819132405871-1269707653.png alt></p>
+<p>Go的调度器内部有三个重要的结构：M，P，S
+M:代表真正的内核OS线程，和POSIX里的thread差不多，真正干活的人
+G:代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度。
+P:代表调度的上下文，可以把它看做一个局部的调度器，使go代码在一个线程上跑，它是实现从N:1到N:M映射的关键。</p>
+<p><img src=/images/2344773-20210819132422918-1272149880.png alt></p>
+<p><img src=/images/2344773-20210819132448185-229261008.png alt></p>
+<p>图中看，有2个物理线程M，每一个M都拥有一个context（P），每一个也都有一个正在运行的goroutine。
+P的数量可以通过GOMAXPROCS()来设置，它其实也就代表了真正的并发度，即有多少个goroutine可以同时运行。
+图中灰色的那些goroutine并没有运行，而是出于ready的就绪态，正在等待被调度。P维护着这个队列（称之为runqueue），
+Go语言里，启动一个goroutine很容易：go function 就行，所以每有一个go语句被执行，runqueue队列就在其末尾加入一个
+goroutine，在下一个调度点，就从runqueue中取出（如何决定取哪个goroutine？）一个goroutine执行。</p>
+<p>为何要维护多个上下文P？因为当一个OS线程被阻塞时，P可以转而投奔另一个OS线程！
+图中看到，当一个OS线程M0陷入阻塞时，P转而在OS线程M1上运行。调度器保证有足够的线程来运行所以的context P。</p>
+<p><img src=/images/2344773-20210819132512758-1722017015.png alt></p>
+<p><img src=/images/2344773-20210819132535557-1795797209.png alt></p>
+<p>图中的M1可能是被创建，或者从线程缓存中取出。</p>
+<p>当MO返回时，它必须尝试取得一个context P来运行goroutine，一般情况下，它会从其他的OS线程那里steal偷一个context过来，
+如果没有偷到的话，它就把goroutine放在一个global runqueue里，然后自己就去睡大觉了（放入线程缓存里）。Contexts们也会周期性的检查global runqueue，否则global runqueue上的goroutine永远无法执行。</p>
+<p><img src=/images/2344773-20210819132552123-2079267861.png alt></p>
+<p><img src=/images/2344773-20210819132604362-1851109609.png alt></p>
+<p>另一种情况是P所分配的任务G很快就执行完了（分配不均），这就导致了一个上下文P闲着没事儿干而系统却任然忙碌。但是如果global runqueue没有任务G了，那么P就不得不从其他的上下文P那里拿一些G来执行。一般来说，如果上下文P从其他的上下文P那里要偷一个任务的话，一般就‘偷’run queue的一半，这就确保了每个OS线程都能充分的使用。</p>
+<h2 id=channels>channels</h2>
+<p>goroutine运行在相同的地址空间，因此访问共享内存必须做好同步。那么goroutine之间如何进行数据的通信呢，Go提供了一个很好的通信机制channel。channel可以与Unix shell 中的双向管道做类比：可以通过它发送或者接收值。这些值只能是特定的类型：channel类型。定义一个channel时，也需要定义发送到channel的值的类型。注意，必须使用make 创建channel：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>ci <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>)
+cs <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>string</span>)
+cf <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#a2f;font-weight:700>interface</span>{})
+</code></pre></div><p>channel通过操作符&lt;-来接收和发送数据</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>ch <span style=color:#666>&lt;-</span> v    <span style=color:#080;font-style:italic>// 发送v到channel ch.
+</span><span style=color:#080;font-style:italic></span>v <span style=color:#666>:=</span> <span style=color:#666>&lt;-</span>ch  <span style=color:#080;font-style:italic>// 从ch中接收数据，并赋值给v
+</span></code></pre></div><p>我们把这些应用到我们的例子中来：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+<span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;fmt&#34;</span>
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>sum</span>(a []<span style=color:#0b0;font-weight:700>int</span>, c <span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>) {
+    total <span style=color:#666>:=</span> <span style=color:#666>0</span>
+    <span style=color:#a2f;font-weight:700>for</span> _, v <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> a {
+        total <span style=color:#666>+=</span> v
+    }
+    c <span style=color:#666>&lt;-</span> total  <span style=color:#080;font-style:italic>// send total to c
+</span><span style=color:#080;font-style:italic></span>}
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    a <span style=color:#666>:=</span> []<span style=color:#0b0;font-weight:700>int</span>{<span style=color:#666>7</span>, <span style=color:#666>2</span>, <span style=color:#666>8</span>, <span style=color:#666>-</span><span style=color:#666>9</span>, <span style=color:#666>4</span>, <span style=color:#666>0</span>}
+    c <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>)
+    <span style=color:#a2f;font-weight:700>go</span> <span style=color:#00a000>sum</span>(a[:<span style=color:#a2f>len</span>(a)<span style=color:#666>/</span><span style=color:#666>2</span>], c)
+    <span style=color:#a2f;font-weight:700>go</span> <span style=color:#00a000>sum</span>(a[<span style=color:#a2f>len</span>(a)<span style=color:#666>/</span><span style=color:#666>2</span>:], c)
+    x, y <span style=color:#666>:=</span> <span style=color:#666>&lt;-</span>c, <span style=color:#666>&lt;-</span>c  <span style=color:#080;font-style:italic>// receive from c
+</span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Println</span>(x, y, x <span style=color:#666>+</span> y)
+}
+</code></pre></div><p>默认情况下，channel接收和发送数据都是阻塞的，除非另一端已经准备好，这样就使得Goroutines同步变的更加的简单，而不需要显式的lock。所谓阻塞，也就是如果读取（value := &lt;-ch）它将会被阻塞，直到有数据接收。其次，任何发送（ch&lt;-5）将会被阻塞，直到数据被读出。无缓冲channel是在多个goroutine之间同步很棒的工具。</p>
+<h3 id=buffered-channels>Buffered Channels</h3>
+<p>上面我们介绍了默认的非缓存类型的channel，不过Go也允许指定channel的缓冲大小，很简单，就是channel可以存储多少元素。ch:= make(chan bool, 4)，创建了可以存储4个元素的bool 型channel。在这个channel 中，前4个元素可以无阻塞的写入。当写入第5个元素时，代码将会阻塞，直到其他goroutine从channel 中读取一些元素，腾出空间。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>ch <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#a2f;font-weight:700>type</span>, value)
+<span style=color:#080;font-style:italic>/*
+</span><span style=color:#080;font-style:italic>value == 0 ! 无缓冲（阻塞）
+</span><span style=color:#080;font-style:italic>value &gt; 0 ! 缓冲（非阻塞，直到value 个元素）
+</span><span style=color:#080;font-style:italic>*/</span>
+</code></pre></div><p>我们看一下下面这个例子，你可以在自己本机测试一下，修改相应的value值</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+<span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;fmt&#34;</span>
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    c <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>, <span style=color:#666>2</span>)<span style=color:#080;font-style:italic>//修改2为1就报错，修改2为3可以正常运行
+</span><span style=color:#080;font-style:italic></span>    c <span style=color:#666>&lt;-</span> <span style=color:#666>1</span>
+    c <span style=color:#666>&lt;-</span> <span style=color:#666>2</span>
+    fmt.<span style=color:#00a000>Println</span>(<span style=color:#666>&lt;-</span>c)
+    fmt.<span style=color:#00a000>Println</span>(<span style=color:#666>&lt;-</span>c)
+}
+    <span style=color:#080;font-style:italic>//修改为1报如下的错误:
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#080;font-style:italic>//fatal error: all goroutines are asleep - deadlock!
+</span></code></pre></div><h3 id=range和close>Range和Close</h3>
+<p>上面这个例子中，我们需要读取两次c，这样不是很方便，Go考虑到了这一点，所以也可以通过range，像操作slice或者map一样操作缓存类型的channel，请看下面的例子</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;fmt&#34;</span>
+)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>fibonacci</span>(n <span style=color:#0b0;font-weight:700>int</span>, c <span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>) {
+    x, y <span style=color:#666>:=</span> <span style=color:#666>1</span>, <span style=color:#666>1</span>
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; n; i<span style=color:#666>++</span> {
+        c <span style=color:#666>&lt;-</span> x
+        x, y = y, x <span style=color:#666>+</span> y
+    }
+    <span style=color:#a2f>close</span>(c)
+}
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    c <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>, <span style=color:#666>10</span>)
+    <span style=color:#a2f;font-weight:700>go</span> <span style=color:#00a000>fibonacci</span>(<span style=color:#a2f>cap</span>(c), c)
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> c {
+        fmt.<span style=color:#00a000>Println</span>(i)
+    }
+}
+</code></pre></div><p>for i := range c能够不断的读取channel里面的数据，直到该channel被显式的关闭。上面代码我们看到可以显式的关闭channel，生产者通过内置函数close关闭channel。关闭channel之后就无法再发送任何数据了，在消费方可以通过语法v, ok := &lt;-ch测试channel是否被关闭。如果ok返回false，那么说明channel已经没有任何数据并且已经被关闭。</p>
+<blockquote>
+<p>记住应该在生产者的地方关闭channel，而不是消费的地方去关闭它，这样容易引起panic</p>
+<p>另外记住一点的就是channel不像文件之类的，不需要经常去关闭，只有当你确实没有任何发送数据了，或者你想显式的结束range循环之类的</p>
+</blockquote>
+<h3 id=select>Select</h3>
+<p>我们上面介绍的都是只有一个channel的情况，那么如果存在多个channel的时候，我们该如何操作呢，Go里面提供了一个关键字select，通过select可以监听channel上的数据流动。</p>
+<p>select默认是阻塞的，只有当监听的channel中有发送或接收可以进行时才会运行，当多个channel都准备好的时候，select是随机的选择一个执行的。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+<span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;fmt&#34;</span>
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>fibonacci</span>(c, quit <span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>) {
+    x, y <span style=color:#666>:=</span> <span style=color:#666>1</span>, <span style=color:#666>1</span>
+    <span style=color:#a2f;font-weight:700>for</span> {
+        <span style=color:#a2f;font-weight:700>select</span> {
+        <span style=color:#a2f;font-weight:700>case</span> c <span style=color:#666>&lt;-</span> x:
+            x, y = y, x <span style=color:#666>+</span> y
+        <span style=color:#a2f;font-weight:700>case</span> <span style=color:#666>&lt;-</span>quit:
+            fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;quit&#34;</span>)
+            <span style=color:#a2f;font-weight:700>return</span>
+        }
+    }
+}
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    c <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>)
+    quit <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>)
+    <span style=color:#a2f;font-weight:700>go</span> <span style=color:#a2f;font-weight:700>func</span>() {
+        <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; <span style=color:#666>10</span>; i<span style=color:#666>++</span> {
+            fmt.<span style=color:#00a000>Println</span>(<span style=color:#666>&lt;-</span>c)
+        }
+        quit <span style=color:#666>&lt;-</span> <span style=color:#666>0</span>
+    }()
+    <span style=color:#00a000>fibonacci</span>(c, quit)
+}
+</code></pre></div><p>在select里面还有default语法，select其实就是类似switch的功能，default就是当监听的channel都没有准备好的时候，默认执行的（select不再阻塞等待channel）。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>select</span> {
+<span style=color:#a2f;font-weight:700>case</span> i <span style=color:#666>:=</span> <span style=color:#666>&lt;-</span>c:
+    <span style=color:#080;font-style:italic>// use i
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>default</span>:
+    <span style=color:#080;font-style:italic>// 当c阻塞的时候执行这里
+</span><span style=color:#080;font-style:italic></span>}
+</code></pre></div><h3 id=超时>超时</h3>
+<p>有时候会出现goroutine阻塞的情况，那么我们如何避免整个程序进入阻塞的情况呢？我们可以利用select来设置超时，通过如下的方式实现：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    c <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>int</span>)
+    o <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>chan</span> <span style=color:#0b0;font-weight:700>bool</span>)
+    <span style=color:#a2f;font-weight:700>go</span> <span style=color:#a2f;font-weight:700>func</span>() {
+        <span style=color:#a2f;font-weight:700>for</span> {
+            <span style=color:#a2f;font-weight:700>select</span> {
+                <span style=color:#a2f;font-weight:700>case</span> v <span style=color:#666>:=</span> <span style=color:#666>&lt;-</span> c:
+                    <span style=color:#a2f>println</span>(v)
+                <span style=color:#a2f;font-weight:700>case</span> <span style=color:#666>&lt;-</span> time.<span style=color:#00a000>After</span>(<span style=color:#666>5</span> <span style=color:#666>*</span> time.Second):
+                    <span style=color:#a2f>println</span>(<span style=color:#b44>&#34;timeout&#34;</span>)
+                    o <span style=color:#666>&lt;-</span> <span style=color:#a2f;font-weight:700>true</span>
+                    <span style=color:#a2f;font-weight:700>break</span>
+            }
+        }
+    }()
+    <span style=color:#666>&lt;-</span> o
+}
+</code></pre></div><h3 id=runtime-goroutine>runtime goroutine</h3>
+<p>runtime包中有几个处理goroutine的函数：</p>
+<ul>
+<li>
+<p>Goexit</p>
+<p>退出当前执行的goroutine，但是defer函数还会继续调用</p>
+</li>
+<li>
+<p>Gosched</p>
+<p>让出当前goroutine的执行权限，调度器安排其他等待的任务运行，并在下次某个时候从该位置恢复执行。</p>
+</li>
+<li>
+<p>NumCPU</p>
+<p>返回 CPU 核数量</p>
+</li>
+<li>
+<p>NumGoroutine</p>
+<p>返回正在执行和排队的任务总数</p>
+</li>
+<li>
+<p>GOMAXPROCS</p>
+<p>用来设置可以并行计算的CPU核数的最大值，并返回之前的值。</p>
+</li>
+</ul>
+<p>参考文章:</p>
+<ul>
+<li>《go web编程》</li>
+<li><a href=https://www.zhihu.com/question/20862617/answer/27964865 target=_blank rel=noopener>https://www.zhihu.com/question/20862617/answer/27964865</a>
+</li>
+</ul>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/golang rel=tag title=golang>#golang#</a>
+</div>
+<div class=post-nav>
+<div class=article-copyright>
+<div class=article-copyright-img>
+<img src=/img/qq_qrcode.png width=129px height=129px>
+<div style=text-align:center>QQ扫一扫交流</div>
+</div>
+<div class=article-copyright-info>
+<p>
+<span>标题：</span>Go并发
+</p>
+<p>
+<span>链接：</span>https://www.zhaohaiyu.com/post/go/go-concurrent/
+</p>
+<p>
+<span>作者：</span>haiyux
+</p>
+<p>
+<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
+</p>
+</div>
+</div>
+<div class=clear></div>
+</div>
+<div class=reward-qr-info>
+<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
+<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span>
+</button>
+<div id=QR style=display:none>
+<div id=wechat style=display:inline-block>
+<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
+<p>微信打赏</p>
+</div>
+<div id=alipay style=display:inline-block>
+<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
+<p>支付宝打赏</p>
+</div>
+</div>
+</div>
+<div class=post-nav>
+<div class="post-nav-next post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/go/go-reflect/ rel=next title="Go Reflect">
+<i class="fa fa-chevron-left"></i> Go Reflect
+</a>
+</div>
+<div class="post-nav-prev post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/go/go-interface/ rel=prev title=Go接口>
+Go接口
+<i class="fa fa-chevron-right"></i>
+</a>
+</div>
+</div>
+<div id=ucomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
+<p class=site-author-name itemprop=name>haiyux</p>
+<p class="site-description motion-element" itemprop=description>
+路漫漫其修远兮,吾将上下而求索
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/haiyux/ target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
+<i class="fa fa-fw fa-envelope"></i>
+Email
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://farer.org/ title=farer target=_blank>farer</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/golang>Golang
+<sup>30</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql
+<sup>7</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/http>HTTP
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/protobuf>Protobuf
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/grpc>Grpc
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis
+<sup>2</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/ddd>Ddd
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/docker>Docker
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/kratos>Kratos
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/makefile>Makefile
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mq>Mq
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/nginx>Nginx
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/raft>Raft
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/thrift>Thrift
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/traceing>Traceing
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/wire>Wire
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup>
+</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#goroutine>goroutine</a>
+<ul>
+<li><a href=#goroutine的调度机制>goroutine的调度机制</a></li>
+</ul>
+</li>
+<li><a href=#channels>channels</a>
+<ul>
+<li><a href=#buffered-channels>Buffered Channels</a></li>
+<li><a href=#range和close>Range和Close</a></li>
+<li><a href=#select>Select</a></li>
+<li><a href=#超时>超时</a></li>
+<li><a href=#runtime-goroutine>runtime goroutine</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>haiyux's blog</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script src=//cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
+<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

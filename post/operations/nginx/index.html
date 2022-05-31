@@ -1,0 +1,993 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> Nginx基础 - haiyux's blog </title>
+<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
+<meta name=author content="haiyux">
+<meta property="og:title" content="Nginx基础">
+<meta property="og:site_name" content="haiyux's blog">
+<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
+<meta name=title content="Nginx基础 - haiyux's blog">
+<meta name=description content="欢迎来到haiyux的博客">
+<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
+<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
+<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>haiyux's blog</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-active">
+<a href=/post/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav> </div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.zhaohaiyu.com/post/operations/nginx/ itemprop=url>
+Nginx基础
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-pushdate>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2020-06-13">
+2020-06-13
+</time>
+</span>
+<span class=post-category>
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a class=post-category-a href=/categories/operations itemprop=url rel=index>
+<span itemprop=name>operations</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span class=post-wordcount>
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>3870 字</span>
+</span>
+<span class=post-readtime>
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>8分钟</span>
+</span>
+<span id=/post/operations/nginx/ class="leancloud_visitors post-visitor" data-flag-title=Nginx基础>
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=nginx是什么>nginx是什么</h2>
+<p>nginx是一个开源的，支持高性能，高并发的www服务和代理服务软件。</p>
+<ul>
+<li>
+<p>支持高并发，能支持几万并发连接</p>
+</li>
+<li>
+<p>资源消耗少，在3万并发连接下开启10个nginx线程消耗的内存不到200M</p>
+</li>
+<li>
+<p>可以做http反向代理和负载均衡</p>
+</li>
+<li>
+<p>支持异步网络i/o事件模型epoll</p>
+</li>
+</ul>
+<p><img src=/images/2344773-20210819233627191-1981392114.png alt></p>
+<p>Tengine是由淘宝网发起的Web服务器项目。它在Nginx的基础上，针对大访问量网站的需求，添加了很多高级功能和特性。T目标是打造一个高效、稳定、安全、易用的Web平台。</p>
+<h2 id=安装环境依赖包>安装环境依赖包</h2>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>yum install gcc-c++ pcre pcre-devel zlib zlib-devel gcc patch libffi-devel python-devel  zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel openssl openssl-devel -y
+</code></pre></div><h2 id=安装并启动nginx>安装并启动nginx</h2>
+<ol>
+<li>
+<p>下载源码包 <code>http://tengine.taobao.org/download/tengine-2.3.3.tar.gz</code></p>
+</li>
+<li>
+<p>解压缩源码 <code>tar -zxvf tengine-2.3.3.tar.gz</code>配置</p>
+</li>
+<li>
+<p>编译安装 开启nginx状态监测功能</p>
+<ol>
+<li><code>./configure</code></li>
+<li><code>make && make install</code></li>
+</ol>
+</li>
+<li>
+<p>nginx操作，进入nginx下的sbin目录（默认在<code>/usr/local下</code>）</p>
+<ul>
+<li>启动<code>./nginx -c</code>指定配置文件</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>关闭<code>./nginx -s stop</code>
+<ul>
+<li>重新加载<code>./nginx -s reload</code></li>
+</ul>
+</li>
+<li>检查配置文件 <code>./nginx -t</code></li>
+</ul>
+<h2 id=部署一个web站点>部署一个web站点</h2>
+<p>nginx默认站点是Nginx目录下的html文件夹，这里可以从nginx.conf中查到</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>location</span> <span style=color:#b44>/</span> {
+            <span style=color:#a2f;font-weight:700>root</span>   <span style=color:#b44>html</span>; <span style=color:#080;font-style:italic># 这里是默认的站点html文件夹，也就是 /usr/local/nginx/html 文件夹下的内容
+</span><span style=color:#080;font-style:italic></span>            <span style=color:#a2f;font-weight:700>index</span>  <span style=color:#b44>index.html</span> <span style=color:#b44>index.htm</span>; <span style=color:#080;font-style:italic># 站点首页文件名是index.html
+</span><span style=color:#080;font-style:italic></span>        }
+</code></pre></div><p>如果要部署网站业务数据，只需要把开发好的程序全放到html目录下即可</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#666>[</span>root@VM-0-3-centos html<span style=color:#666>]</span><span style=color:#080;font-style:italic># ls /usr/local/nginx/html/</span>
+50x.html  index.html
+</code></pre></div><p>因此只需要通过域名/资源，即可访问</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-http data-lang=http><span>http://a.zhaohaoyu.com
+</span></code></pre></div><h2 id=nginx的目录结构>Nginx的目录结构</h2>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>client_body_temp  conf  fastcgi_temp  html  logs  proxy_temp  sbin  scgi_temp  static  uwsgi_temp
+</code></pre></div><ul>
+<li>
+<p>conf 存放nginx所有配置文件的目录,主要nginx.conf</p>
+</li>
+<li>
+<p>html 存放nginx默认站点的目录，如index.html、error.html等</p>
+</li>
+<li>
+<p>logs 存放nginx默认日志的目录，如error.log access.log</p>
+</li>
+<li>
+<p>sbin 存放nginx主命令的目录,./nginx</p>
+</li>
+</ul>
+<h2 id=nginx主配置文件解析>Nginx主配置文件解析</h2>
+<p>Nginx主配置文件/etc/nginx/nginx.conf是一个纯文本类型的文件，整个配置文件是以区块的形式组织的。一般，每个区块以一对大括号{}来表示开始与结束。</p>
+<ol>
+<li>
+<h3 id=coremodule核心模块>CoreModule核心模块</h3>
+<ul>
+<li>
+<p><code>user www</code> Nginx进程所使用的用户</p>
+</li>
+<li>
+<p><code>worker_processes 1</code>; Nginx运行的work进程数量(建议与CPU数量一致或auto)</p>
+</li>
+<li>
+<p><code>error_log logs/error.log</code> Nginx错误日志存放路径</p>
+</li>
+<li>
+<p><code>pid logs/nginx.pid</code> Nginx服务运行后产生的pid进程号</p>
+</li>
+</ul>
+</li>
+<li>
+<h3 id=events事件模块>events事件模块</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>events</span> {
+    <span style=color:#a2f;font-weight:700>worker_connections</span>  <span style=color:#666>1024</span>; <span style=color:#080;font-style:italic># 每个worker进程支持的最大连接数  
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>use</span> <span style=color:#b44>epool</span>; <span style=color:#080;font-style:italic># 事件驱动模型, epoll默认
+</span><span style=color:#080;font-style:italic></span>}
+</code></pre></div></li>
+<li>
+<h3 id=http内核模块>http内核模块</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#080;font-style:italic># 公共的配置定义在http
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>http</span> {
+    <span style=color:#080;font-style:italic># http层开始 ...
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>include</span>       <span style=color:#b44>mime.types</span>;
+    <span style=color:#a2f;font-weight:700>default_type</span>  <span style=color:#b44>application/octet-stream</span>;
+
+    <span style=color:#a2f;font-weight:700>access_log</span>  <span style=color:#b44>logs/access.log</span>  <span style=color:#b44>main</span>; <span style=color:#080;font-style:italic># 访问日志
+</span><span style=color:#080;font-style:italic></span>
+    <span style=color:#080;font-style:italic># 使用Server配置网站, 每个Server{}代表一个网站(简称虚拟主机)
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>server</span> {
+        <span style=color:#a2f;font-weight:700>listen</span>       <span style=color:#666>80</span>; <span style=color:#080;font-style:italic># 监听端口, 默认80 
+</span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>server_name</span>  <span style=color:#b44>localhost</span>; <span style=color:#080;font-style:italic># 提供服务的域名或主机名
+</span><span style=color:#080;font-style:italic></span>
+        <span style=color:#a2f;font-weight:700>location</span> <span style=color:#b44>/</span> {
+            <span style=color:#a2f;font-weight:700>root</span>   <span style=color:#b44>html</span>; <span style=color:#080;font-style:italic># 存放网站代码路径
+</span><span style=color:#080;font-style:italic></span>            <span style=color:#a2f;font-weight:700>index</span>  <span style=color:#b44>index.html</span> <span style=color:#b44>index.htm</span>; <span style=color:#080;font-style:italic># 服务器返回的默认页面文件
+</span><span style=color:#080;font-style:italic></span>        }
+
+    		<span style=color:#080;font-style:italic># 指定错误代码, 统一定义错误页面, 错误代码重定向到新的Locaiton
+</span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>error_page</span>   <span style=color:#666>500</span> <span style=color:#666>502</span> <span style=color:#666>503</span> <span style=color:#666>504</span>  <span style=color:#b44>/50x.html</span>; 
+        <span style=color:#a2f;font-weight:700>location</span> = <span style=color:#b44>/50x.html</span> {
+            <span style=color:#a2f;font-weight:700>root</span>   <span style=color:#b44>html</span>;
+        }                                                                                                                                          }
+</code></pre></div></li>
+<li>
+<h3 id=include>include</h3>
+<ul>
+<li>
+<p>当存在多个域名时，如果所有配置都写在 nginx.conf 主配置文件中，难免会显得杂乱与臃肿。为了方便配置文件的维护，所以需要进行拆分配置。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#080;font-style:italic># 在nginx.conf中 加入  include a.zhaohaiyu.com/nginx.conf; 
+</span><span style=color:#080;font-style:italic># 在a.zhaohaiyu.com/nginx.conf中加入 
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>server</span> {  
+		<span style=color:#a2f;font-weight:700>listen</span> <span style=color:#666>8000</span>;  
+		<span style=color:#a2f;font-weight:700>server_name</span> <span style=color:#b44>test2.com</span>; 
+
+		<span style=color:#a2f;font-weight:700>location</span> <span style=color:#b44>/</span> {  
+				<span style=color:#a2f;font-weight:700>proxy_set_header</span> <span style=color:#b44>Host</span> <span style=color:#b8860b>$host:$server_port</span>;  
+				<span style=color:#a2f;font-weight:700>proxy_set_header</span> <span style=color:#b44>X-Real-Ip</span> <span style=color:#b8860b>$remote_addr</span>; 
+        <span style=color:#a2f;font-weight:700>proxy_set_header</span> <span style=color:#b44>X-Forwarded-For</span> <span style=color:#b8860b>$proxy_add_x_forwarded_for</span>; 
+        <span style=color:#080;font-style:italic>## proxy_pass 				   http://xxx.xxx.xxx;  echo &#34;test2.com&#34;; ## 输出测试   
+</span><span style=color:#080;font-style:italic></span>     } 
+ } 
+<span style=color:#080;font-style:italic># 等于把zhaohaiyu.com/nginx.conf直接吸入nginx.conf中
+</span></code></pre></div></li>
+</ul>
+</li>
+</ol>
+<h2 id=nginx虚拟主机>Nginx虚拟主机</h2>
+<p><img src=/images/2344773-20210819233653285-66968672.png alt></p>
+<p>如果每台linux服务器只运行了一个小网站，那么人气低，流量小的草根站长需要承担高额的服务器租赁费，也造成了硬件资源浪费。</p>
+<p>虚拟主机就是将一台服务器分割成多个“虚拟服务器”，每个站点使用各自的硬盘空间，由于省资源，省钱，众多网站都使用虚拟主机来部署网站。</p>
+<p>虚拟主机的概念就是在web服务里的一个独立的网站站点，这个站点对应独立的域名（IP），具有独立的程序和资源目录，可以独立的对外提供服务。 这个独立的站点配置是在nginx.conf中使用server{}代码块标签来表示一个虚拟主机。 Nginx支持多个server{}标签，即支持多个虚拟主机站点。</p>
+<h2 id=nginx-status>nginx status</h2>
+<h3 id=启用nginx-status配置>启用nginx status配置</h3>
+<p>在默认主机里面加上location或者你希望能访问到的主机里面。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>server</span> {  
+  <span style=color:#a2f;font-weight:700>stub_status</span> <span style=color:#800>on</span>; 
+}
+</code></pre></div><h3 id=重启nginx>重启nginx</h3>
+<p>请依照你的环境重启你的nginx</p>
+<p><code>./ngnix -s reload</code></p>
+<h3 id=打开status页面>打开status页面</h3>
+<p><img src=/images/2344773-20210819233710510-190471692.png alt></p>
+<h3 id=nginx-status-1>nginx status</h3>
+<ul>
+<li>
+<p><code>active connections </code>– 活跃的连接数量</p>
+</li>
+<li>
+<p><code>server accepts handled requests </code>— 总共处理了11989个连接 , 成功创建11989次握手, 总共处理了11991个请求</p>
+</li>
+<li>
+<p><code>reading</code> — 读取客户端的连接数.</p>
+</li>
+<li>
+<p><code>writing</code> — 响应数据到客户端的数量</p>
+</li>
+<li>
+<p><code>waiting</code> — 开启 keep-alive 的情况下,这个值等于 active – (reading+writing), 意思就是 Nginx 已经处理完正在等候下一次请求指令的驻留连接.</p>
+</li>
+</ul>
+<h2 id=nginx代理>Nginx代理</h2>
+<p><img src=/images/2344773-20210819233724929-688371710.png alt></p>
+<h3 id=正向代理>正向代理</h3>
+<p><strong>正向代理，也就是传说中的代理,他的工作原理就像一个跳板（VPN），简单的说：</strong></p>
+<p><strong>我是一个用户，我访问不了某网站，但是我能访问一个代理服务器，这个代理服务器呢，他能访问那个我不能访问的网站，于是我先连上代理服务器，告诉他我需要那个无法访问网站的内容，代理服务器去取回来，然后返回给我。</strong></p>
+<p><img src=/images/2344773-20210819233734937-920215579.png alt></p>
+<h3 id=反向代理>反向代理</h3>
+<p><strong>对于客户端而言，代理服务器就像是原始服务器。</strong></p>
+<p><img src=/images/2344773-20210819233748014-1958850697.png alt></p>
+<p>nginx实现负载均衡的组件</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>ngx_http_proxy_module</span>    <span style=color:#080;font-style:italic># proxy代理模块，用于把请求抛给服务器节点或者upstream服务器池
+</span></code></pre></div><h3 id=实现一个简单的反向代理>实现一个简单的反向代理</h3>
+<p>机器准备，两台服务器</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>master</span>  <span style=color:#666>192</span><span style=color:#b44>.168.11.63</span>　　<span style=color:#b44>主负载</span> <span style=color:#b44>slave</span>   <span style=color:#666>192</span><span style=color:#b44>.168.11.64</span>　　<span style=color:#b44>web1</span>
+</code></pre></div><p>主负载均衡节点的配置文件</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>worker_processes</span>  <span style=color:#666>1</span>; 
+<span style=color:#a2f;font-weight:700>error_log</span> <span style=color:#b44>logs/error.log</span>; <span style=color:#a2f;font-weight:700>pid</span>       
+<span style=color:#b44>logs/nginx.pid</span>; 
+
+<span style=color:#a2f;font-weight:700>events</span> {  
+		<span style=color:#a2f;font-weight:700>worker_connections</span> <span style=color:#666>1024</span>; 
+} 
+
+<span style=color:#a2f;font-weight:700>http</span> {  
+		<span style=color:#a2f;font-weight:700>include</span>       <span style=color:#b44>mime.types</span>;  
+		<span style=color:#a2f;font-weight:700>default_type</span> <span style=color:#b44>application/octet-stream</span>;  
+		<span style=color:#a2f;font-weight:700>log_format</span> <span style=color:#b44>main</span> <span style=color:#b44>&#39;</span><span style=color:#b8860b>$remote_addr</span> <span style=color:#b44>-</span> <span style=color:#b8860b>$remote_user</span> <span style=color:#b44>[</span><span style=color:#b8860b>$time_local]</span> <span style=color:#b44>&#34;</span><span style=color:#b8860b>$request&#34;</span> <span style=color:#b44>&#39;</span>  <span style=color:#b44>&#39;</span><span style=color:#b8860b>$status</span> <span style=color:#b8860b>$body_bytes_sent</span> <span style=color:#b44>&#34;</span><span style=color:#b8860b>$http_referer&#34;</span> <span style=color:#b44>&#39;</span>  <span style=color:#b44>&#39;&#34;</span><span style=color:#b8860b>$http_user_agent&#34;</span> <span style=color:#b44>&#34;</span><span style=color:#b8860b>$http_x_forwarded_for&#34;&#39;</span>;  
+		<span style=color:#a2f;font-weight:700>access_log</span> <span style=color:#b44>logs/access.log</span> <span style=color:#b44>main</span>;  
+		<span style=color:#a2f;font-weight:700>sendfile</span>       <span style=color:#800>on</span>;  
+		<span style=color:#a2f;font-weight:700>keepalive_timeout</span> <span style=color:#666>65</span>;  
+		<span style=color:#a2f;font-weight:700>upstream</span> <span style=color:#b44>slave_pools</span> {  
+				<span style=color:#a2f;font-weight:700>server</span> 192.168.11.64:<span style=color:#666>80</span> <span style=color:#b44>weight=1</span>;
+    }
+    
+    <span style=color:#a2f;font-weight:700>server</span> {  
+				<span style=color:#a2f;font-weight:700>listen</span>       <span style=color:#666>80</span>;  
+				<span style=color:#a2f;font-weight:700>server_name</span> <span style=color:#b44>localhost</span>;  
+				<span style=color:#a2f;font-weight:700>location</span> <span style=color:#b44>/</span> {  
+						<span style=color:#a2f;font-weight:700>proxy_pass</span> <span style=color:#b44>http://slave_pools</span>;  
+						<span style=color:#a2f;font-weight:700>root</span>   <span style=color:#b44>html</span>;  
+						<span style=color:#a2f;font-weight:700>index</span> <span style=color:#b44>index.html</span> <span style=color:#b44>index.htm</span>;  
+				}  
+		<span style=color:#a2f;font-weight:700>error_page</span>   <span style=color:#666>500</span> <span style=color:#666>502</span> <span style=color:#666>503</span> <span style=color:#666>504</span> <span style=color:#b44>/50x.html</span>;  
+		<span style=color:#a2f;font-weight:700>location</span> = <span style=color:#b44>/50x.html</span> {  
+		<span style=color:#a2f;font-weight:700>root</span>   <span style=color:#b44>html</span>;  
+		}  
+	}
+}
+</code></pre></div><p>检查语法并启动nginx</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[root@master 192.168.11.63 /opt/nginx1-12]$./nginx -t 
+nginx: the configuration file /opt/nginx1-12/conf/nginx.conf syntax is ok nginx: configuration file /opt/nginx1-12/conf/nginx.conf test is successful 
+#启动nginx 
+[root@master 192.168.11.63 /opt/nginx1-12]$/./nginx 
+#检查端口 
+[root@master 192.168.11.63 /opt/nginx1-12]$netstat -tunlp|grep nginx tcp       
+0     0 0.0.0.0:80             0.0.0.0:*               LISTEN     8921/nginx: master
+</code></pre></div><p>此时访问master的服务器192.168.11.63:80地址，已经会将请求转发给slave的80端口</p>
+<p>除了页面效果的展示以外，还可以通过log(access.log)查看代理效果</p>
+<p>master端日志</p>
+<p><img src=/images/2344773-20210819233802753-442727988.png alt></p>
+<p>slave端日志</p>
+<p><img src=/images/2344773-20210819233811667-646303470.png alt></p>
+<h2 id=localtion>LOCALTION</h2>
+<h3 id=location语法优先级排列>Location语法优先级排列</h3>
+<p><strong>匹配符 匹配规则 优先级</strong></p>
+<ul>
+<li>
+<p>= 精确匹配 1</p>
+</li>
+<li>
+<p>^~ 以某个字符串开头 2</p>
+</li>
+<li>
+<p>~ 区分大小写的正则匹配 3</p>
+</li>
+<li>
+<p>~* 不区分大小写的正则匹配 4</p>
+</li>
+<li>
+<p>!~ 区分大小写不匹配的正则 5</p>
+</li>
+<li>
+<p>!~* 不区分大小写不匹配的正则 6</p>
+</li>
+<li>
+<p>/ 通用匹配，任何请求都会匹配到 7</p>
+</li>
+</ul>
+<h3 id=nginxconf配置文件实例>nginx.conf配置文件实例</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>server</span> {  
+		<span style=color:#a2f;font-weight:700>listen</span> <span style=color:#666>80</span>;  
+		<span style=color:#a2f;font-weight:700>server_name</span> <span style=color:#b44>pythonav.cn</span>;   <span style=color:#080;font-style:italic>#优先级1,精确匹配，根路径  
+</span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f;font-weight:700>location</span> =<span style=color:#b44>/</span> {  
+				<span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>400</span>;  
+		}   <span style=color:#080;font-style:italic>#优先级2,以某个字符串开头,以av开头的，优先匹配这里，区分大小写  
+</span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f;font-weight:700>location</span> <span style=color:#b44>^~</span> <span style=color:#b44>/av</span> {  
+				<span style=color:#a2f;font-weight:700>root</span> <span style=color:#b44>/data/av/</span>;  
+		}   <span style=color:#080;font-style:italic>#优先级3，区分大小写的正则匹配，匹配/media*****路径  
+</span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f;font-weight:700>location</span> ~ <span style=color:#b68>/media</span> {  
+				<span style=color:#a2f;font-weight:700>alias</span> <span style=color:#b44>/data/static/</span>;  
+		}   <span style=color:#080;font-style:italic>#优先级4 ，不区分大小写的正则匹配，所有的****.jpg|gif|png 都走这里  
+</span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f;font-weight:700>location</span> ~<span style=color:#b68>*</span> <span style=color:#b44>.*\.(jpg|gif|png|js|css)</span>$ {  
+				<span style=color:#a2f;font-weight:700>root</span> <span style=color:#b44>/data/av/</span>;  
+		}   <span style=color:#080;font-style:italic>#优先7，通用匹配  
+</span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f;font-weight:700>location</span> <span style=color:#b44>/</span> {  
+				<span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>403</span>;  
+		} 
+}
+</code></pre></div><h3 id=nginx语法之root和alias区别实战>nginx语法之root和alias区别实战</h3>
+<p><strong>nginx指定文件路径有root和alias两种方法</strong> 区别在方法和作用域：</p>
+<ol>
+<li>
+<p>方法：</p>
+<ul>
+<li>
+<p>root 语法 root 路径; 默认值 root html; 配置块 http{} server {} location{}</p>
+</li>
+<li>
+<p>alias 语法： alias 路径 配置块 location{}</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>root和alias区别在nginx如何解释location后面的url，这会使得两者分别以不同的方式讲请求映射到服务器文件上</p>
+<p>root参数是root路径+location位置</p>
+<p>root实例：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>location ^~ /av {  root /data/av;   注意这里可有可无结尾的   / }
+</code></pre></div><p>请求url是zhaohaiyu.com/av/index.html时 web服务器会返回服务器上的/data/av/av/index.html</p>
+<p>root实例2：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>location ~* .*\.(jpg|gif|png|js|css)$ {  root /data/av/; }
+</code></pre></div><p>请求url是zhaohaiyu.com/girl.gif时 web服务器会返回服务器上的/data/static/girl.gif</p>
+<p>alias实例：</p>
+<ul>
+<li>alias参数是使用alias路径替换location路径 alias是一个目录的别名 注意alias必须有 &ldquo;/&rdquo; 结束！ alias只能位于location块中</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>location ^~ /av {  alias /data/static/; }
+</code></pre></div><p>请求url是zhaohaiyu.com/av/index.html时 web服务器会返回服务器上的/data/static/index.html</p>
+<h2 id=keepalived高可用软件>Keepalived高可用软件</h2>
+<p>什么是keepalived</p>
+<ul>
+<li>Keepalived是一个用C语言编写的路由软件。该项目的主要目标是为Linux系统和基于Linux的基础架构提供简单而强大的负载均衡和高可用性设施。 还可以作为其他服务（nginx，mysql）的高可用软件 keepalived主要通过vrrp协议实现高可用功能。vrrp叫（virtual router redundancy protocol）虚拟路由器冗余协议，目的为了解决单点故障问题，他可以保证个别节点宕机时。整个网络可以不间断的运行。</li>
+</ul>
+<p>高可用故障切换原理</p>
+<ul>
+<li>在keepalived工作时，主master节点会不断的向备节点发送心跳消息，告诉备节点自己还活着， 当master节点故障时，就无法发送心跳消息，备节点就无法检测到来自master的心跳了，于是调用自身的接管程序，接管master节点的ip资源以及服务， 当master主节点恢复时，备backup节点又会释放接管的ip资源和服务，回复到原本的备节点角色。</li>
+</ul>
+<ol>
+<li>硬件环境准备</li>
+</ol>
+<ul>
+<li>
+<p>实验环境应该最好是4台虚拟机，环境有限因此用2台机器</p>
+<ol>
+<li>
+<p>master</p>
+</li>
+<li>
+<p>slave</p>
+</li>
+</ol>
+</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>global_defs</span> {
+  <span style=color:#a2f;font-weight:700>notification_email</span> {
+    <span style=color:#a2f;font-weight:700>eric.k.zhang@ericsson.com</span>
+  <span>}</span>
+  <span style=color:#b44>notification_email_from</span> <span style=color:#b44>keepalived@node-10-210-149-21</span>
+  <span style=color:#b44>smtp_server</span> <span style=color:#666>127</span><span style=color:#b44>.0.0.1</span>
+  <span style=color:#b44>smtp_connect_timeout</span> <span style=color:#666>30</span>
+  <span style=color:#b44>router_id</span> <span style=color:#b44>LVS_DEVEL</span>
+<span>}</span>
+
+
+<span style=color:#b44>vrrp_script</span> <span style=color:#b44>check_webproxy</span> {
+  <span style=color:#a2f;font-weight:700>script</span> <span style=color:#b44>&#34;killall</span> <span style=color:#b44>-0</span> <span style=color:#b44>nginx&#34;</span>
+  <span style=color:#b44>interval</span> <span style=color:#666>1</span>
+  <span style=color:#b44>weight</span> <span style=color:#666>21</span>
+<span>}</span>
+
+<span style=color:#b44>vrrp_script</span> <span style=color:#b44>check_mantaince_down</span> {
+  <span style=color:#a2f;font-weight:700>script</span> <span style=color:#b44>&#34;[[</span> <span style=color:#b44>-f</span> <span style=color:#b44>/etc/keepalived/down</span> <span style=color:#b44>]]</span> <span style=color:#b44>&amp;&amp;</span> <span style=color:#b44>exit</span> <span style=color:#666>1</span> <span style=color:#b44>||</span> <span style=color:#b44>exit</span> <span style=color:#666>0</span><span style=color:#b44>&#34;</span>
+  <span style=color:#b44>interval</span> <span style=color:#666>1</span>
+  <span style=color:#b44>weight</span> <span style=color:#666>2</span>
+<span>}</span>
+
+
+<span style=color:#b44>vrrp_instance</span> <span style=color:#b44>vip_10_210_149_23</span> {
+  <span style=color:#a2f;font-weight:700>state</span> <span style=color:#b44>MASTER</span>
+  <span style=color:#b44>interface</span> <span style=color:#b44>ens192</span>
+  <span style=color:#b44>virtual_router_id</span> <span style=color:#666>23</span>
+  <span style=color:#b44>garp_master_delay</span> <span style=color:#666>1</span>
+  <span style=color:#b44>mcast_src_ip</span> <span style=color:#666>10</span><span style=color:#b44>.210.149.21</span>
+  <span style=color:#b44>lvs_sync_daemon_interface</span> <span style=color:#b44>ens192</span>
+  <span style=color:#b44>priority</span> <span style=color:#666>110</span>
+  <span style=color:#b44>advert_int</span> <span style=color:#666>2</span>
+  <span style=color:#b44>authentication</span> {
+    <span style=color:#a2f;font-weight:700>auth_type</span> <span style=color:#b44>PASS</span>
+    <span style=color:#b44>auth_pass</span> <span style=color:#666>1111</span>
+  <span>}</span>
+  <span style=color:#b44>track_interface</span> {
+    <span style=color:#a2f;font-weight:700>ens192</span>
+  <span>}</span>
+  <span style=color:#b44>virtual_ipaddress</span> {
+    <span style=color:#a2f;font-weight:700>10.210.149.23/24</span> <span style=color:#b44>dev</span> <span style=color:#b44>ens192</span> <span style=color:#b44>label</span> ens192:<span style=color:#666>0</span>
+  <span>}</span>
+  <span style=color:#b44>track_script</span> {
+    <span style=color:#a2f;font-weight:700>check_webproxy</span>
+    <span style=color:#b44>check_mantaince_down</span>
+  <span>}</span>
+<span>}</span>
+
+<span style=color:#b44>vrrp_instance</span> <span style=color:#b44>nginx_vip_10_210.149_24</span> {
+  <span style=color:#a2f;font-weight:700>state</span> <span style=color:#b44>BACKUP</span>
+  <span style=color:#b44>interface</span> <span style=color:#b44>ens192</span>
+  <span style=color:#b44>virtual_router_id</span> <span style=color:#666>24</span>
+  <span style=color:#b44>garp_master_delay</span> <span style=color:#666>1</span>
+  <span style=color:#b44>mcast_src_ip</span> <span style=color:#666>10</span><span style=color:#b44>.210.149.21</span>
+  <span style=color:#b44>lvs_sync_daemon_interface</span> <span style=color:#b44>ens192</span>
+  <span style=color:#b44>priority</span> <span style=color:#666>100</span>
+  <span style=color:#b44>advert_int</span> <span style=color:#666>2</span>
+  <span style=color:#b44>authentication</span> {
+    <span style=color:#a2f;font-weight:700>auth_type</span> <span style=color:#b44>PASS</span>
+    <span style=color:#b44>auth_pass</span> <span style=color:#666>1111</span>
+  <span>}</span>
+  <span style=color:#b44>track_interface</span> {
+    <span style=color:#a2f;font-weight:700>ens192</span>
+  <span>}</span>
+  <span style=color:#b44>virtual_ipaddress</span> {
+    <span style=color:#a2f;font-weight:700>10.210.149.24/24</span> <span style=color:#b44>dev</span> <span style=color:#b44>ens192</span> <span style=color:#b44>label</span> ens192:<span style=color:#666>1</span>
+  <span>}</span>
+  <span style=color:#b44>track_script</span> {
+    <span style=color:#a2f;font-weight:700>check_webproxy</span>
+    <span style=color:#b44>check_mantaince_down</span>
+  <span>}</span>
+<span>}</span>
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#a2f;font-weight:700>global_defs</span> {
+  <span style=color:#a2f;font-weight:700>notification_email</span> {
+    <span style=color:#a2f;font-weight:700>eric.k.zhang@ericsson.com</span>
+  <span>}</span>
+  <span style=color:#b44>notification_email_from</span> <span style=color:#b44>keepalived@node-10-210-149-21</span>
+  <span style=color:#b44>smtp_server</span> <span style=color:#666>127</span><span style=color:#b44>.0.0.1</span>
+  <span style=color:#b44>smtp_connect_timeout</span> <span style=color:#666>30</span>
+  <span style=color:#b44>router_id</span> <span style=color:#b44>LVS_DEVEL</span>
+<span>}</span>
+
+
+<span style=color:#b44>vrrp_script</span> <span style=color:#b44>check_webproxy</span> {
+  <span style=color:#a2f;font-weight:700>script</span> <span style=color:#b44>&#34;killall</span> <span style=color:#b44>-0</span> <span style=color:#b44>nginx&#34;</span>
+  <span style=color:#b44>interval</span> <span style=color:#666>1</span>
+  <span style=color:#b44>weight</span> <span style=color:#666>21</span>
+<span>}</span>
+
+<span style=color:#b44>vrrp_script</span> <span style=color:#b44>check_mantaince_down</span> {
+  <span style=color:#a2f;font-weight:700>script</span> <span style=color:#b44>&#34;[[</span> <span style=color:#b44>-f</span> <span style=color:#b44>/etc/keepalived/down</span> <span style=color:#b44>]]</span> <span style=color:#b44>&amp;&amp;</span> <span style=color:#b44>exit</span> <span style=color:#666>1</span> <span style=color:#b44>||</span> <span style=color:#b44>exit</span> <span style=color:#666>0</span><span style=color:#b44>&#34;</span>
+  <span style=color:#b44>interval</span> <span style=color:#666>1</span>
+  <span style=color:#b44>weight</span> <span style=color:#666>2</span>
+<span>}</span>
+
+
+<span style=color:#b44>vrrp_instance</span> <span style=color:#b44>vip_10_210_149_23</span> {
+  <span style=color:#a2f;font-weight:700>state</span> <span style=color:#b44>BACKUP</span>
+  <span style=color:#b44>interface</span> <span style=color:#b44>ens192</span>
+  <span style=color:#b44>virtual_router_id</span> <span style=color:#666>23</span>
+  <span style=color:#b44>garp_master_delay</span> <span style=color:#666>1</span>
+  <span style=color:#b44>mcast_src_ip</span> <span style=color:#666>10</span><span style=color:#b44>.210.149.22</span>
+  <span style=color:#b44>lvs_sync_daemon_interface</span> <span style=color:#b44>ens192</span>
+  <span style=color:#b44>priority</span> <span style=color:#666>100</span>
+  <span style=color:#b44>advert_int</span> <span style=color:#666>2</span>
+  <span style=color:#b44>authentication</span> {
+    <span style=color:#a2f;font-weight:700>auth_type</span> <span style=color:#b44>PASS</span>
+    <span style=color:#b44>auth_pass</span> <span style=color:#666>1111</span>
+  <span>}</span>
+  <span style=color:#b44>track_interface</span> {
+    <span style=color:#a2f;font-weight:700>ens192</span>
+  <span>}</span>
+  <span style=color:#b44>virtual_ipaddress</span> {
+    <span style=color:#a2f;font-weight:700>10.210.149.23/24</span> <span style=color:#b44>dev</span> <span style=color:#b44>ens192</span> <span style=color:#b44>label</span> ens192:<span style=color:#666>0</span>
+  <span>}</span>
+  <span style=color:#b44>track_script</span> {
+    <span style=color:#a2f;font-weight:700>check_webproxy</span>
+    <span style=color:#b44>check_mantaince_down</span>
+  <span>}</span>
+<span>}</span>
+
+<span style=color:#b44>vrrp_instance</span> <span style=color:#b44>nginx_vip_10_210.149_24</span> {
+  <span style=color:#a2f;font-weight:700>state</span> <span style=color:#b44>MASTER</span>
+  <span style=color:#b44>interface</span> <span style=color:#b44>ens192</span>
+  <span style=color:#b44>virtual_router_id</span> <span style=color:#666>24</span>
+  <span style=color:#b44>garp_master_delay</span> <span style=color:#666>1</span>
+  <span style=color:#b44>mcast_src_ip</span> <span style=color:#666>10</span><span style=color:#b44>.210.149.22</span>
+  <span style=color:#b44>lvs_sync_daemon_interface</span> <span style=color:#b44>ens192</span>
+  <span style=color:#b44>priority</span> <span style=color:#666>110</span>
+  <span style=color:#b44>advert_int</span> <span style=color:#666>2</span>
+  <span style=color:#b44>authentication</span> {
+    <span style=color:#a2f;font-weight:700>auth_type</span> <span style=color:#b44>PASS</span>
+    <span style=color:#b44>auth_pass</span> <span style=color:#666>1111</span>
+  <span>}</span>
+  <span style=color:#b44>track_interface</span> {
+    <span style=color:#a2f;font-weight:700>ens192</span>
+  <span>}</span>
+  <span style=color:#b44>virtual_ipaddress</span> {
+    <span style=color:#a2f;font-weight:700>10.210.149.24/24</span> <span style=color:#b44>dev</span> <span style=color:#b44>ens192</span> <span style=color:#b44>label</span> ens192:<span style=color:#666>1</span>
+  <span>}</span>
+  <span style=color:#b44>track_script</span> {
+    <span style=color:#a2f;font-weight:700>check_webproxy</span>
+    <span style=color:#b44>check_mantaince_down</span>
+  <span>}</span>
+<span>}</span>
+</code></pre></div>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/%e8%bf%90%e7%bb%b4 rel=tag title=运维>#运维#</a>
+<a href=/tags/nginx rel=tag title=nginx>#nginx#</a>
+</div>
+<div class=post-nav>
+<div class=article-copyright>
+<div class=article-copyright-img>
+<img src=/img/qq_qrcode.png width=129px height=129px>
+<div style=text-align:center>QQ扫一扫交流</div>
+</div>
+<div class=article-copyright-info>
+<p>
+<span>标题：</span>Nginx基础
+</p>
+<p>
+<span>链接：</span>https://www.zhaohaiyu.com/post/operations/nginx/
+</p>
+<p>
+<span>作者：</span>haiyux
+</p>
+<p>
+<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
+</p>
+</div>
+</div>
+<div class=clear></div>
+</div>
+<div class=reward-qr-info>
+<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
+<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span>
+</button>
+<div id=QR style=display:none>
+<div id=wechat style=display:inline-block>
+<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
+<p>微信打赏</p>
+</div>
+<div id=alipay style=display:inline-block>
+<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
+<p>支付宝打赏</p>
+</div>
+</div>
+</div>
+<div class=post-nav>
+<div class="post-nav-next post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/database/mysql-index/ rel=next title=mysql索引>
+<i class="fa fa-chevron-left"></i> mysql索引
+</a>
+</div>
+<div class="post-nav-prev post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/operations/makefile/ rel=prev title=Makefile>
+Makefile
+<i class="fa fa-chevron-right"></i>
+</a>
+</div>
+</div>
+<div id=ucomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
+<p class=site-author-name itemprop=name>haiyux</p>
+<p class="site-description motion-element" itemprop=description>
+路漫漫其修远兮,吾将上下而求索
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/haiyux/ target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
+<i class="fa fa-fw fa-envelope"></i>
+Email
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://farer.org/ title=farer target=_blank>farer</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/golang>Golang
+<sup>30</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql
+<sup>7</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/http>HTTP
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/protobuf>Protobuf
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/grpc>Grpc
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis
+<sup>2</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/ddd>Ddd
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/docker>Docker
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/kratos>Kratos
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/makefile>Makefile
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mq>Mq
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/nginx>Nginx
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/raft>Raft
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/thrift>Thrift
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/traceing>Traceing
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/wire>Wire
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup>
+</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#nginx是什么>nginx是什么</a></li>
+<li><a href=#安装环境依赖包>安装环境依赖包</a></li>
+<li><a href=#安装并启动nginx>安装并启动nginx</a></li>
+<li><a href=#部署一个web站点>部署一个web站点</a></li>
+<li><a href=#nginx的目录结构>Nginx的目录结构</a></li>
+<li><a href=#nginx主配置文件解析>Nginx主配置文件解析</a>
+<ul>
+<li><a href=#coremodule核心模块>CoreModule核心模块</a></li>
+<li><a href=#events事件模块>events事件模块</a></li>
+<li><a href=#http内核模块>http内核模块</a></li>
+<li><a href=#include>include</a></li>
+</ul>
+</li>
+<li><a href=#nginx虚拟主机>Nginx虚拟主机</a></li>
+<li><a href=#nginx-status>nginx status</a>
+<ul>
+<li><a href=#启用nginx-status配置>启用nginx status配置</a></li>
+<li><a href=#重启nginx>重启nginx</a></li>
+<li><a href=#打开status页面>打开status页面</a></li>
+<li><a href=#nginx-status-1>nginx status</a></li>
+</ul>
+</li>
+<li><a href=#nginx代理>Nginx代理</a>
+<ul>
+<li><a href=#正向代理>正向代理</a></li>
+<li><a href=#反向代理>反向代理</a></li>
+<li><a href=#实现一个简单的反向代理>实现一个简单的反向代理</a></li>
+</ul>
+</li>
+<li><a href=#localtion>LOCALTION</a>
+<ul>
+<li><a href=#location语法优先级排列>Location语法优先级排列</a></li>
+<li><a href=#nginxconf配置文件实例>nginx.conf配置文件实例</a></li>
+<li><a href=#nginx语法之root和alias区别实战>nginx语法之root和alias区别实战</a></li>
+</ul>
+</li>
+<li><a href=#keepalived高可用软件>Keepalived高可用软件</a></li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>haiyux's blog</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script src=//cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
+<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

@@ -1,0 +1,522 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> 隔离 - haiyux's blog </title>
+<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
+<meta name=author content="haiyux">
+<meta property="og:title" content="隔离">
+<meta property="og:site_name" content="haiyux's blog">
+<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
+<meta name=title content="隔离 - haiyux's blog">
+<meta name=description content="欢迎来到haiyux的博客">
+<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
+<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
+<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>haiyux's blog</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-active">
+<a href=/post/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav> </div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.zhaohaiyu.com/post/microservice/quarantine/ itemprop=url>
+隔离
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-pushdate>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-09-29">
+2021-09-29
+</time>
+</span>
+<span class=post-category>
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a class=post-category-a href=/categories/microservice itemprop=url rel=index>
+<span itemprop=name>microservice</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span class=post-wordcount>
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>1298 字</span>
+</span>
+<span class=post-readtime>
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>3分钟</span>
+</span>
+<span id=/post/microservice/quarantine/ class="leancloud_visitors post-visitor" data-flag-title=隔离>
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=什么是隔离>什么是隔离？</h2>
+<p>隔离，本质上是对系统或资源进行分割，从而实现当系统发生故障时能限定传播范围和影响范围，即发生故障后只有出问题的服务不可用，保证其他服务仍然可用。</p>
+<p><img src=/images/2344773-20210823144657417-1195873014.png alt></p>
+<h2 id=服务隔离>服务隔离</h2>
+<h2 id=动静隔离>动静隔离</h2>
+<p>例如 CDN</p>
+<p>小到 CPU 的 cacheline false sharing、数据库 mysql 表设计中避免 bufferpool 频繁过期，隔离动静表，大到架构设计中的图片、静态资源等缓存加速。本质上都体现的一样的思路，即加速/缓存访问变换频次小的。比如 CDN 场景中，将静态资源和动态 API 分离，也是体现了隔离的思路:</p>
+<ul>
+<li>降低应用服务器负载，静态文件访问负载全部通过CDN。</li>
+<li>对象存储存储费用最低。</li>
+<li>海量存储空间，无需考虑存储架构升级。</li>
+<li>静态CDN带宽加速，延迟低。</li>
+</ul>
+<p><img src=/images/2344773-20210823144710245-1153353775.png alt></p>
+<p>archive: 稿件表，存储稿件的名称、作者、分类、tag、状态等信息，表示稿件的基本信息。 在一个投稿流程中，一旦稿件创建改动的频率比较低。 archive_stat: 稿件统计表，表示稿件的播放、点赞、收藏、投币数量，比较高频的更新。 随着稿件获取流量，稿件被用户所消费，各类计数信息更新比较频繁。 MySQL BufferPool 是用于缓存 DataPage 的，DataPage 可以理解为缓存了表的行，那么如果频繁更新 DataPage 不断会置换，会导致命中率下降的问题，所以我们在表设计中，仍然可以沿用类似的思路，其主表基本更新，在上游 Cache 未命中，透穿到 MySQL，仍然有 BufferPool 的缓存。</p>
+<h3 id=读写隔离>读写隔离</h3>
+<p>例如主从，除此之外还有常见的 CQRS 模式，分库分表等</p>
+<p>常见的隔离技术，当用于读取操作的服务器出现故障时，写服务器照常可以运作，反之也一样。</p>
+<h2 id=轻重隔离>轻重隔离</h2>
+<ul>
+<li>核心隔离：例如上面讲到将核心业务独立部署，非核心业务共享资源</li>
+<li>热点隔离：例如上面讲到的 remote cache 到 local cache</li>
+<li>用户隔离：不同的用户可能有不同的级别，例如上面讲到的外部用户和管理员</li>
+</ul>
+<h2 id=物理隔离>物理隔离</h2>
+<h3 id=线程>线程</h3>
+<p>常见的例子就是线程池，这个在 Golang 中一般不用过多考虑，runtime 已经帮我们管理好了</p>
+<p>主要通过线程池进行隔离，也是实现服务隔离的基础。（可将图中隔离媒介换成线程池即可）</p>
+<p>把业务进行分类并交给不同的线程池进行处理，当某个线程池处理一种业务请求发生问题时，不会讲故障扩散和影响到其他线程池，保证服务可用。</p>
+<p>假设系统存在商品服务、用户服务和订单服务3个微服务，通过设置运行时环境得到3个服务一共使用200个线程，客户端调用这3个微服务共享线程池时可能会引发服务雪崩，将线程分别隔离后则不会触发整体雪崩。</p>
+<p><img src=/images/2344773-20210823144722010-744930323-0078944.png alt></p>
+<h3 id=进程>进程</h3>
+<p>我们现在一般使用容器化服务，跑在 k8s 上这就是一种进程级别的隔离</p>
+<p>将系统拆分为多个子系统来实现物理隔离，各个子系统运行在独立的容器和JVM中，通过进程隔离使得一个子系统出现问题不会影响其他子系统。</p>
+<h3 id=机房>机房</h3>
+<p>我们目前在 K8s 的基础上做一些开发，常见的一种做法就是将我们的服务的不同副本尽量的分配在不同的可用区，实际上就是云厂商的不同机房，避免机房停电或者着火之类的影响</p>
+<p>如果有条件，对于大型高可用系统，会进行多机房部署，每个机房的服务都有自己的服务分组，本机房的服务应该只调用同机房服务。</p>
+<p>当一个机房出现故障，将请求快速切换到其他机房确保服务继续可用。</p>
+<h3 id=集群>集群</h3>
+<p>非常重要的服务我们可以部署多套，在物理上进行隔离，常见的有异地部署，也可能就部署在同一个区域</p>
+<p>将某些服务单独部署成集群，或对于某些服务可以进行分组集群管理，某一个集群出现问题之后就不会影响到其他集群，从而实现隔离。</p>
+<p><img src=/images/2344773-20210823144742310-1119019267.png alt></p>
+<h2 id=参考文章>参考文章</h2>
+<ul>
+<li><a href=https://blog.csdn.net/xiaofeng10330111/article/details/86772740 target=_blank rel=noopener>https://blog.csdn.net/xiaofeng10330111/article/details/86772740</a>
+</li>
+<li><a href=https://lailin.xyz/post/go-training-week6-usability-1-bulkhe.html target=_blank rel=noopener>https://lailin.xyz/post/go-training-week6-usability-1-bulkhe.html</a>
+</li>
+</ul>
+</div>
+<footer class=post-footer>
+<div class=post-nav>
+<div class=article-copyright>
+<div class=article-copyright-img>
+<img src=/img/qq_qrcode.png width=129px height=129px>
+<div style=text-align:center>QQ扫一扫交流</div>
+</div>
+<div class=article-copyright-info>
+<p>
+<span>标题：</span>隔离
+</p>
+<p>
+<span>链接：</span>https://www.zhaohaiyu.com/post/microservice/quarantine/
+</p>
+<p>
+<span>作者：</span>haiyux
+</p>
+<p>
+<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
+</p>
+</div>
+</div>
+<div class=clear></div>
+</div>
+<div class=reward-qr-info>
+<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
+<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span>
+</button>
+<div id=QR style=display:none>
+<div id=wechat style=display:inline-block>
+<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
+<p>微信打赏</p>
+</div>
+<div id=alipay style=display:inline-block>
+<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
+<p>支付宝打赏</p>
+</div>
+</div>
+</div>
+<div class=post-nav>
+<div class="post-nav-next post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/microservice/currentlimiting/ rel=next title=限流>
+<i class="fa fa-chevron-left"></i> 限流
+</a>
+</div>
+<div class="post-nav-prev post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/operations/open-telemetry/ rel=prev title="基于 OpenTelemetry 的链路追踪">
+基于 OpenTelemetry 的链路追踪
+<i class="fa fa-chevron-right"></i>
+</a>
+</div>
+</div>
+<div id=ucomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
+<p class=site-author-name itemprop=name>haiyux</p>
+<p class="site-description motion-element" itemprop=description>
+路漫漫其修远兮,吾将上下而求索
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/haiyux/ target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
+<i class="fa fa-fw fa-envelope"></i>
+Email
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://farer.org/ title=farer target=_blank>farer</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/golang>Golang
+<sup>30</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql
+<sup>7</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/http>HTTP
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/protobuf>Protobuf
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/grpc>Grpc
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis
+<sup>2</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/ddd>Ddd
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/docker>Docker
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/kratos>Kratos
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/makefile>Makefile
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mq>Mq
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/nginx>Nginx
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/raft>Raft
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/thrift>Thrift
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/traceing>Traceing
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/wire>Wire
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup>
+</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#什么是隔离>什么是隔离？</a></li>
+<li><a href=#服务隔离>服务隔离</a></li>
+<li><a href=#动静隔离>动静隔离</a>
+<ul>
+<li><a href=#读写隔离>读写隔离</a></li>
+</ul>
+</li>
+<li><a href=#轻重隔离>轻重隔离</a></li>
+<li><a href=#物理隔离>物理隔离</a>
+<ul>
+<li><a href=#线程>线程</a></li>
+<li><a href=#进程>进程</a></li>
+<li><a href=#机房>机房</a></li>
+<li><a href=#集群>集群</a></li>
+</ul>
+</li>
+<li><a href=#参考文章>参考文章</a></li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>haiyux's blog</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script src=//cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
+<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

@@ -1,0 +1,949 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> Kratos日志库的使用姿势 - haiyux's blog </title>
+<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
+<meta name=author content="haiyux">
+<meta property="og:title" content="Kratos日志库的使用姿势">
+<meta property="og:site_name" content="haiyux's blog">
+<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
+<meta name=title content="Kratos日志库的使用姿势 - haiyux's blog">
+<meta name=description content="欢迎来到haiyux的博客">
+<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
+<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
+<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>haiyux's blog</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-active">
+<a href=/post/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav> </div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.zhaohaiyu.com/post/microservice/kratos-log/ itemprop=url>
+Kratos日志库的使用姿势
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-pushdate>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-08-19">
+2021-08-19
+</time>
+</span>
+<span class=post-category>
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a class=post-category-a href=/categories/microservice itemprop=url rel=index>
+<span itemprop=name>microservice</span>
+</a>
+&nbsp;
+</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a class=post-category-a href=/categories/go itemprop=url rel=index>
+<span itemprop=name>go</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span class=post-wordcount>
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>2508 字</span>
+</span>
+<span class=post-readtime>
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>6分钟</span>
+</span>
+<span id=/post/microservice/kratos-log/ class="leancloud_visitors post-visitor" data-flag-title=Kratos日志库的使用姿势>
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=什么是日志>什么是日志</h2>
+<blockquote>
+<p>所谓日志（Log）是指系统所指定对象的某些操作和其操作结果按时间有序的集合。log文件就是日志文件，log文件记录了系统和系统的用户之间交互的信息，是自动捕获人与系统终端之间交互的类型、内容或时间的数据收集方法。</p>
+</blockquote>
+<p>日志是用来记录，用户操作，系统状态，错误信息等等内容的文件，是一个软件系统的重要组成部分。一个良好的日志规范，对于系统运行状态的分析，以及线上问题的解决具有重大的意义。</p>
+<h3 id=日志规范>日志规范</h3>
+<p>在开发软件打印日志时，需要注意一些问题，举例可能不全，可以自行百度相关文章或查看文章底部文献：</p>
+<ul>
+<li>重要功能日志尽可能的完善。</li>
+<li>不要随意打印无用的日志，过多无用的日志会增加分析日志的难度。</li>
+<li>日志要区分等级 如 debug，warn，info，error 等。</li>
+<li>捕获到未处理错误时最好打印错误堆栈信息</li>
+</ul>
+<h3 id=go-语言常用的日志库>Go 语言常用的日志库</h3>
+<p>Go 语言标准库中就为我们提供了一个日志库 <strong>log</strong>，除了这个以外还有很多日志库，如 <strong>logrus</strong>，<strong>glog</strong>，<strong>logx</strong>，<strong>Uber</strong> 的 <strong>zap</strong> 等等，例如 <strong>zap</strong> 就有很多的优点：</p>
+<ul>
+<li>
+<p>高性能</p>
+</li>
+<li>
+<p>配置项丰富</p>
+</li>
+<li>
+<p>多种日志级别</p>
+</li>
+<li>
+<p>支持Hook</p>
+</li>
+<li>
+<p>丰富的工具包</p>
+</li>
+<li>
+<p>提供了sugar log</p>
+</li>
+<li>
+<p>多种日志打印格式</p>
+</li>
+<li>
+<p>&mldr;</p>
+<h5 id=简单使用>简单使用</h5>
+</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#a2f;font-weight:700>package</span> main
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;errors&#34;</span>
+    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
+)
+
+<span style=color:#a2f;font-weight:700>var</span> logger <span style=color:#666>*</span>zap.Logger
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>init</span>() {
+    logger, _ = zap.<span style=color:#00a000>NewProduction</span>()
+}
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    logger.<span style=color:#00a000>Error</span>(
+        <span style=color:#b44>&#34;My name is baobao&#34;</span>,
+        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;from&#34;</span>, <span style=color:#b44>&#34;Hulun Buir&#34;</span>),
+        zap.<span style=color:#00a000>Error</span>(errors.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;no good&#34;</span>)))
+
+    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;Worked in the Ministry of national development of China!&#34;</span>,
+        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;key&#34;</span>, <span style=color:#b44>&#34;eat🍚&#34;</span>),
+        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;key&#34;</span>, <span style=color:#b44>&#34;sleep😴&#34;</span>))
+    <span style=color:#a2f;font-weight:700>defer</span> logger.<span style=color:#00a000>Sync</span>()
+}
+</code></pre></div><h2 id=kratos-日志库原理解析>Kratos 日志库原理解析</h2>
+<blockquote>
+<p>在私下与 <strong>Tony老师</strong> 沟通时关于日志库的实现理念时，<strong>Tony老师</strong> 说：由于目前日志库非常多并且好用，在 <strong>Kratos</strong> 的日志中，主要考虑以下几个问题：</p>
+<ol>
+<li>统一日志接口设计</li>
+<li>组织结构化日志</li>
+<li>并且需要有友好的日志级别使用</li>
+<li>支持多输出源对接需求，如log-agent 或者 3rd 日志库</li>
+</ol>
+</blockquote>
+<p><strong>kratos</strong> 的日志库，不强制具体实现方式，只提供适配器，用户可以自行实现日志功能，只需要实现<strong>kratos/log</strong> 的 <strong>Logger interface</strong> 即可接入自己喜欢的日志系统。</p>
+<p><strong>kratos</strong> 的日志库，在设计阶段，参考了很多优秀的开源项目和大厂的日志系统实现，经历了多次改动后才呈现给大家。</p>
+<h3 id=log库的组成>log库的组成</h3>
+<p><strong>kratos</strong> 的 <strong>log</strong> 库主要由以下几个文件组成</p>
+<ul>
+<li>
+<p><strong>level.go</strong> 定义日志级别</p>
+</li>
+<li>
+<p><strong>log.go</strong> 日志核心</p>
+</li>
+<li>
+<p><strong>helper.go</strong> <strong>log</strong>的<strong>helper</strong></p>
+</li>
+<li>
+<p><strong>value.go</strong> 实现动态值</p>
+<h3 id=源码分析>源码分析</h3>
+<p><strong>kratos</strong> 的 <strong>log</strong> 库中, 核心部分就是 <strong>log.go</strong> 代码非常简洁，符合 <strong>kratos</strong> 的设计理念。 <strong>log.go</strong> 中声明了 <strong>Logger interface</strong>，用户只需要实现接口，即可引入自己的日志实现，主要代码如下：</p>
+</li>
+</ul>
+<h4 id=loggo><strong>log.go</strong></h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#a2f;font-weight:700>package</span> log
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;context&#34;</span>
+    <span style=color:#b44>&#34;log&#34;</span>
+)
+
+<span style=color:#a2f;font-weight:700>var</span> (
+    <span style=color:#080;font-style:italic>// DefaultLogger is default logger.
+</span><span style=color:#080;font-style:italic></span>    DefaultLogger Logger = <span style=color:#00a000>NewStdLogger</span>(log.<span style=color:#00a000>Writer</span>())
+)
+
+<span style=color:#080;font-style:italic>// Logger 接口, 后面实现自定义日志库的时候，就是要实现这个接口。
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>type</span> Logger <span style=color:#a2f;font-weight:700>interface</span> {
+    <span style=color:#00a000>Log</span>(level Level, keyvals <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>error</span>
+}
+
+<span style=color:#a2f;font-weight:700>type</span> logger <span style=color:#a2f;font-weight:700>struct</span> {
+    logs      []Logger <span style=color:#080;font-style:italic>// logger 数组
+</span><span style=color:#080;font-style:italic></span>    prefix    []<span style=color:#a2f;font-weight:700>interface</span>{} <span style=color:#080;font-style:italic>// 一些默认打印的值,例如通过 With 绑定的 Valuer
+</span><span style=color:#080;font-style:italic></span>    hasValuer <span style=color:#0b0;font-weight:700>bool</span> <span style=color:#080;font-style:italic>// 是否包含 Valuer 
+</span><span style=color:#080;font-style:italic></span>    ctx       context.Context <span style=color:#080;font-style:italic>// 上下文
+</span><span style=color:#080;font-style:italic></span>}
+
+<span style=color:#a2f;font-weight:700>func</span> (c <span style=color:#666>*</span>logger) <span style=color:#00a000>Log</span>(level Level, keyvals <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>error</span> {
+    kvs <span style=color:#666>:=</span> <span style=color:#a2f>make</span>([]<span style=color:#a2f;font-weight:700>interface</span>{}, <span style=color:#666>0</span>, <span style=color:#a2f>len</span>(c.prefix)<span style=color:#666>+</span><span style=color:#a2f>len</span>(keyvals))
+    kvs = <span style=color:#a2f>append</span>(kvs, c.prefix<span style=color:#666>...</span>)
+        <span style=color:#080;font-style:italic>// 判断是否存在 valuer
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>if</span> c.hasValuer {
+                <span style=color:#080;font-style:italic>// 绑定 valuer
+</span><span style=color:#080;font-style:italic></span>        <span style=color:#00a000>bindValues</span>(c.ctx, kvs)
+    }
+    kvs = <span style=color:#a2f>append</span>(kvs, keyvals<span style=color:#666>...</span>)
+        <span style=color:#080;font-style:italic>// 遍历 logs，调用所有的 logger 进行日志打印。
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>for</span> _, l <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> c.logs {
+        <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> l.<span style=color:#00a000>Log</span>(level, kvs<span style=color:#666>...</span>); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+            <span style=color:#a2f;font-weight:700>return</span> err
+        }
+    }
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>
+}
+
+<span style=color:#080;font-style:italic>// With with logger fields.
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>With</span>(l Logger, kv <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) Logger {
+    <span style=color:#080;font-style:italic>// 判断是否能 把传入的 logger 断言成 *logger
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>if</span> c, ok <span style=color:#666>:=</span> l.(<span style=color:#666>*</span>logger); ok {
+        <span style=color:#080;font-style:italic>// 预分配内存,make了一个空间长度为 c.prefix + keyvals长度的 interface数组
+</span><span style=color:#080;font-style:italic></span>        kvs <span style=color:#666>:=</span> <span style=color:#a2f>make</span>([]<span style=color:#a2f;font-weight:700>interface</span>{}, <span style=color:#666>0</span>, <span style=color:#a2f>len</span>(c.prefix)<span style=color:#666>+</span><span style=color:#a2f>len</span>(kv))
+        <span style=color:#080;font-style:italic>// 处理打印的内容
+</span><span style=color:#080;font-style:italic></span>        kvs = <span style=color:#a2f>append</span>(kvs, kv<span style=color:#666>...</span>)
+        kvs = <span style=color:#a2f>append</span>(kvs, c.prefix<span style=color:#666>...</span>)
+        <span style=color:#080;font-style:italic>// containsValuer()用来判断 kvs 里面是否存在 valuer
+</span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>&amp;</span>logger{
+            logs:      c.logs,
+            prefix:    kvs,
+            hasValuer: <span style=color:#00a000>containsValuer</span>(kvs),
+            ctx:       c.ctx,
+        }
+    }
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>&amp;</span>logger{logs: []Logger{l}, prefix: kv, hasValuer: <span style=color:#00a000>containsValuer</span>(kv)}
+}
+
+<span style=color:#080;font-style:italic>// WithContext 绑定 ctx,注意 ctx 必须非空
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>WithContext</span>(ctx context.Context, l Logger) Logger {
+    <span style=color:#a2f;font-weight:700>if</span> c, ok <span style=color:#666>:=</span> l.(<span style=color:#666>*</span>logger); ok {
+        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>&amp;</span>logger{
+            logs:      c.logs,
+            prefix:    c.prefix,
+            hasValuer: c.hasValuer,
+            ctx:       ctx,
+        }
+    }
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>&amp;</span>logger{logs: []Logger{l}, ctx: ctx}
+}
+
+<span style=color:#080;font-style:italic>// MultiLogger 包装多个logger，简单说就是同时使用多个logger打印
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>MultiLogger</span>(logs <span style=color:#666>...</span>Logger) Logger {
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>&amp;</span>logger{logs: logs}
+}
+</code></pre></div><h4 id=valuego>value.go</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#080;font-style:italic>// 返回 valuer 函数.
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Value</span>(ctx context.Context, v <span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#a2f;font-weight:700>interface</span>{} {
+    <span style=color:#a2f;font-weight:700>if</span> v, ok <span style=color:#666>:=</span> v.(Valuer); ok {
+        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#00a000>v</span>(ctx)
+    }
+    <span style=color:#a2f;font-weight:700>return</span> v
+}
+
+<span style=color:#080;font-style:italic>// ...省略一些内置的 valuer 实现
+</span><span style=color:#080;font-style:italic></span>
+<span style=color:#080;font-style:italic>// 绑定 valuer
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>bindValues</span>(ctx context.Context, keyvals []<span style=color:#a2f;font-weight:700>interface</span>{}) {
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>1</span>; i &lt; <span style=color:#a2f>len</span>(keyvals); i <span style=color:#666>+=</span> <span style=color:#666>2</span> {
+        <span style=color:#a2f;font-weight:700>if</span> v, ok <span style=color:#666>:=</span> keyvals[i].(Valuer); ok {
+            keyvals[i] = <span style=color:#00a000>v</span>(ctx)
+        }
+    }
+}
+
+<span style=color:#080;font-style:italic>// 是否包含 valuer
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>containsValuer</span>(keyvals []<span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>bool</span> {
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>1</span>; i &lt; <span style=color:#a2f>len</span>(keyvals); i <span style=color:#666>+=</span> <span style=color:#666>2</span> {
+        <span style=color:#a2f;font-weight:700>if</span> _, ok <span style=color:#666>:=</span> keyvals[i].(Valuer); ok {
+            <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>true</span>
+        }
+    }
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>
+}
+</code></pre></div><h4 id=helpergo>helper.go</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#a2f;font-weight:700>package</span> log
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;context&#34;</span>
+    <span style=color:#b44>&#34;fmt&#34;</span>
+)
+
+<span style=color:#080;font-style:italic>// Helper is a logger helper.
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>type</span> Helper <span style=color:#a2f;font-weight:700>struct</span> {
+    logger Logger
+}
+
+<span style=color:#080;font-style:italic>// 创建一个 logger helper 实例
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>NewHelper</span>(logger Logger) <span style=color:#666>*</span>Helper {
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>&amp;</span>Helper{
+        logger: logger,
+    }
+}
+
+<span style=color:#080;font-style:italic>// 通过 WithContext() 返回包含 ctx 的一个日志的帮助类，包含一些定义好的按级别打印日志的方法
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> (h <span style=color:#666>*</span>Helper) <span style=color:#00a000>WithContext</span>(ctx context.Context) <span style=color:#666>*</span>Helper {
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>&amp;</span>Helper{
+        logger: <span style=color:#00a000>WithContext</span>(ctx, h.logger),
+    }
+}
+
+<span style=color:#a2f;font-weight:700>func</span> (h <span style=color:#666>*</span>Helper) <span style=color:#00a000>Log</span>(level Level, keyvals <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) {
+    h.logger.<span style=color:#00a000>Log</span>(level, keyvals<span style=color:#666>...</span>)
+}
+
+<span style=color:#a2f;font-weight:700>func</span> (h <span style=color:#666>*</span>Helper) <span style=color:#00a000>Debug</span>(a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) {
+    h.logger.<span style=color:#00a000>Log</span>(LevelDebug, <span style=color:#b44>&#34;msg&#34;</span>, fmt.<span style=color:#00a000>Sprint</span>(a<span style=color:#666>...</span>))
+}
+
+<span style=color:#a2f;font-weight:700>func</span> (h <span style=color:#666>*</span>Helper) <span style=color:#00a000>Debugf</span>(format <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) {
+    h.logger.<span style=color:#00a000>Log</span>(LevelDebug, <span style=color:#b44>&#34;msg&#34;</span>, fmt.<span style=color:#00a000>Sprintf</span>(format, a<span style=color:#666>...</span>))
+}
+
+<span style=color:#080;font-style:italic>// ...省略一些重复的方法
+</span></code></pre></div><h4 id=通过单元测试了解调用逻辑>通过单元测试了解调用逻辑</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>TestInfo</span>(t <span style=color:#666>*</span>testing.T) {
+    logger <span style=color:#666>:=</span> DefaultLogger
+    logger = <span style=color:#00a000>With</span>(logger, <span style=color:#b44>&#34;ts&#34;</span>, DefaultTimestamp, <span style=color:#b44>&#34;caller&#34;</span>, DefaultCaller)
+    logger.<span style=color:#00a000>Log</span>(LevelInfo, <span style=color:#b44>&#34;key1&#34;</span>, <span style=color:#b44>&#34;value1&#34;</span>)
+}
+</code></pre></div><ol>
+<li>
+<p>单测中首先声明了一个 <strong>logger</strong> ，用的默认的 <strong>DefaultLogger</strong></p>
+</li>
+<li>
+<p>调用 <strong>log.go</strong> 中的 <strong>With()</strong> 函数， 传入了 <strong>logger</strong> ,和两个动态值， <strong>DefaultTimestamp</strong> 和 <strong>DefaultCaller</strong>。</p>
+</li>
+<li>
+<p>With方法被调用，判断是否能将参数 <strong>l</strong> 类型转换成 <strong>*logger</strong></p>
+</li>
+<li>
+<p>如果可以转换，将传入的KV，赋值给 <strong>logger.prefix</strong> 上，然后调用 <strong>value.go</strong> 中的 <strong>containsValuer()</strong> 判断传入的KV中是否存在 Valuer类型的值，将结果赋值给 <strong>context.hasValuer</strong>，最后返回 <strong>Logger</strong> 对象</p>
+</li>
+<li>
+<p>否则则直接返回一个 <strong>&logger{logs: []Logger{l}, prefix: kv, hasValuer: containsValuer(kv)}</strong></p>
+</li>
+<li>
+<p>然后打印日志时，<strong>logger struct</strong> 的 <strong>Log</strong> 方法被调用</p>
+</li>
+<li>
+<p><strong>Log()</strong> 方法首先预分配了 <strong>keyvals</strong> 的空间，然后判断 <strong>hasValuer</strong>，如果为 <strong>true</strong>，则调用 <strong>valuer.go</strong> 中的 <strong>bindValuer()</strong> 并传入了 <strong>ctx</strong> 然后获取 <strong>valuer</strong> 的值`if v, ok := v.(Valuer); ok {</p>
+<pre><code> return v()
+</code></pre>
+<p>}`</p>
+</li>
+</ol>
+<p>8.最后遍历 <strong>logger.logs</strong> 打印日志</p>
+<h2 id=使用方法>使用方法</h2>
+<h3 id=使用-logger-打印日志>使用 Logger 打印日志</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>logger <span style=color:#666>:=</span> log.DefaultLogger
+logger.<span style=color:#00a000>Log</span>(LevelInfo, <span style=color:#b44>&#34;key1&#34;</span>, <span style=color:#b44>&#34;value1&#34;</span>)
+</code></pre></div><h3 id=使用-helper-打印日志>使用 Helper 打印日志</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>log <span style=color:#666>:=</span> log.<span style=color:#00a000>NewHelper</span>(DefaultLogger)
+log.<span style=color:#00a000>Debug</span>(<span style=color:#b44>&#34;test debug&#34;</span>)
+log.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;test info&#34;</span>)
+log.<span style=color:#00a000>Warn</span>(<span style=color:#b44>&#34;test warn&#34;</span>)
+log.<span style=color:#00a000>Error</span>(<span style=color:#b44>&#34;test error&#34;</span>)
+</code></pre></div><h3 id=使用-valuer>使用 valuer</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>logger <span style=color:#666>:=</span> DefaultLogger
+logger = <span style=color:#00a000>With</span>(logger, <span style=color:#b44>&#34;ts&#34;</span>, DefaultTimestamp, <span style=color:#b44>&#34;caller&#34;</span>, DefaultCaller)
+logger.<span style=color:#00a000>Log</span>(LevelInfo, <span style=color:#b44>&#34;msg&#34;</span>, <span style=color:#b44>&#34;helloworld&#34;</span>)
+</code></pre></div><h3 id=同时打印多个-logger>同时打印多个 logger</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>out <span style=color:#666>:=</span> log.<span style=color:#00a000>NewStdLogger</span>(os.Stdout)
+err <span style=color:#666>:=</span> log.<span style=color:#00a000>NewStdLogger</span>(os.Stderr)
+l <span style=color:#666>:=</span> log.<span style=color:#00a000>With</span>(<span style=color:#00a000>MultiLogger</span>(out, err))
+l.<span style=color:#00a000>Log</span>(LevelInfo, <span style=color:#b44>&#34;msg&#34;</span>, <span style=color:#b44>&#34;test&#34;</span>)
+</code></pre></div><h3 id=使用-context>使用 context</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>logger <span style=color:#666>:=</span> log.<span style=color:#00a000>With</span>(<span style=color:#00a000>NewStdLogger</span>(os.Stdout),
+    <span style=color:#b44>&#34;trace&#34;</span>, <span style=color:#00a000>Trace</span>(),
+)
+log <span style=color:#666>:=</span> log.<span style=color:#00a000>NewHelper</span>(logger)
+ctx <span style=color:#666>:=</span> context.<span style=color:#00a000>WithValue</span>(context.<span style=color:#00a000>Background</span>(), <span style=color:#b44>&#34;trace_id&#34;</span>, <span style=color:#b44>&#34;2233&#34;</span>)
+log.<span style=color:#00a000>WithContext</span>(ctx).<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;got trace!&#34;</span>)
+</code></pre></div><h3 id=使用-filter-过滤日志>使用 filter 过滤日志</h3>
+<p>如果需要过滤日志中某些不应该被打印明文的字段如 password 等，可以通过 log.NewFilter() 来实现过滤功能。</p>
+<h4 id=通过-level-过滤日志>通过 level 过滤日志</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>l <span style=color:#666>:=</span> log.<span style=color:#00a000>NewHelper</span>(log.<span style=color:#00a000>NewFilter</span>(log.DefaultLogger, log.<span style=color:#00a000>FilterLevel</span>(log.LevelWarn)))
+l.<span style=color:#00a000>Log</span>(LevelDebug, <span style=color:#b44>&#34;msg1&#34;</span>, <span style=color:#b44>&#34;te1st debug&#34;</span>)
+l.<span style=color:#00a000>Debug</span>(<span style=color:#b44>&#34;test debug&#34;</span>)
+l.<span style=color:#00a000>Debugf</span>(<span style=color:#b44>&#34;test %s&#34;</span>, <span style=color:#b44>&#34;debug&#34;</span>)
+l.<span style=color:#00a000>Debugw</span>(<span style=color:#b44>&#34;log&#34;</span>, <span style=color:#b44>&#34;test debug&#34;</span>)
+l.<span style=color:#00a000>Warn</span>(<span style=color:#b44>&#34;warn log&#34;</span>)
+</code></pre></div><h4 id=通过-key-过滤日志>通过 key 过滤日志</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>l <span style=color:#666>:=</span> log.<span style=color:#00a000>NewHelper</span>(log.<span style=color:#00a000>NewFilter</span>(log.DefaultLogger, log.<span style=color:#00a000>FilterKey</span>(<span style=color:#b44>&#34;password&#34;</span>)))
+l.<span style=color:#00a000>Debugw</span>(<span style=color:#b44>&#34;password&#34;</span>, <span style=color:#b44>&#34;123456&#34;</span>)
+</code></pre></div><h5 id=通过-value-过滤日志>通过 value 过滤日志</h5>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>l <span style=color:#666>:=</span> log.<span style=color:#00a000>NewHelper</span>(log.<span style=color:#00a000>NewFilter</span>(log.DefaultLogger, log.<span style=color:#00a000>FilterValue</span>(<span style=color:#b44>&#34;kratos&#34;</span>)))
+l.<span style=color:#00a000>Debugw</span>(<span style=color:#b44>&#34;name&#34;</span>, <span style=color:#b44>&#34;kratos&#34;</span>)
+</code></pre></div><h4 id=通过-hook-func-过滤日志>通过 hook func 过滤日志</h4>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>l <span style=color:#666>:=</span> log.<span style=color:#00a000>NewHelper</span>(log.<span style=color:#00a000>NewFilter</span>(log.DefaultLogger, log.<span style=color:#00a000>FilterFunc</span>(testFilterFunc)))
+l.<span style=color:#00a000>Debug</span>(<span style=color:#b44>&#34;debug level&#34;</span>)
+l.<span style=color:#00a000>Infow</span>(<span style=color:#b44>&#34;password&#34;</span>, <span style=color:#b44>&#34;123456&#34;</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>testFilterFunc</span>(level Level, keyvals <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>bool</span> {
+    <span style=color:#a2f;font-weight:700>if</span> level <span style=color:#666>==</span> LevelWarn {
+        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>true</span>
+    }
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; <span style=color:#a2f>len</span>(keyvals); i<span style=color:#666>++</span> {
+        <span style=color:#a2f;font-weight:700>if</span> keyvals[i] <span style=color:#666>==</span> <span style=color:#b44>&#34;password&#34;</span> {
+            keyvals[i<span style=color:#666>+</span><span style=color:#666>1</span>] = <span style=color:#b44>&#34;***&#34;</span>
+        }
+    }
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>
+}
+</code></pre></div><h2 id=用-zap-实现-kratos-的日志接口>用 Zap 实现 kratos 的日志接口</h2>
+<p>实现的代码十分简单，仅有不到100 行代码，仅供大家参考。</p>
+<h3 id=实现>实现</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#080;font-style:italic>// kratos/examples/log/zap.go
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>package</span> logger
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;fmt&#34;</span>
+        <span style=color:#b44>&#34;os&#34;</span>
+
+    <span style=color:#b44>&#34;github.com/go-kratos/kratos/v2/log&#34;</span>
+    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
+    <span style=color:#b44>&#34;go.uber.org/zap/zapcore&#34;</span>
+    <span style=color:#b44>&#34;gopkg.in/natefinch/lumberjack.v2&#34;</span>
+)
+
+<span style=color:#a2f;font-weight:700>var</span> _ log.Logger = (<span style=color:#666>*</span>ZapLogger)(<span style=color:#a2f;font-weight:700>nil</span>)
+
+<span style=color:#080;font-style:italic>// Zap 结构体
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>type</span> ZapLogger <span style=color:#a2f;font-weight:700>struct</span> {
+    log  <span style=color:#666>*</span>zap.Logger
+    Sync <span style=color:#a2f;font-weight:700>func</span>() <span style=color:#0b0;font-weight:700>error</span>
+}
+
+<span style=color:#080;font-style:italic>// 创建一个 ZapLogger 实例
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>NewZapLogger</span>(encoder zapcore.EncoderConfig, level zap.AtomicLevel, opts <span style=color:#666>...</span>zap.Option) <span style=color:#666>*</span>ZapLogger {
+    writeSyncer <span style=color:#666>:=</span> <span style=color:#00a000>getLogWriter</span>()
+    <span style=color:#080;font-style:italic>// 设置 zapcore
+</span><span style=color:#080;font-style:italic></span>    core <span style=color:#666>:=</span> zapcore.<span style=color:#00a000>NewCore</span>(
+        zapcore.<span style=color:#00a000>NewConsoleEncoder</span>(encoder),
+        zapcore.<span style=color:#00a000>NewMultiWriteSyncer</span>(
+            zapcore.<span style=color:#00a000>AddSync</span>(os.Stdout),
+        ), level)
+    <span style=color:#080;font-style:italic>//  new 一个 *zap.Logger
+</span><span style=color:#080;font-style:italic></span>    zapLogger <span style=color:#666>:=</span> zap.<span style=color:#00a000>New</span>(core, opts<span style=color:#666>...</span>)
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>&amp;</span>ZapLogger{log: zapLogger, Sync: zapLogger.Sync}
+}
+
+<span style=color:#080;font-style:italic>// Log 方法实现了 kratos/log/log.go 中的 Logger interface
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> (l <span style=color:#666>*</span>ZapLogger) <span style=color:#00a000>Log</span>(level log.Level, keyvals <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>error</span> {
+    <span style=color:#a2f;font-weight:700>if</span> <span style=color:#a2f>len</span>(keyvals) <span style=color:#666>==</span> <span style=color:#666>0</span> <span style=color:#666>||</span> <span style=color:#a2f>len</span>(keyvals)<span style=color:#666>%</span><span style=color:#666>2</span> <span style=color:#666>!=</span> <span style=color:#666>0</span>{
+            l.log.<span style=color:#00a000>Warn</span>(fmt.<span style=color:#00a000>Sprint</span>(<span style=color:#b44>&#34;Keyvalues must appear in pairs: &#34;</span>, keyvals))
+        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>
+    }
+    <span style=color:#080;font-style:italic>// 按照 KV 传入的时候,使用的 zap.Field
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>var</span> data []zap.Field
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; <span style=color:#a2f>len</span>(keyvals); i <span style=color:#666>+=</span> <span style=color:#666>2</span> {
+        data = <span style=color:#a2f>append</span>(data, zap.<span style=color:#00a000>Any</span>(fmt.<span style=color:#00a000>Sprint</span>(keyvals[i]), fmt.<span style=color:#00a000>Sprint</span>(keyvals[i<span style=color:#666>+</span><span style=color:#666>1</span>])))
+    }
+    <span style=color:#a2f;font-weight:700>switch</span> level {
+    <span style=color:#a2f;font-weight:700>case</span> log.LevelDebug:
+        l.log.<span style=color:#00a000>Debug</span>(<span style=color:#b44>&#34;&#34;</span>, data<span style=color:#666>...</span>)
+    <span style=color:#a2f;font-weight:700>case</span> log.LevelInfo:
+        l.log.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;&#34;</span>, data<span style=color:#666>...</span>)
+    <span style=color:#a2f;font-weight:700>case</span> log.LevelWarn:
+        l.log.<span style=color:#00a000>Warn</span>(<span style=color:#b44>&#34;&#34;</span>, data<span style=color:#666>...</span>)
+    <span style=color:#a2f;font-weight:700>case</span> log.LevelError:
+        l.log.<span style=color:#00a000>Error</span>(<span style=color:#b44>&#34;&#34;</span>, data<span style=color:#666>...</span>)
+    }
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>
+}
+
+<span style=color:#080;font-style:italic>// 日志自动切割，采用 lumberjack 实现的
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>getLogWriter</span>() zapcore.WriteSyncer {
+    lumberJackLogger <span style=color:#666>:=</span> <span style=color:#666>&amp;</span>lumberjack.Logger{
+        Filename:   <span style=color:#b44>&#34;./test.log&#34;</span>,
+        MaxSize:    <span style=color:#666>10</span>,
+        MaxBackups: <span style=color:#666>5</span>,
+        MaxAge:     <span style=color:#666>30</span>,
+        Compress:   <span style=color:#a2f;font-weight:700>false</span>,
+    }
+    <span style=color:#a2f;font-weight:700>return</span> zapcore.<span style=color:#00a000>AddSync</span>(lumberJackLogger)
+}
+</code></pre></div><h3 id=使用方法-1>使用方法</h3>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#080;font-style:italic>// kratos/examples/log/zap_test.go
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>package</span> logger
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;testing&#34;</span>
+
+    <span style=color:#b44>&#34;github.com/go-kratos/kratos/v2/log&#34;</span>
+    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
+    <span style=color:#b44>&#34;go.uber.org/zap/zapcore&#34;</span>
+)
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>TestZapLogger</span>(t <span style=color:#666>*</span>testing.T) {
+    encoder <span style=color:#666>:=</span> zapcore.EncoderConfig{
+        TimeKey:        <span style=color:#b44>&#34;t&#34;</span>,
+        LevelKey:       <span style=color:#b44>&#34;level&#34;</span>,
+        NameKey:        <span style=color:#b44>&#34;logger&#34;</span>,
+        CallerKey:      <span style=color:#b44>&#34;caller&#34;</span>,
+        MessageKey:     <span style=color:#b44>&#34;msg&#34;</span>,
+        StacktraceKey:  <span style=color:#b44>&#34;stack&#34;</span>,
+        EncodeTime:     zapcore.ISO8601TimeEncoder,
+        LineEnding:     zapcore.DefaultLineEnding,
+        EncodeLevel:    zapcore.LowercaseLevelEncoder,
+        EncodeDuration: zapcore.SecondsDurationEncoder,
+        EncodeCaller:   zapcore.FullCallerEncoder,
+    }
+    logger <span style=color:#666>:=</span> <span style=color:#00a000>NewZapLogger</span>(
+        encoder,
+        zap.<span style=color:#00a000>NewAtomicLevelAt</span>(zapcore.DebugLevel),
+        zap.<span style=color:#00a000>AddStacktrace</span>(
+            zap.<span style=color:#00a000>NewAtomicLevelAt</span>(zapcore.ErrorLevel)),
+        zap.<span style=color:#00a000>AddCallerSkip</span>(<span style=color:#666>2</span>),
+        zap.<span style=color:#00a000>Development</span>(),
+    )
+    zlog <span style=color:#666>:=</span> log.<span style=color:#00a000>NewHelper</span>(logger)
+    zlog.<span style=color:#00a000>Infow</span>(<span style=color:#b44>&#34;name&#34;</span>,<span style=color:#b44>&#34;go 语言进阶&#34;</span>)
+    <span style=color:#a2f;font-weight:700>defer</span> logger.<span style=color:#00a000>Sync</span>()
+}
+</code></pre></div><h2 id=参考文献>参考文献</h2>
+<ul>
+<li>关于 log 库的讨论 <a href=https://github.com/go-kratos/kratos/issues/882 target=_blank rel=noopener>issue</a>
+</li>
+<li>Uber 的日志库 Zap <a href=https://github.com/uber-go/zap target=_blank rel=noopener>uber/zap</a>
+</li>
+<li>日志割接库 <a href=https://github.com/natefinch/lumberjack target=_blank rel=noopener>lumberjack</a>
+</li>
+<li>基于 zap 的日志demo <a href=https://github.com/go-kratos/kratos/tree/main/examples/log target=_blank rel=noopener>log example </a>
+</li>
+</ul>
+<hr>
+<p><img src=/images/2344773-20210902225224456-315933124.png alt></p>
+<p><img src=/images/2344773-20210902225203602-1750987546.gif alt></p>
+</div>
+<footer class=post-footer>
+<div class=post-nav>
+<div class=article-copyright>
+<div class=article-copyright-img>
+<img src=/img/qq_qrcode.png width=129px height=129px>
+<div style=text-align:center>QQ扫一扫交流</div>
+</div>
+<div class=article-copyright-info>
+<p>
+<span>标题：</span>Kratos日志库的使用姿势
+</p>
+<p>
+<span>链接：</span>https://www.zhaohaiyu.com/post/microservice/kratos-log/
+</p>
+<p>
+<span>作者：</span>haiyux
+</p>
+<p>
+<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
+</p>
+</div>
+</div>
+<div class=clear></div>
+</div>
+<div class=reward-qr-info>
+<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
+<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span>
+</button>
+<div id=QR style=display:none>
+<div id=wechat style=display:inline-block>
+<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
+<p>微信打赏</p>
+</div>
+<div id=alipay style=display:inline-block>
+<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
+<p>支付宝打赏</p>
+</div>
+</div>
+</div>
+<div class=post-nav>
+<div class="post-nav-next post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/database/mysql-lock/ rel=next title=mysql锁>
+<i class="fa fa-chevron-left"></i> mysql锁
+</a>
+</div>
+<div class="post-nav-prev post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/database/rabbitmq/ rel=prev title=RabbitMQ消息队列>
+RabbitMQ消息队列
+<i class="fa fa-chevron-right"></i>
+</a>
+</div>
+</div>
+<div id=ucomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
+<p class=site-author-name itemprop=name>haiyux</p>
+<p class="site-description motion-element" itemprop=description>
+路漫漫其修远兮,吾将上下而求索
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/haiyux/ target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
+<i class="fa fa-fw fa-envelope"></i>
+Email
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://farer.org/ title=farer target=_blank>farer</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/golang>Golang
+<sup>30</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql
+<sup>7</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/http>HTTP
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/protobuf>Protobuf
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/grpc>Grpc
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis
+<sup>2</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/ddd>Ddd
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/docker>Docker
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/kratos>Kratos
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/makefile>Makefile
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mq>Mq
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/nginx>Nginx
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/raft>Raft
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/thrift>Thrift
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/traceing>Traceing
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/wire>Wire
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup>
+</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#什么是日志>什么是日志</a>
+<ul>
+<li><a href=#日志规范>日志规范</a></li>
+<li><a href=#go-语言常用的日志库>Go 语言常用的日志库</a></li>
+</ul>
+</li>
+<li><a href=#kratos-日志库原理解析>Kratos 日志库原理解析</a>
+<ul>
+<li><a href=#log库的组成>log库的组成</a></li>
+<li><a href=#源码分析>源码分析</a></li>
+</ul>
+</li>
+<li><a href=#使用方法>使用方法</a>
+<ul>
+<li><a href=#使用-logger-打印日志>使用 Logger 打印日志</a></li>
+<li><a href=#使用-helper-打印日志>使用 Helper 打印日志</a></li>
+<li><a href=#使用-valuer>使用 valuer</a></li>
+<li><a href=#同时打印多个-logger>同时打印多个 logger</a></li>
+<li><a href=#使用-context>使用 context</a></li>
+<li><a href=#使用-filter-过滤日志>使用 filter 过滤日志</a></li>
+</ul>
+</li>
+<li><a href=#用-zap-实现-kratos-的日志接口>用 Zap 实现 kratos 的日志接口</a>
+<ul>
+<li><a href=#实现>实现</a></li>
+<li><a href=#使用方法-1>使用方法</a></li>
+</ul>
+</li>
+<li><a href=#参考文献>参考文献</a></li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>haiyux's blog</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script src=//cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
+<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

@@ -1,0 +1,699 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> mysql索引 - haiyux's blog </title>
+<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
+<meta name=author content="haiyux">
+<meta property="og:title" content="mysql索引">
+<meta property="og:site_name" content="haiyux's blog">
+<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
+<meta name=title content="mysql索引 - haiyux's blog">
+<meta name=description content="欢迎来到haiyux的博客">
+<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
+<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
+<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>haiyux's blog</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-active">
+<a href=/post/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav> </div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.zhaohaiyu.com/post/database/mysql-index/ itemprop=url>
+mysql索引
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-pushdate>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2020-10-07">
+2020-10-07
+</time>
+</span>
+<span class=post-category>
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a class=post-category-a href=/categories/database itemprop=url rel=index>
+<span itemprop=name>database</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span class=post-wordcount>
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>5322 字</span>
+</span>
+<span class=post-readtime>
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>11分钟</span>
+</span>
+<span id=/post/database/mysql-index/ class="leancloud_visitors post-visitor" data-flag-title=mysql索引>
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=什么是索引>什么是索引</h2>
+<p>一般的应用系统，都是读多写少。而且插入操作和一般的更新操作很少出现性能问题（因为有redo log锁cache缓存）。在生产环境中，我们遇到最多的，也是最容易出问题的，还是一些复杂的查询操作，因此对查询语句的优化显然是重中之重。说起加速查询，就不得不提到索引了。索引的核心思想就是<strong>加速查询</strong>。</p>
+<h2 id=索引的原理>索引的原理</h2>
+<h3 id=索引原理>索引原理</h3>
+<p>索引的目的在于提高查询效率，可以类比字典，如果要查“mysql”这个单词，我们肯定需要定位到m字母，然后从下往下找到y字母，再找到剩下的sql。如果没有索引，那么你可能需要把所有单词看一遍才能找到你想要的，如果我想找到m开头的单词呢？或者ze开头的单词呢？是不是觉得如果没有索引，这个事情根本无法完成？</p>
+<p><strong>本质都是：通过不断地缩小想要获取数据的范围来筛选出最终想要的结果，同时把随机的事件变成顺序的事件，也就是说，有了这种索引机制，我们可以总是用同一种查找方式来锁定数据。</strong></p>
+<p>数据库也是一样，但显然要复杂许多，因为不仅面临着等值查询，还有范围查询(>、&lt;、between、in)、模糊查询(like)、并集查询(or)等等。数据库应该选择怎么样的方式来应对所有的问题呢？我们回想字典的例子，能不能把数据分成段，然后分段查询呢？最简单的如果1000条数据，1到100分成第一段，101到200分成第二段，201到300分成第三段……这样查第250条数据，只要找第三段就可以了，一下子去除了90%的无效数据。但如果是1千万的记录呢，分成几段比较好？稍有算法基础的同学会想到搜索树，其平均复杂度是lgN，具有不错的查询性能。但这里我们忽略了一个关键的问题，复杂度模型是基于每次相同的操作成本来考虑的，数据库实现比较复杂，数据保存在磁盘上，而为了提高性能，每次又可以把部分数据读入内存来计算，因为我们知道访问磁盘的成本大概是访问内存的十万倍左右，所以简单的搜索树难以满足复杂的应用场景。</p>
+<h3 id=磁盘io与预读>磁盘IO与预读</h3>
+<p>考虑到磁盘IO是非常高昂的操作，计算机操作系统做了一些优化，<strong>当一次IO时，不光把当前磁盘地址的数据，而是把相邻的数据也都读取到内存缓冲区内</strong>，因为局部预读性原理告诉我们，当计算机访问一个地址的数据的时候，与其相邻的数据也会很快被访问到。每一次IO读取的数据我们称之为一页(page)。具体一页有多大数据跟操作系统有关，一般为4k或8k，也就是我们读取一页内的数据时候，实际上才发生了一次IO，这个理论对于索引的数据结构设计非常有帮助。</p>
+<h4 id=索引的数据结构>索引的数据结构</h4>
+<p>前面讲了生活中索引的例子，索引的基本原理，数据库的复杂性，又讲了操作系统的相关知识，目的就是让大家了解，任何一种数据结构都不是凭空产生的，一定会有它的背景和使用场景，我们现在总结一下，我们需要这种数据结构能够做些什么，其实很简单，那就是：每次查找数据时把磁盘IO次数控制在一个很小的数量级，最好是常数数量级。那么我们就想到如果一个高度可控的多路搜索树是否能满足需求呢？就这样，b+树应运而生。</p>
+<h2 id=详解b树>详解b+树</h2>
+<p><img src=/images/2344773-20210902161820123-1947712285.png alt></p>
+<p>如上图，是一颗b+树，关于b+树的定义可以参见<a href=http://zh.wikipedia.org/wiki/B%2B%e6%a0%91 target=_blank rel=noopener>B+树</a>
+，这里只说一些重点，浅蓝色的块我们称之为一个磁盘块，可以看到每个磁盘块包含几个数据项（深蓝色所示）和指针（黄色所示），如磁盘块1包含数据项17和35，包含指针P1、P2、P3，P1表示小于17的磁盘块，P2表示在17和35之间的磁盘块，P3表示大于35的磁盘块。真实的数据存在于叶子节点即3、5、9、10、13、15、28、29、36、60、75、79、90、99。非叶子节点只不存储真实的数据，只存储指引搜索方向的数据项，如17、35并不真实存在于数据表中。</p>
+<h3 id=b树的查找过程>b+树的查找过程</h3>
+<p>如图所示，如果要查找数据项29，那么首先会把磁盘块1由磁盘加载到内存，此时发生一次IO，在内存中用二分查找确定29在17和35之间，锁定磁盘块1的P2指针，内存时间因为非常短（相比磁盘的IO）可以忽略不计，通过磁盘块1的P2指针的磁盘地址把磁盘块3由磁盘加载到内存，发生第二次IO，29在26和30之间，锁定磁盘块3的P2指针，通过指针加载磁盘块8到内存，发生第三次IO，同时内存中做二分查找找到29，结束查询，总计三次IO。真实的情况是，3层的b+树可以表示上百万的数据，如果上百万的数据查找只需要三次IO，性能提高将是巨大的，如果没有索引，每个数据项都要发生一次IO，那么总共需要百万次的IO，显然成本非常非常高。</p>
+<h3 id=b树性质>b+树性质</h3>
+<ol>
+<li><strong>索引字段要尽量的小</strong>：通过上面的分析，我们知道IO次数取决于b+数的高度h，假设当前数据表的数据为N，每个磁盘块的数据项的数量是m，则有h=㏒(m+1)N，当数据量N一定的情况下，m越大，h越小；而m = 磁盘块的大小 / 数据项的大小，磁盘块的大小也就是一个数据页的大小，是固定的，如果数据项占的空间越小，数据项的数量越多，树的高度越低。这就是为什么每个数据项，即索引字段要尽量的小，比如int占4字节，要比bigint8字节少一半。这也是为什么b+树要求把真实的数据放到叶子节点而不是内层节点，一旦放到内层节点，磁盘块的数据项会大幅度下降，导致树增高。当数据项等于1时将会退化成线性表。</li>
+<li><strong>索引的最左匹配特性</strong>：当b+树的数据项是复合的数据结构，比如(name,age,sex)的时候，b+数是按照从左到右的顺序来建立搜索树的，比如当(张三,20,F)这样的数据来检索的时候，b+树会优先比较name来确定下一步的所搜方向，如果name相同再依次比较age和sex，最后得到检索的数据；但当(20,F)这样的没有name的数据来的时候，b+树就不知道下一步该查哪个节点，因为建立搜索树的时候name就是第一个比较因子，必须要先根据name来搜索才能知道下一步去哪里查询。比如当(张三,F)这样的数据来检索时，b+树可以用name来指定搜索方向，但下一个字段age的缺失，所以只能把名字等于张三的数据都找到，然后再匹配性别是F的数据了， 这个是非常重要的性质，即索引的最左匹配特性。</li>
+</ol>
+<h2 id=聚集索引与辅助索引>聚集索引与辅助索引</h2>
+<p><strong>在数据库中，B+树的高度一般都在24层，这也就是说查找某一个键值的行记录时最多只需要24次IO，这倒不错。因为当前一般的机械硬盘每秒至少可以做100次IO，24次的IO意味着查询时间只需要0.02~0.04秒。</strong></p>
+<p><strong>数据库中的B+树索引可以分为聚集索引（clustered index）和辅助索引（secondary index），</strong></p>
+<p><strong>聚集索引与辅助索引相同的是：不管是聚集索引还是辅助索引，其内部都是B+树的形式，即高度是平衡的，叶子结点存放着所有的数据。</strong></p>
+<p><strong>聚集索引与辅助索引不同的是：叶子结点存放的是否是一整行的信息</strong></p>
+<h3 id=聚集索引>聚集索引</h3>
+<ol>
+<li>InnoDB存储引擎表示索引组织表，即表中数据按照主键顺序存放。而聚集索引（clustered index）就是按照每张表的主键构造一棵B+树，同时叶子结点存放的即为整张表的行记录数据，也将聚集索引的叶子结点称为数据页。聚集索引的这个特性决定了索引组织表中数据也是索引的一部分。同B+树数据结构一样，每个数据页都通过一个双向链表来进行链接。</li>
+<li>如果未定义主键，MySQL取第一个唯一索引（unique）而且只含非空列（NOT NULL）作为主键，InnoDB使用它作为聚簇索引。</li>
+<li>如果没有这样的列，InnoDB就自己产生一个这样的ID值，它有六个字节，而且是隐藏的，使其作为聚簇索引。</li>
+<li>由于实际的数据页只能按照一棵B+树进行排序，因此每张表只能拥有一个聚集索引。在多少情况下，查询优化器倾向于采用聚集索引。因为聚集索引能够在B+树索引的叶子节点上直接找到数据。此外由于定义了数据的逻辑顺序，聚集索引能够特别快地访问针对范围值得查询。</li>
+</ol>
+<p><img src=/images/2344773-20210902162101812-1982655829.png alt></p>
+<h4 id=聚集索引的好处>聚集索引的好处</h4>
+<ol>
+<li>它对主键的排序查找和范围查找速度非常快，叶子节点的数据就是用户所要查询的数据。如用户需要查找一张表，查询最后的10位用户信息，由于B+树索引是双向链表，所以用户可以快速找到最后一个数据页，并取出10条记录</li>
+<li>范围查询（range query），即如果要查找主键某一范围内的数据，通过叶子节点的上层中间节点就可以得到页的范围，之后直接读取数据页即可</li>
+</ol>
+<h3 id=辅助索引>辅助索引</h3>
+<ol>
+<li>表中除了聚集索引外其他索引都是辅助索引（Secondary Index，也称为非聚集索引），与聚集索引的区别是：辅助索引的叶子节点不包含行记录的全部数据。</li>
+<li>叶子节点除了包含键值以外，每个叶子节点中的索引行中还包含一个书签（bookmark）。该书签用来告诉InnoDB存储引擎去哪里可以找到与索引相对应的行数据。</li>
+<li>由于InnoDB存储引擎是索引组织表，因此InnoDB存储引擎的辅助索引的书签就是相应行数据的聚集索引键。如下图</li>
+</ol>
+<p><img src=/images/2344773-20210902162601459-147323126.png alt></p>
+<p>辅助索引的存在并不影响数据在聚集索引中的组织，因此每张表上可以有多个辅助索引，但只能有一个聚集索引。当通过辅助索引来寻找数据时，InnoDB存储引擎会遍历辅助索引并通过叶子级别的指针获得只想主键索引的主键，然后再通过主键索引来找到一个完整的行记录。</p>
+<p>举例来说，如果在一棵高度为3的辅助索引树种查找数据，那需要对这个辅助索引树遍历3次找到指定主键，如果聚集索引树的高度同样为3，那么还需要对聚集索引树进行3次查找，最终找到一个完整的行数据所在的页，因此一共需要6次逻辑IO访问才能得到最终的一个数据页。</p>
+<h2 id=mysql索引管理>MySQL索引管理</h2>
+<h3 id=功能>功能</h3>
+<ol>
+<li>索引的功能就是加速查找</li>
+<li>mysql中的primary key，unique，联合唯一也都是索引，这些索引除了加速查找以外，还有约束的功能</li>
+</ol>
+<h3 id=mysql常用的索引>MySQL常用的索引</h3>
+<p>聚簇索引（主键索引）：</p>
+<ul>
+<li>加速查询</li>
+<li>存储所有数据</li>
+</ul>
+<p>普通索引INDEX：</p>
+<ul>
+<li>加速查找</li>
+</ul>
+<p>唯一索引：</p>
+<ul>
+<li>主键索引PRIMARY KEY：加速查找+约束（不为空、不能重复）</li>
+<li>唯一索引UNIQUE:加速查找+约束（不能重复）</li>
+</ul>
+<p>联合索引：</p>
+<ul>
+<li>加速查找</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#666>-</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>PRIMARY</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>KEY</span>(id,name):<span>联合主键索引</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#666>-</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>UNIQUE</span>(id,name):<span>联合唯一索引</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#666>-</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>INDEX</span>(id,name):<span>联合普通索引</span><span style=color:#bbb>
+</span></code></pre></div><p><strong>索引建议使用bTree 不建议使用hash索引</strong></p>
+<h2 id=创建删除索引的语法>创建/删除索引的语法</h2>
+<ul>
+<li>创建表时</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#080;font-style:italic>/*
+</span><span style=color:#080;font-style:italic>CREATE TABLE 表名 (
+</span><span style=color:#080;font-style:italic>    字段名1  数据类型 [完整性约束条件…],
+</span><span style=color:#080;font-style:italic>    字段名2  数据类型 [完整性约束条件…],
+</span><span style=color:#080;font-style:italic>    [UNIQUE | FULLTEXT | SPATIAL ]   INDEX | KEY
+</span><span style=color:#080;font-style:italic>    [索引名]  (字段名[(长度)]  [ASC |DESC]) 
+</span><span style=color:#080;font-style:italic>);
+</span><span style=color:#080;font-style:italic>*/</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>table</span><span style=color:#bbb> </span>t1(<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>id<span style=color:#bbb> </span><span style=color:#a2f>int</span>,<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>name<span style=color:#bbb> </span><span style=color:#a2f>char</span>,<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>age<span style=color:#bbb> </span><span style=color:#a2f>int</span>,<span style=color:#bbb>
+</span><span style=color:#bbb>    </span>sex<span style=color:#bbb> </span>enum(<span style=color:#b44>&#39;male&#39;</span>,<span style=color:#b44>&#39;female&#39;</span>),<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#a2f;font-weight:700>unique</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>key</span><span style=color:#bbb> </span>uni_id(id),<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#a2f;font-weight:700>index</span><span style=color:#bbb> </span>ix_name(name)<span style=color:#bbb> </span><span style=color:#666>#</span><span style=color:#bbb> </span>index没有key<span style=color:#bbb>
+</span><span style=color:#bbb></span>);<span style=color:#bbb>
+</span></code></pre></div><ul>
+<li>CREATE在已存在的表上创建索引</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#080;font-style:italic>/*
+</span><span style=color:#080;font-style:italic>CREATE  [UNIQUE | FULLTEXT | SPATIAL ]  INDEX  索引名 
+</span><span style=color:#080;font-style:italic>	ON 表名 (字段名[(长度)]  [ASC |DESC]) ;
+</span><span style=color:#080;font-style:italic>*/</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>index</span><span style=color:#bbb> </span>ix_age<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>on</span><span style=color:#bbb> </span>t1(age);<span style=color:#bbb>
+</span></code></pre></div><ul>
+<li>ALTER TABLE在已存在的表上创建索引</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#080;font-style:italic>/*
+</span><span style=color:#080;font-style:italic>ALTER TABLE 表名 ADD  [UNIQUE | FULLTEXT | SPATIAL ] INDEX
+</span><span style=color:#080;font-style:italic>	索引名 (字段名[(长度)]  [ASC |DESC]) ;
+</span><span style=color:#080;font-style:italic>*/</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#a2f;font-weight:700>alter</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>table</span><span style=color:#bbb> </span>t1<span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>add</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>index</span><span style=color:#bbb> </span>ix_sex(sex);<span style=color:#bbb>
+</span></code></pre></div><ul>
+<li>查看索引</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#a2f;font-weight:700>show</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>create</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>table</span><span style=color:#bbb> </span>t1;<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#080;font-style:italic>/*
+</span><span style=color:#080;font-style:italic>| t1    | CREATE TABLE `t1` (
+</span><span style=color:#080;font-style:italic>  `id` int(11) DEFAULT NULL,
+</span><span style=color:#080;font-style:italic>  `name` char(1) DEFAULT NULL,
+</span><span style=color:#080;font-style:italic>  `age` int(11) DEFAULT NULL,
+</span><span style=color:#080;font-style:italic>  `sex` enum(&#39;male&#39;,&#39;female&#39;) DEFAULT NULL,
+</span><span style=color:#080;font-style:italic>  UNIQUE KEY `uni_id` (`id`),
+</span><span style=color:#080;font-style:italic>  KEY `ix_name` (`name`),
+</span><span style=color:#080;font-style:italic>  KEY `ix_age` (`age`),
+</span><span style=color:#080;font-style:italic>  KEY `ix_sex` (`sex`)
+</span><span style=color:#080;font-style:italic>) ENGINE=InnoDB DEFAULT CHARSET=latin1
+</span><span style=color:#080;font-style:italic>*/</span><span style=color:#bbb>
+</span></code></pre></div><ul>
+<li>删除索引</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#a2f;font-weight:700>DROP</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>INDEX</span><span style=color:#bbb> </span><span>索引名</span><span style=color:#bbb> </span><span style=color:#a2f;font-weight:700>ON</span><span style=color:#bbb> </span><span>表名字</span>;<span style=color:#bbb>
+</span></code></pre></div><h2 id=查询优化神器---explain命令>查询优化神器 - explain命令</h2>
+<p>关于explain命令相信大家并不陌生，具体用法和字段含义可以参考官网<a href=http://dev.mysql.com/doc/refman/5.5/en/explain-output.html target=_blank rel=noopener>explain-output</a>
+，这里需要强调rows是核心指标，绝大部分rows小的语句执行一定很快（有例外，下面会讲到）。所以优化语句基本上都是在优化rows。</p>
+<h3 id=慢查询优化基本步骤>慢查询优化基本步骤</h3>
+<ol start=0>
+<li>
+<p>先运行看看是否真的很慢，注意设置SQL_NO_CACHE</p>
+</li>
+<li>
+<p>where条件单表查，锁定最小返回记录表。这句话的意思是把查询语句的where都应用到表中返回的记录数最小的表开始查起，单表每个字段分别查询，看哪个字段的区分度最高</p>
+</li>
+<li>
+<p>explain查看执行计划，是否与1预期一致（从锁定记录较少的表开始查询）</p>
+</li>
+<li>
+<p>order by limit 形式的sql语句让排序的表优先查</p>
+</li>
+<li>
+<p>了解业务方使用场景</p>
+</li>
+<li>
+<p>加索引时参照建索引的几大原则</p>
+</li>
+<li>
+<p>观察结果，不符合预期继续从0分析</p>
+</li>
+</ol>
+<h3 id=explain参数>explain参数</h3>
+<ol>
+<li>
+<p><code>select_typec</code> 表示 SELECT 的类型。
+常见的取值有</p>
+<ul>
+<li><code>SIMPLE</code>（简单表，即不使用表连接或者子查询）</li>
+<li><code>PRIMARY</code>（主查询，即外层的查询）</li>
+<li><code>UNION</code>（<code>UNION</code> 中的第二个或者后面的查询语句）</li>
+<li><code>SUBQUERY</code>（子查询中的第一个 <code>SELECT</code>）等。</li>
+</ul>
+</li>
+<li>
+<p><code>table</code> 输出结果集的表。</p>
+</li>
+<li>
+<p><code>type</code> 表示表的连接类型，性能由好到差的连接类型如下</p>
+<ul>
+<li><code>system</code>（表中仅有一行，即常量表）</li>
+<li><code>const</code>（单表中最多有一个匹配行，例如 <code>primary key</code> 或者 <code>unique index</code>）</li>
+<li><code>eq_ref</code>（对于前面的每一行，在此表中只查询一条记录，简单来说，就是多表连接中使用<code>primary key</code>或者<code>unique index</code>）</li>
+<li><code>ref</code>（与<code>eq_ref</code>类似，区别在于不是使用<code>primary key</code> 或者 <code>unique index</code>，而是使用普通的索引）</li>
+<li><code>ref_or_null</code>（与 <code>ref</code> 类似，区别在于条件中包含对 <code>NULL</code> 的查询）</li>
+<li><code>index_merge</code> (索引合并优化)</li>
+<li><code>unique_subquery</code>（in的后面是一个查询主键字段的子查询）</li>
+<li><code>index_subquery</code>（与 <code>unique_subquery</code> 类似，区别在于 in 的后面是查询非唯一索引字段的子查询）</li>
+<li><code>range</code>（单表中的范围查询）</li>
+<li><code>index</code>（对于前面的每一行，都通过查询索引来得到数据）</li>
+<li><code>all</code>（对于前面的每一行，都通过全表扫描来得到数据）。</li>
+</ul>
+</li>
+<li>
+<p><code>possible_keys</code> 表示查询时，可能使用的索引。</p>
+</li>
+<li>
+<p><code>key</code> 表示实际使用的索引。</p>
+</li>
+<li>
+<p><code>key_len</code> 索引字段的长度。</p>
+</li>
+<li>
+<p><code>rows</code> 扫描行的数量。</p>
+</li>
+<li>
+<p><code>Extra</code> 执行情况的说明和描述。</p>
+</li>
+</ol>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/mysql rel=tag title=mysql>#mysql#</a>
+</div>
+<div class=post-nav>
+<div class=article-copyright>
+<div class=article-copyright-img>
+<img src=/img/qq_qrcode.png width=129px height=129px>
+<div style=text-align:center>QQ扫一扫交流</div>
+</div>
+<div class=article-copyright-info>
+<p>
+<span>标题：</span>mysql索引
+</p>
+<p>
+<span>链接：</span>https://www.zhaohaiyu.com/post/database/mysql-index/
+</p>
+<p>
+<span>作者：</span>haiyux
+</p>
+<p>
+<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
+</p>
+</div>
+</div>
+<div class=clear></div>
+</div>
+<div class=reward-qr-info>
+<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
+<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span>
+</button>
+<div id=QR style=display:none>
+<div id=wechat style=display:inline-block>
+<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
+<p>微信打赏</p>
+</div>
+<div id=alipay style=display:inline-block>
+<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
+<p>支付宝打赏</p>
+</div>
+</div>
+</div>
+<div class=post-nav>
+<div class="post-nav-next post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/database/redis/ rel=next title=reids基础>
+<i class="fa fa-chevron-left"></i> reids基础
+</a>
+</div>
+<div class="post-nav-prev post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/operations/nginx/ rel=prev title=Nginx基础>
+Nginx基础
+<i class="fa fa-chevron-right"></i>
+</a>
+</div>
+</div>
+<div id=ucomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
+<p class=site-author-name itemprop=name>haiyux</p>
+<p class="site-description motion-element" itemprop=description>
+路漫漫其修远兮,吾将上下而求索
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/haiyux/ target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
+<i class="fa fa-fw fa-envelope"></i>
+Email
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://farer.org/ title=farer target=_blank>farer</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/golang>Golang
+<sup>30</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql
+<sup>7</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/http>HTTP
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/protobuf>Protobuf
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/grpc>Grpc
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis
+<sup>2</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/ddd>Ddd
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/docker>Docker
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/kratos>Kratos
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/makefile>Makefile
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mq>Mq
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/nginx>Nginx
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/raft>Raft
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/thrift>Thrift
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/traceing>Traceing
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/wire>Wire
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup>
+</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#什么是索引>什么是索引</a></li>
+<li><a href=#索引的原理>索引的原理</a>
+<ul>
+<li><a href=#索引原理>索引原理</a></li>
+<li><a href=#磁盘io与预读>磁盘IO与预读</a></li>
+</ul>
+</li>
+<li><a href=#详解b树>详解b+树</a>
+<ul>
+<li><a href=#b树的查找过程>b+树的查找过程</a></li>
+<li><a href=#b树性质>b+树性质</a></li>
+</ul>
+</li>
+<li><a href=#聚集索引与辅助索引>聚集索引与辅助索引</a>
+<ul>
+<li><a href=#聚集索引>聚集索引</a></li>
+<li><a href=#辅助索引>辅助索引</a></li>
+</ul>
+</li>
+<li><a href=#mysql索引管理>MySQL索引管理</a>
+<ul>
+<li><a href=#功能>功能</a></li>
+<li><a href=#mysql常用的索引>MySQL常用的索引</a></li>
+</ul>
+</li>
+<li><a href=#创建删除索引的语法>创建/删除索引的语法</a></li>
+<li><a href=#查询优化神器---explain命令>查询优化神器 - explain命令</a>
+<ul>
+<li><a href=#慢查询优化基本步骤>慢查询优化基本步骤</a></li>
+<li><a href=#explain参数>explain参数</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>haiyux's blog</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script src=//cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
+<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

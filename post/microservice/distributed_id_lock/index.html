@@ -1,0 +1,792 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> 分布式ID和锁 - haiyux's blog </title>
+<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
+<meta name=author content="haiyux">
+<meta property="og:title" content="分布式ID和锁">
+<meta property="og:site_name" content="haiyux's blog">
+<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
+<meta name=title content="分布式ID和锁 - haiyux's blog">
+<meta name=description content="欢迎来到haiyux的博客">
+<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
+<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
+<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>haiyux's blog</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-active">
+<a href=/post/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav> </div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.zhaohaiyu.com/post/microservice/distributed_id_lock/ itemprop=url>
+分布式ID和锁
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-pushdate>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-01-23">
+2021-01-23
+</time>
+</span>
+<span class=post-category>
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a class=post-category-a href=/categories/microservice itemprop=url rel=index>
+<span itemprop=name>microservice</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span class=post-wordcount>
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>3695 字</span>
+</span>
+<span class=post-readtime>
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>8分钟</span>
+</span>
+<span id=/post/microservice/distributed_id_lock/ class="leancloud_visitors post-visitor" data-flag-title=分布式ID和锁>
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=分布式id生成器>分布式id生成器</h2>
+<p>有时我们需要能够生成类似MySQL自增ID这样不断增大，同时又不会重复的id。以支持业务中的高并发场景。比较典型的，电商促销时，短时间内会有大量的订单涌入到系统，比如每秒10w+。明星出轨时，会有大量热情的粉丝发微博以表心意，同样会在短时间内产生大量的消息。</p>
+<p>在插入数据库之前，我们需要给这些消息、订单先打上一个ID，然后再插入到我们的数据库。对这个id的要求是希望其中能带有一些时间信息，这样即使我们后端的系统对消息进行了分库分表，也能够以时间顺序对这些消息进行排序。</p>
+<p><em>Twitter的snowflake算法是这种场景下的一个典型解法。先来看看snowflake是怎么一回事</em>：</p>
+<p><img src=/images/2344773-20210821154455384-787668998.png alt></p>
+<p><em>snowflake中的比特位分布</em></p>
+<p>首先确定我们的数值是64位，int64类型，被划分为四部分，不含开头的第一个bit，因为这个bit是符号位。用41位来表示收到请求时的时间戳，单位为毫秒，然后五位来表示数据中心的id，然后再五位来表示机器的实例id，最后是12位的循环自增id（到达1111,1111,1111后会归0）。</p>
+<p>这样的机制可以支持我们在同一台机器上，同一毫秒内产生<code>2 ^ 12 = 4096</code>条消息。一秒共409.6万条消息。从值域上来讲完全够用了。</p>
+<p>数据中心加上实例id共有10位，可以支持我们每数据中心部署32台机器，所有数据中心共1024台实例。</p>
+<p>表示<code>timestamp</code>的41位，可以支持我们使用69年。当然，我们的时间毫秒计数不会真的从1970年开始记，那样我们的系统跑到<code>2039/9/7 23:47:35</code>就不能用了，所以这里的<code>timestamp</code>实际上只是相对于某个时间的增量，比如我们的系统上线是2018-08-01，那么我们可以把这个timestamp当作是从<code>2018-08-01 00:00:00.000</code>的偏移量。</p>
+<h3 id=worker_id分配>worker_id分配</h3>
+<p><code>timestamp</code>，<code>datacenter_id</code>，<code>worker_id</code>和<code>sequence_id</code>这四个字段中，<code>timestamp</code>和<code>sequence_id</code>是由程序在运行期生成的。但<code>datacenter_id</code>和<code>worker_id</code>需要我们在部署阶段就能够获取得到，并且一旦程序启动之后，就是不可更改的了（想想，如果可以随意更改，可能被不慎修改，造成最终生成的id有冲突）。</p>
+<p>一般不同数据中心的机器，会提供对应的获取数据中心id的API，所以<code>datacenter_id</code>我们可以在部署阶段轻松地获取到。而worker_id是我们逻辑上给机器分配的一个id，这个要怎么办呢？比较简单的想法是由能够提供这种自增id功能的工具来支持，比如MySQL:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>mysql&gt; insert into a <span style=color:#666>(</span>ip<span style=color:#666>)</span> values<span style=color:#666>(</span><span style=color:#b44>&#34;10.1.2.101&#34;</span><span style=color:#666>)</span>;
+Query OK, <span style=color:#666>1</span> row affected <span style=color:#666>(</span>0.00 sec<span style=color:#666>)</span>
+
+mysql&gt; <span style=color:#a2f;font-weight:700>select</span> last_insert_id<span style=color:#666>()</span>;
++------------------+
+| last_insert_id<span style=color:#666>()</span> |
++------------------+
+|                <span style=color:#666>2</span> |
++------------------+
+<span style=color:#666>1</span> row in <span style=color:#a2f>set</span> <span style=color:#666>(</span>0.00 sec<span style=color:#666>)</span>
+</code></pre></div><p>从MySQL中获取到<code>worker_id</code>之后，就把这个<code>worker_id</code>直接持久化到本地，以避免每次上线时都需要获取新的<code>worker_id</code>。让单实例的<code>worker_id</code>可以始终保持不变。</p>
+<p>当然，使用MySQL相当于给我们简单的id生成服务增加了一个外部依赖。依赖越多，我们的服务的可运维性就越差。</p>
+<p>考虑到集群中即使有单个id生成服务的实例挂了，也就是损失一段时间的一部分id，所以我们也可以更简单暴力一些，把<code>worker_id</code>直接写在worker的配置中，上线时，由部署脚本完成<code>worker_id</code>字段替换。</p>
+<h3 id=开源实例>开源实例</h3>
+<h4 id=标准snowflake实现>标准snowflake实现</h4>
+<p><code>github.com/bwmarrin/snowflake</code> 是一个相当轻量化的snowflake的Go实现。其文档对各位使用的定义见<em>图 6-2</em>所示。</p>
+<p><img src=/images/2344773-20210821154507976-124951092.png alt></p>
+<p><em>图 6-2 snowflake库</em></p>
+<p>和标准的snowflake完全一致。使用上比较简单：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;fmt&#34;</span>
+    <span style=color:#b44>&#34;os&#34;</span>
+
+    <span style=color:#b44>&#34;github.com/bwmarrin/snowflake&#34;</span>
+)
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    n, err <span style=color:#666>:=</span> snowflake.<span style=color:#00a000>NewNode</span>(<span style=color:#666>1</span>)
+    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+        <span style=color:#a2f>println</span>(err)
+        os.<span style=color:#00a000>Exit</span>(<span style=color:#666>1</span>)
+    }
+
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; <span style=color:#666>3</span>; i<span style=color:#666>++</span> {
+        id <span style=color:#666>:=</span> n.<span style=color:#00a000>Generate</span>()
+        fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;id&#34;</span>, id)
+        fmt.<span style=color:#00a000>Println</span>(
+            <span style=color:#b44>&#34;node: &#34;</span>, id.<span style=color:#00a000>Node</span>(),
+            <span style=color:#b44>&#34;step: &#34;</span>, id.<span style=color:#00a000>Step</span>(),
+            <span style=color:#b44>&#34;time: &#34;</span>, id.<span style=color:#00a000>Time</span>(),
+            <span style=color:#b44>&#34;\n&#34;</span>,
+        )
+    }
+}
+</code></pre></div><p>当然，这个库也给我们留好了定制的后路，其中预留了一些可定制字段：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>    <span style=color:#080;font-style:italic>// Epoch is set to the twitter snowflake epoch of Nov 04 2010 01:42:54 UTC
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#080;font-style:italic>// You may customize this to set a different epoch for your application.
+</span><span style=color:#080;font-style:italic></span>    Epoch <span style=color:#0b0;font-weight:700>int64</span> = <span style=color:#666>1288834974657</span>
+
+    <span style=color:#080;font-style:italic>// Number of bits to use for Node
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#080;font-style:italic>// Remember, you have a total 22 bits to share between Node/Step
+</span><span style=color:#080;font-style:italic></span>    NodeBits <span style=color:#0b0;font-weight:700>uint8</span> = <span style=color:#666>10</span>
+
+    <span style=color:#080;font-style:italic>// Number of bits to use for Step
+</span><span style=color:#080;font-style:italic></span>    <span style=color:#080;font-style:italic>// Remember, you have a total 22 bits to share between Node/Step
+</span><span style=color:#080;font-style:italic></span>    StepBits <span style=color:#0b0;font-weight:700>uint8</span> = <span style=color:#666>12</span>
+</code></pre></div><p><code>Epoch</code>就是本节开头讲的起始时间，<code>NodeBits</code>指的是机器编号的位长，<code>StepBits</code>指的是自增序列的位长。</p>
+<h4 id=sonyflake>sonyflake</h4>
+<p>sonyflake是Sony公司的一个开源项目，基本思路和snowflake差不多，不过位分配上稍有不同，见<em>图 6-3</em>：</p>
+<p><img src=/images/2344773-20210821154526488-1644768550.png alt></p>
+<p><em>图 6-3 sonyflake</em></p>
+<p>这里的时间只用了39个bit，但时间的单位变成了10ms，所以理论上比41位表示的时间还要久(174年)。</p>
+<p><code>Sequence ID</code>和之前的定义一致，<code>Machine ID</code>其实就是节点id。<code>sonyflake</code>与众不同的地方在于其在启动阶段的配置参数：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>NewSonyflake</span>(st Settings) <span style=color:#666>*</span>Sonyflake
+</code></pre></div><p><code>Settings</code>数据结构如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>type</span> Settings <span style=color:#a2f;font-weight:700>struct</span> {
+    StartTime      time.Time
+    MachineID      <span style=color:#a2f;font-weight:700>func</span>() (<span style=color:#0b0;font-weight:700>uint16</span>, <span style=color:#0b0;font-weight:700>error</span>)
+    CheckMachineID <span style=color:#a2f;font-weight:700>func</span>(<span style=color:#0b0;font-weight:700>uint16</span>) <span style=color:#0b0;font-weight:700>bool</span>
+}
+</code></pre></div><p><code>StartTime</code>选项和我们之前的<code>Epoch</code>差不多，如果不设置的话，默认是从<code>2014-09-01 00:00:00 +0000 UTC</code>开始。</p>
+<p><code>MachineID</code>可以由用户自定义的函数，如果用户不定义的话，会默认将本机IP的低16位作为<code>machine id</code>。</p>
+<p><code>CheckMachineID</code>是由用户提供的检查<code>MachineID</code>是否冲突的函数。这里的设计还是比较巧妙的，如果有另外的中心化存储并支持检查重复的存储，那我们就可以按照自己的想法随意定制这个检查<code>MachineID</code>是否冲突的逻辑。如果公司有现成的Redis集群，那么我们可以很轻松地用Redis的集合类型来检查冲突。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>redis 127.0.0.1:6379&gt; SADD base64_encoding_of_last16bits <span style=color:#b8860b>MzI0Mgo</span><span style=color:#666>=</span>
+<span style=color:#666>(</span>integer<span style=color:#666>)</span> <span style=color:#666>1</span>
+redis 127.0.0.1:6379&gt; SADD base64_encoding_of_last16bits <span style=color:#b8860b>MzI0Mgo</span><span style=color:#666>=</span>
+<span style=color:#666>(</span>integer<span style=color:#666>)</span> <span style=color:#666>0</span>
+</code></pre></div><p>使用起来也比较简单，有一些逻辑简单的函数就略去实现了：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;fmt&#34;</span>
+    <span style=color:#b44>&#34;os&#34;</span>
+    <span style=color:#b44>&#34;time&#34;</span>
+
+    <span style=color:#b44>&#34;github.com/sony/sonyflake&#34;</span>
+)
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>getMachineID</span>() (<span style=color:#0b0;font-weight:700>uint16</span>, <span style=color:#0b0;font-weight:700>error</span>) {
+    <span style=color:#a2f;font-weight:700>var</span> machineID <span style=color:#0b0;font-weight:700>uint16</span>
+    <span style=color:#a2f;font-weight:700>var</span> err <span style=color:#0b0;font-weight:700>error</span>
+    machineID = <span style=color:#00a000>readMachineIDFromLocalFile</span>()
+    <span style=color:#a2f;font-weight:700>if</span> machineID <span style=color:#666>==</span> <span style=color:#666>0</span> {
+        machineID, err = <span style=color:#00a000>generateMachineID</span>()
+        <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+            <span style=color:#a2f;font-weight:700>return</span> <span style=color:#666>0</span>, err
+        }
+    }
+
+    <span style=color:#a2f;font-weight:700>return</span> machineID, <span style=color:#a2f;font-weight:700>nil</span>
+}
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>checkMachineID</span>(machineID <span style=color:#0b0;font-weight:700>uint16</span>) <span style=color:#0b0;font-weight:700>bool</span> {
+    saddResult, err <span style=color:#666>:=</span> <span style=color:#00a000>saddMachineIDToRedisSet</span>()
+    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> <span style=color:#666>||</span> saddResult <span style=color:#666>==</span> <span style=color:#666>0</span> {
+        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>true</span>
+    }
+
+    err <span style=color:#666>:=</span> <span style=color:#00a000>saveMachineIDToLocalFile</span>(machineID)
+    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>true</span>
+    }
+
+    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>
+}
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    t, _ <span style=color:#666>:=</span> time.<span style=color:#00a000>Parse</span>(<span style=color:#b44>&#34;2006-01-02&#34;</span>, <span style=color:#b44>&#34;2018-01-01&#34;</span>)
+    settings <span style=color:#666>:=</span> sonyflake.Settings{
+        StartTime:      t,
+        MachineID:      getMachineID,
+        CheckMachineID: checkMachineID,
+    }
+
+    sf <span style=color:#666>:=</span> sonyflake.<span style=color:#00a000>NewSonyflake</span>(settings)
+    id, err <span style=color:#666>:=</span> sf.<span style=color:#00a000>NextID</span>()
+    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+        fmt.<span style=color:#00a000>Println</span>(err)
+        os.<span style=color:#00a000>Exit</span>(<span style=color:#666>1</span>)
+    }
+
+    fmt.<span style=color:#00a000>Println</span>(id)
+}
+</code></pre></div><h2 id=分布式锁>分布式锁</h2>
+<p>在单机程序并发或并行修改全局变量时，需要对修改行为加锁以创造临界区。为什么需要加锁呢？我们看看在不加锁的情况下并发计数会发生什么情况：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;sync&#34;</span>
+)
+
+<span style=color:#080;font-style:italic>// 全局变量
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> counter <span style=color:#0b0;font-weight:700>int</span>
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    <span style=color:#a2f;font-weight:700>var</span> wg sync.WaitGroup
+    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; <span style=color:#666>1000</span>; i<span style=color:#666>++</span> {
+        wg.<span style=color:#00a000>Add</span>(<span style=color:#666>1</span>)
+        <span style=color:#a2f;font-weight:700>go</span> <span style=color:#a2f;font-weight:700>func</span>() {
+        <span style=color:#a2f;font-weight:700>defer</span> wg.<span style=color:#00a000>Done</span>()
+            counter<span style=color:#666>++</span>
+        }()
+    }
+
+    wg.<span style=color:#00a000>Wait</span>()
+    <span style=color:#a2f>println</span>(counter)
+}
+</code></pre></div><p>多次运行会得到不同的结果：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>❯❯❯ go run local_lock.go
+<span style=color:#666>945</span>
+❯❯❯ go run local_lock.go
+<span style=color:#666>937</span>
+❯❯❯ go run local_lock.go
+<span style=color:#666>959</span>
+</code></pre></div><h3 id=基于redis的setnx>基于Redis的setnx</h3>
+<p>在分布式场景下，我们也需要这种“抢占”的逻辑，这时候怎么办呢？我们可以使用Redis提供的<code>setnx</code>命令：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+
+<span style=color:#a2f;font-weight:700>import</span> (
+	<span style=color:#b44>&#34;fmt&#34;</span>
+	<span style=color:#b44>&#34;time&#34;</span>
+
+	<span style=color:#b44>&#34;github.com/go-redis/redis&#34;</span>
+	<span style=color:#b44>&#34;github.com/gofrs/uuid&#34;</span>
+)
+
+<span style=color:#080;font-style:italic>// 声明一个全局的rdb变量
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> rdb <span style=color:#666>*</span>redis.Client
+
+<span style=color:#080;font-style:italic>// 初始化连接
+</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>initClient</span>() (err <span style=color:#0b0;font-weight:700>error</span>) {
+	rdb = redis.<span style=color:#00a000>NewClient</span>(<span style=color:#666>&amp;</span>redis.Options{
+		Addr:     <span style=color:#b44>&#34;localhost:6379&#34;</span>,
+		Password: <span style=color:#b44>&#34;zhy1996&#34;</span>, <span style=color:#080;font-style:italic>// no password set
+</span><span style=color:#080;font-style:italic></span>		DB:       <span style=color:#666>0</span>,         <span style=color:#080;font-style:italic>// use default DB
+</span><span style=color:#080;font-style:italic></span>	})
+
+	_, err = rdb.<span style=color:#00a000>Ping</span>().<span style=color:#00a000>Result</span>()
+	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+		<span style=color:#a2f;font-weight:700>return</span> err
+	}
+	<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>
+}
+
+<span style=color:#a2f;font-weight:700>var</span> unlock_lua = <span style=color:#b44>`
+</span><span style=color:#b44>if redis.call(&#34;get&#34;,KEYS[1]) == ARGV[1] then
+</span><span style=color:#b44>	return redis.call(&#34;del&#34;,KEYS[1])
+</span><span style=color:#b44>else
+</span><span style=color:#b44>	return 0
+</span><span style=color:#b44>end
+</span><span style=color:#b44>`</span>
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Lock</span>(key, value <span style=color:#0b0;font-weight:700>string</span>, expiration time.Duration) (<span style=color:#0b0;font-weight:700>bool</span>, <span style=color:#0b0;font-weight:700>error</span>) {
+	is, err <span style=color:#666>:=</span> rdb.<span style=color:#00a000>SetNX</span>(key, value, expiration).<span style=color:#00a000>Result</span>()
+	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+		<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>, fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;redis setnx failed&#34;</span>)
+	}
+	<span style=color:#a2f;font-weight:700>return</span> is, <span style=color:#a2f;font-weight:700>nil</span>
+}
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>UnLock</span>(key, value <span style=color:#0b0;font-weight:700>string</span>) (<span style=color:#0b0;font-weight:700>bool</span>, <span style=color:#0b0;font-weight:700>error</span>) {
+	res, err <span style=color:#666>:=</span> rdb.<span style=color:#00a000>Eval</span>(unlock_lua, []<span style=color:#0b0;font-weight:700>string</span>{key}, value).<span style=color:#00a000>Result</span>()
+	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+		<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>, err
+	}
+	v, ok <span style=color:#666>:=</span> res.(<span style=color:#0b0;font-weight:700>int64</span>)
+	<span style=color:#a2f;font-weight:700>if</span> !ok {
+		<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>, fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;lua script return is not int&#34;</span>)
+	}
+	<span style=color:#a2f;font-weight:700>if</span> v <span style=color:#666>==</span> <span style=color:#666>0</span> {
+		<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>, <span style=color:#a2f;font-weight:700>nil</span>
+	}
+	<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>true</span>, <span style=color:#a2f;font-weight:700>nil</span>
+}
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+	err <span style=color:#666>:=</span> <span style=color:#00a000>initClient</span>()
+	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+		fmt.<span style=color:#00a000>Println</span>(err)
+	}
+
+	ul, _ <span style=color:#666>:=</span> uuid.<span style=color:#00a000>NewV4</span>()
+	value <span style=color:#666>:=</span> ul.<span style=color:#00a000>String</span>()
+
+	<span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; <span style=color:#666>10</span>; i<span style=color:#666>++</span> {
+		is, err <span style=color:#666>:=</span> <span style=color:#00a000>Lock</span>(<span style=color:#b44>&#34;lock_1&#34;</span>, value, time.Second)
+		<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+			fmt.<span style=color:#00a000>Println</span>(err)
+			<span style=color:#a2f;font-weight:700>return</span>
+		}
+		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;是否拿到锁:&#34;</span>, is)
+	}
+
+	res, err <span style=color:#666>:=</span> <span style=color:#00a000>UnLock</span>(<span style=color:#b44>&#34;lock_1&#34;</span>, value)
+	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+		fmt.<span style=color:#00a000>Println</span>(err)
+		<span style=color:#a2f;font-weight:700>return</span>
+	}
+	fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;解锁:&#34;</span>, res)
+}
+</code></pre></div><p>看看运行结果：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>是否拿到锁: <span style=color:#a2f>true</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+是否拿到锁: <span style=color:#a2f>false</span>
+解锁: <span style=color:#a2f>true</span>
+</code></pre></div><p>通过代码和执行结果可以看到，我们远程调用<code>setnx</code>实际上和单机的trylock非常相似，如果获取锁失败，那么相关的任务逻辑就不应该继续向前执行。</p>
+<p><code>setnx</code>很适合在高并发场景下，用来争抢一些“唯一”的资源。比如交易撮合系统中卖家发起订单，而多个买家会对其进行并发争抢。这种场景我们没有办法依赖具体的时间来判断先后，因为不管是用户设备的时间，还是分布式场景下的各台机器的时间，都是没有办法在合并后保证正确的时序的。哪怕是我们同一个机房的集群，不同的机器的系统时间可能也会有细微的差别。</p>
+<p>所以，我们需要依赖于这些请求到达Redis节点的顺序来做正确的抢锁操作。如果用户的网络环境比较差，那也只能自求多福了。</p>
+<h3 id=基于etcd>基于etcd</h3>
+<p>etcd是分布式系统中，功能上与ZooKeeper类似的组件，这两年越来越火了。上面基于ZooKeeper我们实现了分布式阻塞锁，基于etcd，也可以实现类似的功能：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
+
+<span style=color:#a2f;font-weight:700>import</span> (
+    <span style=color:#b44>&#34;log&#34;</span>
+
+    <span style=color:#b44>&#34;github.com/zieckey/etcdsync&#34;</span>
+)
+
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+    m, err <span style=color:#666>:=</span> etcdsync.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;/lock&#34;</span>, <span style=color:#666>10</span>, []<span style=color:#0b0;font-weight:700>string</span>{<span style=color:#b44>&#34;http://127.0.0.1:2379&#34;</span>})
+    <span style=color:#a2f;font-weight:700>if</span> m <span style=color:#666>==</span> <span style=color:#a2f;font-weight:700>nil</span> <span style=color:#666>||</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+        log.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;etcdsync.New failed&#34;</span>)
+        <span style=color:#a2f;font-weight:700>return</span>
+    }
+    err = m.<span style=color:#00a000>Lock</span>()
+    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+        log.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;etcdsync.Lock failed&#34;</span>)
+        <span style=color:#a2f;font-weight:700>return</span>
+    }
+
+    log.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;etcdsync.Lock OK&#34;</span>)
+    log.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;Get the lock. Do something here.&#34;</span>)
+
+    err = m.<span style=color:#00a000>Unlock</span>()
+    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+        log.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;etcdsync.Unlock failed&#34;</span>)
+    } <span style=color:#a2f;font-weight:700>else</span> {
+        log.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;etcdsync.Unlock OK&#34;</span>)
+    }
+}
+</code></pre></div><p>etcd中没有像ZooKeeper那样的Sequence节点。所以其锁实现和基于ZooKeeper实现的有所不同。在上述示例代码中使用的etcdsync的Lock流程是：</p>
+<ol>
+<li>先检查<code>/lock</code>路径下是否有值，如果有值，说明锁已经被别人抢了</li>
+<li>如果没有值，那么写入自己的值。写入成功返回，说明加锁成功。写入时如果节点被其它节点写入过了，那么会导致加锁失败，这时候到 3</li>
+<li>watch <code>/lock</code>下的事件，此时陷入阻塞</li>
+<li>当<code>/lock</code>路径下发生事件时，当前进程被唤醒。检查发生的事件是否是删除事件（说明锁被持有者主动unlock），或者过期事件（说明锁过期失效）。如果是的话，那么回到 1，走抢锁流程。</li>
+</ol>
+<p>值得一提的是，在etcdv3的API中官方已经提供了可以直接使用的锁API，读者可以查阅etcd的文档做进一步的学习。</p>
+<p>参考文章：《go语言高级编程》</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/%e5%be%ae%e6%9c%8d%e5%8a%a1 rel=tag title=微服务>#微服务#</a>
+</div>
+<div class=post-nav>
+<div class=article-copyright>
+<div class=article-copyright-img>
+<img src=/img/qq_qrcode.png width=129px height=129px>
+<div style=text-align:center>QQ扫一扫交流</div>
+</div>
+<div class=article-copyright-info>
+<p>
+<span>标题：</span>分布式ID和锁
+</p>
+<p>
+<span>链接：</span>https://www.zhaohaiyu.com/post/microservice/distributed_id_lock/
+</p>
+<p>
+<span>作者：</span>haiyux
+</p>
+<p>
+<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
+</p>
+</div>
+</div>
+<div class=clear></div>
+</div>
+<div class=reward-qr-info>
+<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
+<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span>
+</button>
+<div id=QR style=display:none>
+<div id=wechat style=display:inline-block>
+<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
+<p>微信打赏</p>
+</div>
+<div id=alipay style=display:inline-block>
+<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
+<p>支付宝打赏</p>
+</div>
+</div>
+</div>
+<div class=post-nav>
+<div class="post-nav-next post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/network/http-https/ rel=next title="Http Https">
+<i class="fa fa-chevron-left"></i> Http Https
+</a>
+</div>
+<div class="post-nav-prev post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/microservice/thrift/ rel=prev title=thrift的介绍及其使用>
+thrift的介绍及其使用
+<i class="fa fa-chevron-right"></i>
+</a>
+</div>
+</div>
+<div id=ucomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
+<p class=site-author-name itemprop=name>haiyux</p>
+<p class="site-description motion-element" itemprop=description>
+路漫漫其修远兮,吾将上下而求索
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/haiyux/ target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
+<i class="fa fa-fw fa-envelope"></i>
+Email
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://farer.org/ title=farer target=_blank>farer</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/golang>Golang
+<sup>30</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql
+<sup>7</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/http>HTTP
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/protobuf>Protobuf
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/grpc>Grpc
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis
+<sup>2</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/ddd>Ddd
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/docker>Docker
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/kratos>Kratos
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/makefile>Makefile
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mq>Mq
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/nginx>Nginx
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/raft>Raft
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/thrift>Thrift
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/traceing>Traceing
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/wire>Wire
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup>
+</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#分布式id生成器>分布式id生成器</a>
+<ul>
+<li><a href=#worker_id分配>worker_id分配</a></li>
+<li><a href=#开源实例>开源实例</a></li>
+</ul>
+</li>
+<li><a href=#分布式锁>分布式锁</a>
+<ul>
+<li><a href=#基于redis的setnx>基于Redis的setnx</a></li>
+<li><a href=#基于etcd>基于etcd</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>haiyux's blog</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script src=//cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
+<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>

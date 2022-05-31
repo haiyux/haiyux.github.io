@@ -1,0 +1,841 @@
+<!doctype html><html lang=zh-cn dir=content/zh-cn>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
+<title> Go fmt包 - haiyux's blog </title>
+<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
+<meta name=author content="haiyux">
+<meta property="og:title" content="Go fmt包">
+<meta property="og:site_name" content="haiyux's blog">
+<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
+<meta name=title content="Go fmt包 - haiyux's blog">
+<meta name=description content="欢迎来到haiyux的博客">
+<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
+<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
+<link href=//cdn.bootcdn.net/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css rel=stylesheet type=text/css>
+<link href=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.css rel=stylesheet>
+<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
+<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
+</head>
+<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
+<div class="container one-collumn sidebar-position-left page-home">
+<div class=headband></div>
+<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
+<div class=header-inner> <div class=site-brand-container>
+<div class=site-nav-toggle>
+<div class=toggle role=button style=opacity:1;top:0>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+<span class=toggle-line></span>
+</div>
+</div>
+<div class=site-meta>
+<div class=custom-logo-site-title>
+<a href=/ class=brand rel=start>
+<span class=logo-line-before><i></i></span>
+<span class=site-title>haiyux's blog</span>
+<span class=logo-line-after><i></i></span>
+</a>
+</div>
+<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
+</div>
+<div class=site-nav-right>
+<div class="toggle popup-trigger" style=opacity:1;top:0>
+<i class="fa fa-search fa-fw fa-lg"></i>
+</div>
+</div>
+</div>
+<nav class=site-nav>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a href=/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-active">
+<a href=/post/ rel=section>
+<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/about.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
+</a>
+<div style=display:none></div>
+</li>
+<li class=menu-item>
+<a href=/404.html rel=section>
+<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
+</a>
+<div style=display:none></div>
+</li>
+<li class="menu-item menu-item-search">
+<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
+</li>
+</ul>
+<div class=site-search>
+<div class="popup search-popup local-search-popup">
+<div class="local-search-header clearfix">
+<span class=search-icon><i class="fa fa-search"></i> </span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
+<div class=local-search-input-wrapper>
+<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
+</div>
+</div>
+<div id=local-search-result></div>
+</div>
+</div>
+</nav> </div>
+</header>
+<main id=main class=main>
+<div class=main-inner>
+<div class=content-wrap>
+<div id=content class=content>
+<section id=posts class=posts-expand>
+<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
+<header class=post-header>
+<h1 class=post-title itemprop="name headline">
+<a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-fmt/ itemprop=url>
+Go fmt包
+</a>
+</h1>
+<div class=post-meta>
+<span class=post-pushdate>
+<i class="fa fa-calendar-o fa-fw"></i>
+<span class=post-meta-item-text>时间：</span>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2020-02-21">
+2020-02-21
+</time>
+</span>
+<span class=post-category>
+<i class="fa fa-folder-o fa-fw"></i>
+<span class=post-meta-item-text>分类：</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing>
+<a class=post-category-a href=/categories/go itemprop=url rel=index>
+<span itemprop=name>go</span>
+</a>
+&nbsp;
+</span>
+</span>
+<span class=post-wordcount>
+<i class="fa fa-file-word-o fa-fw"></i>
+<span class=post-meta-item-text>字数：</span>
+<span class=leancloud-world-count>2648 字</span>
+</span>
+<span class=post-readtime>
+<i class="fa fa-eye fa-fw"></i>
+<span class=post-meta-item-text>阅读：</span>
+<span class=leancloud-view-count>6分钟</span>
+</span>
+<span id=/post/go/go-fmt/ class="leancloud_visitors post-visitor" data-flag-title="Go fmt包">
+<i class="fa fa-binoculars fa-fw"></i>
+<span class=post-meta-item-text>阅读次数：</span>
+<span class=leancloud-visitors-count></span>
+</span>
+</div>
+</header>
+<div class=post-body itemprop=articleBody>
+<h2 id=fmt>fmt</h2>
+<p>fmt包实现了类似C语言printf和scanf的格式化I/O。主要分为向外输出内容和获取输入内容两大部分。</p>
+<h2 id=向外输出>向外输出</h2>
+<p>标准库fmt提供了以下几种输出相关函数。</p>
+<h3 id=print>Print</h3>
+<p>Print系列函数会将内容输出到系统的标准输出，区别在于Print函数直接输出内容，Printf函数支持格式化输出字符串，Println函数会在输出内容的结尾添加一个换行符。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Print</span>(a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Printf</span>(format <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Println</span>(a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+</code></pre></div><h3 id=fprint>Fprint</h3>
+<p>Fprint系列函数会将内容输出到一个io.Writer接口类型的变量w中，我们通常用这个函数往文件中写入内容。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Fprint</span>(w io.Writer, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Fprintf</span>(w io.Writer, format <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Fprintln</span>(w io.Writer, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+</code></pre></div><h3 id=sprint>Sprint</h3>
+<p>Sprint系列函数会把传入的数据生成并返回一个字符串。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Sprint</span>(a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>string</span>
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Sprintf</span>(format <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>string</span>
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Sprintln</span>(a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>string</span>
+</code></pre></div><h3 id=errorf>Errorf</h3>
+<p>Errorf函数根据format参数生成格式化字符串并返回一个包含该字符串的错误。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Errorf</span>(format <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>error</span>
+</code></pre></div><h2 id=格式化占位符>格式化占位符</h2>
+<p>*printf系列函数都支持format格式化参数，在这里我们按照占位符将被替换的变量类型划分，方便查询和记忆。</p>
+<h3 id=通用占位符>通用占位符</h3>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%v</td>
+<td>值的默认格式表示</td>
+</tr>
+<tr>
+<td>%+v</td>
+<td>类似%v，但输出结构体时会添加字段名</td>
+</tr>
+<tr>
+<td>%#v</td>
+<td>值的Go语法表示</td>
+</tr>
+<tr>
+<td>%T</td>
+<td>打印值的类型</td>
+</tr>
+<tr>
+<td>%%</td>
+<td>百分号</td>
+</tr>
+</tbody>
+</table>
+<h3 id=布尔型>布尔型</h3>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%t</td>
+<td>true或false</td>
+</tr>
+</tbody>
+</table>
+<h3 id=整型>整型</h3>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%b</td>
+<td>表示为二进制</td>
+</tr>
+<tr>
+<td>%c</td>
+<td>该值对应的unicode码值</td>
+</tr>
+<tr>
+<td>%d</td>
+<td>表示为十进制</td>
+</tr>
+<tr>
+<td>%o</td>
+<td>表示为八进制</td>
+</tr>
+<tr>
+<td>%x</td>
+<td>表示为十六进制，使用a-f</td>
+</tr>
+<tr>
+<td>%X</td>
+<td>表示为十六进制，使用A-F</td>
+</tr>
+<tr>
+<td>%U</td>
+<td>表示为Unicode格式：U+1234，等价于”U+%04X”</td>
+</tr>
+<tr>
+<td>%q</td>
+<td>该值对应的单引号括起来的go语法字符字面值，必要时会采用安全的转义表示</td>
+</tr>
+</tbody>
+</table>
+<h3 id=浮点数与复数>浮点数与复数</h3>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%b</td>
+<td>无小数部分、二进制指数的科学计数法，如-123456p-78</td>
+</tr>
+<tr>
+<td>%e</td>
+<td>科学计数法，如-1234.456e+78</td>
+</tr>
+<tr>
+<td>%E</td>
+<td>科学计数法，如-1234.456E+78</td>
+</tr>
+<tr>
+<td>%f</td>
+<td>有小数部分但无指数部分，如123.456</td>
+</tr>
+<tr>
+<td>%F</td>
+<td>等价于%f</td>
+</tr>
+<tr>
+<td>%g</td>
+<td>根据实际情况采用%e或%f格式（以获得更简洁、准确的输出）</td>
+</tr>
+<tr>
+<td>%G</td>
+<td>根据实际情况采用%E或%F格式（以获得更简洁、准确的输出）</td>
+</tr>
+</tbody>
+</table>
+<h3 id=字符串和byte>字符串和[]byte</h3>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%s</td>
+<td>直接输出字符串或者[]byte</td>
+</tr>
+<tr>
+<td>%q</td>
+<td>该值对应的双引号括起来的go语法字符串字面值，必要时会采用安全的转义表示</td>
+</tr>
+<tr>
+<td>%x</td>
+<td>每个字节用两字符十六进制数表示（使用a-f）</td>
+</tr>
+<tr>
+<td>%X</td>
+<td>每个字节用两字符十六进制数表示（使用A-F）</td>
+</tr>
+</tbody>
+</table>
+<h3 id=指针>指针</h3>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%p</td>
+<td>表示为十六进制，并加上前导的0x</td>
+</tr>
+</tbody>
+</table>
+<h3 id=宽度标识符>宽度标识符</h3>
+<p>宽度通过一个紧跟在百分号后面的十进制数指定，如果未指定宽度，则表示值时除必需之外不作填充。精度通过（可选的）宽度后跟点号后跟的十进制数指定。如果未指定精度，会使用默认精度；如果点号后没有跟数字，表示精度为0。举例如下：</p>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>%f</td>
+<td>默认宽度，默认精度</td>
+</tr>
+<tr>
+<td>%9f</td>
+<td>宽度9，默认精度</td>
+</tr>
+<tr>
+<td>%.2f</td>
+<td>默认宽度，精度2</td>
+</tr>
+<tr>
+<td>%9.2f</td>
+<td>宽度9，精度2</td>
+</tr>
+<tr>
+<td>%9.f</td>
+<td>宽度9，精度0</td>
+</tr>
+</tbody>
+</table>
+<h3 id=其他falg>其他falg</h3>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>’+’</td>
+<td>总是输出数值的正负号；对%q（%+q）会生成全部是ASCII字符的输出（通过转义）；</td>
+</tr>
+<tr>
+<td>’ ‘</td>
+<td>对数值，正数前加空格而负数前加负号；对字符串采用%x或%X时（% x或% X）会给各打印的字节之间加空格</td>
+</tr>
+<tr>
+<td>’-’</td>
+<td>在输出右边填充空白而不是默认的左边（即从默认的右对齐切换为左对齐）；</td>
+</tr>
+<tr>
+<td>’#’</td>
+<td>八进制数前加0（%#o），十六进制数前加0x（%#x）或0X（%#X），指针去掉前面的0x（%#p）对%q（%#q），对%U（%#U）会输出空格和单引号括起来的go字面值；</td>
+</tr>
+<tr>
+<td>‘0’</td>
+<td>使用0而不是空格填充，对于数值类型会把填充的0放在正负号后面；</td>
+</tr>
+</tbody>
+</table>
+<h2 id=获取输入>获取输入</h2>
+<p>Go语言fmt包下有fmt.Scan、fmt.Scanf、fmt.Scanln三个函数，可以在程序运行过程中从标准输入获取用户的输入。</p>
+<h3 id=fmtscan>fmt.Scan</h3>
+<p>函数定签名如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Scan</span>(a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+</code></pre></div><ul>
+<li>Scan从标准输入扫描文本，读取由空白符分隔的值保存到传递给本函数的参数中，换行符视为空白符。</li>
+<li>本函数返回成功扫描的数据个数和遇到的任何错误。如果读取的数据个数比提供的参数少，会返回一个错误报告原因。</li>
+</ul>
+<p>具体代码示例如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+	<span style=color:#a2f;font-weight:700>var</span> (
+		name    <span style=color:#0b0;font-weight:700>string</span>
+		age     <span style=color:#0b0;font-weight:700>int</span>
+		married <span style=color:#0b0;font-weight:700>bool</span>
+	)
+	fmt.<span style=color:#00a000>Scan</span>(<span style=color:#666>&amp;</span>name, <span style=color:#666>&amp;</span>age, <span style=color:#666>&amp;</span>married)
+	fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;扫描结果 name:%s age:%d married:%t \n&#34;</span>, name, age, married)
+}
+</code></pre></div><p>将上面的代码编译后在终端执行，在终端依次输入小王子、28和false使用空格分隔。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span>$</span> .<span style=color:#666>/</span>scan_demo 
+小王子 <span style=color:#666>28</span> <span style=color:#a2f;font-weight:700>false</span>
+扫描结果 name:小王子 age:<span style=color:#666>28</span> married:<span style=color:#a2f;font-weight:700>false</span>
+</code></pre></div><p>fmt.Scan从标准输入中扫描用户输入的数据，将以空白符分隔的数据分别存入指定的参数。</p>
+<h3 id=fmtscanf>fmt.Scanf</h3>
+<p>函数签名如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Scanf</span>(format <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+</code></pre></div><ul>
+<li>Scanf从标准输入扫描文本，根据format参数指定的格式去读取由空白符分隔的值保存到传递给本函数的参数中。</li>
+<li>本函数返回成功扫描的数据个数和遇到的任何错误。</li>
+</ul>
+<p>代码示例如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+	<span style=color:#a2f;font-weight:700>var</span> (
+		name    <span style=color:#0b0;font-weight:700>string</span>
+		age     <span style=color:#0b0;font-weight:700>int</span>
+		married <span style=color:#0b0;font-weight:700>bool</span>
+	)
+	fmt.<span style=color:#00a000>Scanf</span>(<span style=color:#b44>&#34;1:%s 2:%d 3:%t&#34;</span>, <span style=color:#666>&amp;</span>name, <span style=color:#666>&amp;</span>age, <span style=color:#666>&amp;</span>married)
+	fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;扫描结果 name:%s age:%d married:%t \n&#34;</span>, name, age, married)
+}
+</code></pre></div><p>将上面的代码编译后在终端执行，在终端按照指定的格式依次输入小王子、28和false。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span>$</span> .<span style=color:#666>/</span>scan_demo 
+<span style=color:#666>1</span>:zhy <span style=color:#666>2</span>:<span style=color:#666>18</span> <span style=color:#666>3</span>:<span style=color:#a2f;font-weight:700>false</span>
+扫描结果 name:zhy age:<span style=color:#666>18</span> married:<span style=color:#a2f;font-weight:700>false</span>
+</code></pre></div><p>fmt.Scanf不同于fmt.Scan简单的以空格作为输入数据的分隔符，fmt.Scanf为输入数据指定了具体的输入内容格式，只有按照格式输入数据才会被扫描并存入对应变量。</p>
+<p>例如，我们还是按照上个示例中以空格分隔的方式输入，fmt.Scanf就不能正确扫描到输入的数据。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span>$</span> .<span style=color:#666>/</span>scan_demo 
+zhy <span style=color:#666>18</span> <span style=color:#a2f;font-weight:700>false</span>
+扫描结果 zhy: age:<span style=color:#666>0</span> married:<span style=color:#a2f;font-weight:700>false</span>
+</code></pre></div><h3 id=fmtscanln>fmt.Scanln</h3>
+<p>函数签名如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Scanln</span>(a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+</code></pre></div><ul>
+<li>Scanln类似Scan，它在遇到换行时才停止扫描。最后一个数据后面必须有换行或者到达结束位置。</li>
+<li>本函数返回成功扫描的数据个数和遇到的任何错误。</li>
+</ul>
+<p>具体代码示例如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+	<span style=color:#a2f;font-weight:700>var</span> (
+		name    <span style=color:#0b0;font-weight:700>string</span>
+		age     <span style=color:#0b0;font-weight:700>int</span>
+		married <span style=color:#0b0;font-weight:700>bool</span>
+	)
+	fmt.<span style=color:#00a000>Scanln</span>(<span style=color:#666>&amp;</span>name, <span style=color:#666>&amp;</span>age, <span style=color:#666>&amp;</span>married)
+	fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;扫描结果 name:%s age:%d married:%t \n&#34;</span>, name, age, married)
+}
+
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ ./scan_demo 
+zhy 18 false
+扫描结果 name:zhy age:28 married:false
+</code></pre></div><p>fmt.Scanln遇到回车就结束扫描了，这个比较常用。</p>
+<h3 id=bufionewreader>bufio.NewReader</h3>
+<p>有时候我们想完整获取输入的内容，而输入的内容可能包含空格，这种情况下可以使用bufio包来实现。示例代码如下：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>bufioDemo</span>() {
+	reader <span style=color:#666>:=</span> bufio.<span style=color:#00a000>NewReader</span>(os.Stdin) <span style=color:#080;font-style:italic>// 从标准输入生成读对象
+</span><span style=color:#080;font-style:italic></span>	fmt.<span style=color:#00a000>Print</span>(<span style=color:#b44>&#34;请输入内容：&#34;</span>)
+	text, _ <span style=color:#666>:=</span> reader.<span style=color:#00a000>ReadString</span>(<span style=color:#b44>&#39;\n&#39;</span>) <span style=color:#080;font-style:italic>// 读到换行
+</span><span style=color:#080;font-style:italic></span>	text = strings.<span style=color:#00a000>TrimSpace</span>(text)
+	fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;%#v\n&#34;</span>, text)
+}
+
+</code></pre></div><h3 id=fscan系列>Fscan系列</h3>
+<p>这几个函数功能分别类似于fmt.Scan、fmt.Scanf、fmt.Scanln三个函数，只不过它们不是从标准输入中读取数据而是从io.Reader中读取数据。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Fscan</span>(r io.Reader, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Fscanln</span>(r io.Reader, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Fscanf</span>(r io.Reader, format <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+</code></pre></div><h3 id=sscan系列>Sscan系列</h3>
+<p>这几个函数功能分别类似于fmt.Scan、fmt.Scanf、fmt.Scanln三个函数，只不过它们不是从标准输入中读取数据而是从指定字符串中读取数据。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Sscan</span>(str <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Sscanln</span>(str <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Sscanf</span>(str <span style=color:#0b0;font-weight:700>string</span>, format <span style=color:#0b0;font-weight:700>string</span>, a <span style=color:#666>...</span><span style=color:#a2f;font-weight:700>interface</span>{}) (n <span style=color:#0b0;font-weight:700>int</span>, err <span style=color:#0b0;font-weight:700>error</span>)
+</code></pre></div><p>参考文章:<a href=https://www.liwenzhou.com/posts/Go/go_fmt/ target=_blank rel=noopener>https://www.liwenzhou.com/posts/Go/go_fmt/</a>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=/tags/golang rel=tag title=golang>#golang#</a>
+</div>
+<div class=post-nav>
+<div class=article-copyright>
+<div class=article-copyright-img>
+<img src=/img/qq_qrcode.png width=129px height=129px>
+<div style=text-align:center>QQ扫一扫交流</div>
+</div>
+<div class=article-copyright-info>
+<p>
+<span>标题：</span>Go fmt包
+</p>
+<p>
+<span>链接：</span>https://www.zhaohaiyu.com/post/go/go-fmt/
+</p>
+<p>
+<span>作者：</span>haiyux
+</p>
+<p>
+<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
+</p>
+</div>
+</div>
+<div class=clear></div>
+</div>
+<div class=reward-qr-info>
+<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
+<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span>
+</button>
+<div id=QR style=display:none>
+<div id=wechat style=display:inline-block>
+<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
+<p>微信打赏</p>
+</div>
+<div id=alipay style=display:inline-block>
+<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
+<p>支付宝打赏</p>
+</div>
+</div>
+</div>
+<div class=post-nav>
+<div class="post-nav-next post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/go/go-deep-channel/ rel=next title="Go Channel源码分析">
+<i class="fa fa-chevron-left"></i> Go Channel源码分析
+</a>
+</div>
+<div class="post-nav-prev post-nav-item">
+<a href=https://www.zhaohaiyu.com/post/go/go-time/ rel=prev title="Go time包">
+Go time包
+<i class="fa fa-chevron-right"></i>
+</a>
+</div>
+</div>
+<div id=ucomments></div>
+</footer>
+</article>
+</section>
+</div>
+</div>
+<div class=sidebar-toggle>
+<div class=sidebar-toggle-line-wrap>
+<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+</div>
+</div>
+<aside id=sidebar class=sidebar>
+<div class=sidebar-inner>
+<ul class="sidebar-nav motion-element">
+<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
+文章目录
+</li>
+<li class=sidebar-nav-overview data-target=site-overview>
+站点概览
+</li>
+</ul>
+<section class="site-overview sidebar-panel">
+<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
+<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
+<p class=site-author-name itemprop=name>haiyux</p>
+<p class="site-description motion-element" itemprop=description>
+路漫漫其修远兮,吾将上下而求索
+</p>
+</div>
+<nav class="site-state motion-element">
+<div class="site-state-item site-state-posts">
+<a href=/post/>
+<span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span>
+</a>
+</div>
+<div class="site-state-item site-state-categories">
+<a href=/categories/>
+<span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span>
+</a>
+</div>
+<div class="site-state-item site-state-tags">
+<a href=/tags/>
+<span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span>
+</a>
+</div>
+</nav>
+<div class="links-of-author motion-element">
+<span class=links-of-author-item>
+<a href=https://github.com/haiyux/ target=_blank title=GitHub>
+<i class="fa fa-fw fa-github"></i>
+GitHub
+</a>
+</span>
+<span class=links-of-author-item>
+<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
+<i class="fa fa-fw fa-envelope"></i>
+Email
+</a>
+</span>
+</div>
+<div class="links-of-blogroll motion-element links-of-blogroll-inline">
+<div class=links-of-blogroll-title>
+<i class="fa fa-fw fa-globe"></i>
+友情链接
+</div>
+<ul class=links-of-blogroll-list>
+<li class=links-of-blogroll-item>
+<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://farer.org/ title=farer target=_blank>farer</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
+</li>
+<li class=links-of-blogroll-item>
+<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
+</li>
+</ul>
+</div>
+<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
+<div class=tagcloud-of-blogroll-title>
+<i class="fa fa-fw fa-tags"></i>
+标签云
+</div>
+<ul class=tagcloud-of-blogroll-list>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/golang>Golang
+<sup>30</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mysql>Mysql
+<sup>7</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/http>HTTP
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/protobuf>Protobuf
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/grpc>Grpc
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/redis>Redis
+<sup>2</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/ddd>Ddd
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/docker>Docker
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/kratos>Kratos
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/makefile>Makefile
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/mq>Mq
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/nginx>Nginx
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/raft>Raft
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/thrift>Thrift
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/traceing>Traceing
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/wire>Wire
+<sup>1</sup>
+</a>
+</li>
+<li class=tagcloud-of-blogroll-item>
+<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup>
+</a>
+</li>
+</ul>
+</div>
+</section>
+<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+<div class=post-toc>
+<div class=post-toc-content><nav id=TableOfContents>
+<ul>
+<li><a href=#fmt>fmt</a></li>
+<li><a href=#向外输出>向外输出</a>
+<ul>
+<li><a href=#print>Print</a></li>
+<li><a href=#fprint>Fprint</a></li>
+<li><a href=#sprint>Sprint</a></li>
+<li><a href=#errorf>Errorf</a></li>
+</ul>
+</li>
+<li><a href=#格式化占位符>格式化占位符</a>
+<ul>
+<li><a href=#通用占位符>通用占位符</a></li>
+<li><a href=#布尔型>布尔型</a></li>
+<li><a href=#整型>整型</a></li>
+<li><a href=#浮点数与复数>浮点数与复数</a></li>
+<li><a href=#字符串和byte>字符串和[]byte</a></li>
+<li><a href=#指针>指针</a></li>
+<li><a href=#宽度标识符>宽度标识符</a></li>
+<li><a href=#其他falg>其他falg</a></li>
+</ul>
+</li>
+<li><a href=#获取输入>获取输入</a>
+<ul>
+<li><a href=#fmtscan>fmt.Scan</a></li>
+<li><a href=#fmtscanf>fmt.Scanf</a></li>
+<li><a href=#fmtscanln>fmt.Scanln</a></li>
+<li><a href=#bufionewreader>bufio.NewReader</a></li>
+<li><a href=#fscan系列>Fscan系列</a></li>
+<li><a href=#sscan系列>Sscan系列</a></li>
+</ul>
+</li>
+</ul>
+</nav></div>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=footer-inner>
+<div class=copyright>
+<span class=copyright-year>
+&copy; 2010 - 2022
+</span>
+<span class=with-love><i class="fa fa-heart"></i></span>
+<span class=copyright-author>haiyux's blog</span>
+</div>
+<div class=powered-info>
+<span class=powered-by>
+Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
+</span>
+<span class=separator-line>/</span>
+<span class=theme-info>
+Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
+</a>
+</span>
+</div>
+<div class=vistor-info>
+</div>
+<div class=license-info>
+<span class=storage-info>
+Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
+</span>
+<span class=separator-line>/</span>
+<span class=license-num>
+<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
+</span>
+</div>
+</div>
+</footer>
+<div class=back-to-top>
+<i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span>
+</div>
+</div>
+<script type=text/javascript src=//cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.min.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
+<script type=text/javascript src=https://www.zhaohaiyu.com/js/scrollspy.js></script>
+<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.main').css('padding-bottom'),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}}),$(document).on('affixed.bs.affix',function(){updateTOCHeight(document.body.clientHeight-100)})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initScrollSpy(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
+<script src=//cdn.bootcdn.net/ajax/libs/imageviewer/0.1.0/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
+<script src=//cdn.jsdelivr.net/npm/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
+<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
+<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</body>
+</html>
