@@ -436,7 +436,7 @@ body {
   width: 860px;
 }
 .main {
-  padding-bottom: 150px;
+  padding-bottom: 20px;
 }
 .main-inner {
   margin: 0 auto;
@@ -2210,10 +2210,6 @@ a.search-result {
     display: none;
   }
 
-  .footer {
-    margin: -100px 0 0 0;
-  }
-
   .cnzz_icon {
     position: absolute;
     padding-left: 18%;
@@ -2441,12 +2437,12 @@ body {
 }
 @media (min-width: 768px) and (max-width: 991px) {
   .main {
-    padding-bottom: 100px;
+    padding-bottom: 20px;
   }
 }
 @media (max-width: 767px) {
   .main {
-    padding-bottom: 100px;
+    padding-bottom: 20px;
   }
 }
 .container .main-inner {
@@ -3142,7 +3138,9 @@ body {
   height: auto;
 }
 
-.main-inner > .sub-menu {
+.content-wrap > .sub-menu {
+  margin: 0 -50px;
+  padding: 0;
   background: #fff;
   border-radius: initial;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12);
@@ -3157,10 +3155,6 @@ body {
   margin: 0;
 }
 
-.sub-menu {
-  margin: 0;
-  padding: 6px 0;
-}
 .sub-menu .menu-item {
   display: inline-block;
 }
