@@ -1,595 +1,159 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Go函数 - haiyux's blog </title>
-<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
-<meta name=author content="haiyux">
-<meta property="og:title" content="Go函数">
-<meta property="og:site_name" content="haiyux's blog">
-<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
-<meta name=title content="Go函数 - haiyux's blog">
-<meta name=description content="欢迎来到haiyux的博客">
-<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet>
-<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Go函数 - haiyux's blog</title><meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="haiyux"><meta property="og:title" content="Go函数"><meta property="og:site_name" content="haiyux's blog"><meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg"><meta name=title content="Go函数 - haiyux's blog"><meta name=description content="欢迎来到haiyux的博客"><link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico><link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css><link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>haiyux's blog</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class="menu-item menu-item-active">
-<a href=/post/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav> </div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-function/ itemprop=url>
-Go函数
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-pushdate>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post/ rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-function/ itemprop=url>Go函数</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2019-02-01">
-2019-02-01
-</time>
-</span>
-<span class=post-category>
-<i class="fa fa-folder-o fa-fw"></i>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2019-02-01">2019-02-01</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/go itemprop=url rel=index>
-<span itemprop=name>go</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span class=post-wordcount>
-<i class="fa fa-file-word-o fa-fw"></i>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/go itemprop=url rel=index><span itemprop=name>go</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>2271 字</span>
-</span>
-<span class=post-readtime>
-<i class="fa fa-eye fa-fw"></i>
+<span class=leancloud-world-count>2271 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>5分钟</span>
-</span>
-<span id=/post/go/go-function/ class="leancloud_visitors post-visitor" data-flag-title=Go函数>
-<i class="fa fa-binoculars fa-fw"></i>
+<span class=leancloud-view-count>5分钟</span></span>
+<span id=/post/go/go-function/ class="leancloud_visitors post-visitor" data-flag-title=Go函数><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=函数声明>函数声明</h2>
-<p><strong>函数声明包括函数名、形式参数列表、返回值列表（可省略）以及函数体。</strong></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> function<span style=color:#666>-</span><span style=color:#00a000>name</span>(param<span style=color:#666>...</span>) (result<span style=color:#666>...</span>) {
-    body
-}
-</code></pre></div><p>形式参数列表描述了函数的参数名以及参数类型。这些参数作为局部变量，其值由参数调用者提供。返回值列表描述了函数返回值的变量名以及类型。如果函数返回一个无名变量或者没有返回值，返回值列表的括号是可以省略的。如果一个函数声明不包括返回值列表，那么函数体执行完毕后，不会返回任何值。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>hypot</span>(x, y <span style=color:#0b0;font-weight:700>float64</span>) <span style=color:#0b0;font-weight:700>float64</span> {
-    <span style=color:#a2f;font-weight:700>return</span> math.<span style=color:#00a000>Sqrt</span>(x<span style=color:#666>*</span>x <span style=color:#666>+</span> y<span style=color:#666>*</span>y)
-}
-fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>hypot</span>(<span style=color:#666>3</span>,<span style=color:#666>4</span>)) <span style=color:#080;font-style:italic>// &#34;5&#34;
-</span></code></pre></div><h2 id=递归>递归</h2>
-<p>函数可以是递归的，这意味着函数可以直接或间接的调用自身。对许多问题而言，递归是一种强有力的技术，例如处理递归的数据结构。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>a</span>(i <span style=color:#0b0;font-weight:700>int</span>) (res <span style=color:#0b0;font-weight:700>int</span>){
-    <span style=color:#a2f;font-weight:700>if</span> i <span style=color:#666>==</span> <span style=color:#666>1</span> {
-        <span style=color:#a2f;font-weight:700>return</span> i 
-    }
-    <span style=color:#a2f;font-weight:700>return</span> i <span style=color:#666>*</span> <span style=color:#00a000>a</span>(i <span style=color:#666>-</span> <span style=color:#666>1</span>)
-}
-fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>a</span>(<span style=color:#666>5</span>)) <span style=color:#080;font-style:italic>// 120
-</span></code></pre></div><h2 id=多返回值>多返回值</h2>
-<p>在Go中，一个函数可以返回多个值。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>calculation</span>(a,b <span style=color:#0b0;font-weight:700>int</span>)(add,sub <span style=color:#0b0;font-weight:700>int</span>) {
-	add = a <span style=color:#666>+</span> b
-    sub = a <span style=color:#666>-</span> b
-}
-</code></pre></div><h2 id=错误>错误</h2>
-<p>在Go中有一部分函数总是能成功的运行，对各种可能的输入都做了良好的处理，使得运行时几乎不会失败，除非遇到灾难性的、不可预料的情况，比如运行时的内存溢出。导致这种错误的原因很复杂，难以处理，从错误中恢复的可能性也很低。</p>
-<p>panic是来自被调函数的信号，表示发生了某个已知的bug。一个良好的程序永远不应该发生panic异常。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>value, ok <span style=color:#666>:=</span> cache.<span style=color:#00a000>Lookup</span>(key)
-<span style=color:#a2f;font-weight:700>if</span> !ok {
-    <span style=color:#080;font-style:italic>// ...cache[key] does not exist…
-</span><span style=color:#080;font-style:italic></span>}
-</code></pre></div><h3 id=错误处理策略>错误处理策略</h3>
-<p>当一次函数调用返回错误时，调用者有应该选择何时的方式处理错误。根据情况的不同，有很多处理方式.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>resp,err <span style=color:#666>:=</span> http.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;https://www.google.com&#34;</span>)
-<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-    fmt.<span style=color:#00a000>Println</span>(err)
-}
-</code></pre></div><h3 id=文件结尾错误eof>文件结尾错误（EOF）</h3>
-<p>函数经常会返回多种错误，这对终端用户来说可能会很有趣，但对程序而言，这使得情况变得复杂。很多时候，程序必须根据错误类型，作出不同的响应。让我们考虑这样一个例子：从文件中读取n个字节。如果n等于文件的长度，读取过程的任何错误都表示失败。如果n小于文件的长度，调用者会重复的读取固定大小的数据直到文件结束。这会导致调用者必须分别处理由文件结束引起的各种错误。基于这样的原因，io包保证任何由文件结束引起的读取失败都返回同一个错误——io.EOF，该错误在io包中定义：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> io
-<span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;errors&#34;</span>
-<span style=color:#080;font-style:italic>// EOF is the error returned by Read when no more input is available.
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> EOF = errors.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;EOF&#34;</span>)
-</code></pre></div><p>调用者只需通过简单的比较，就可以检测出这个错误。下面的例子展示了如何从标准输入中读取字符，以及判断文件结束。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>in <span style=color:#666>:=</span> bufio.<span style=color:#00a000>NewReader</span>(os.Stdin)
-<span style=color:#a2f;font-weight:700>for</span> {
-    r, _, err <span style=color:#666>:=</span> in.<span style=color:#00a000>ReadRune</span>()
-    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>==</span> io.EOF {
-        <span style=color:#a2f;font-weight:700>break</span> <span style=color:#080;font-style:italic>// finished reading
-</span><span style=color:#080;font-style:italic></span>    }
-    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-        <span style=color:#a2f;font-weight:700>return</span> fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;read failed:%v&#34;</span>, err)
-    }
-    <span style=color:#080;font-style:italic>// ...use r…
-</span><span style=color:#080;font-style:italic></span>}
-</code></pre></div><p>因为文件结束这种错误不需要更多的描述，所以io.EOF有固定的错误信息——“EOF”。对于其他错误，我们可能需要在错误信息中描述错误的类型和数量，这使得我们不能像io.EOF一样采用固定的错误信息。在7.11节中，我们会提出更系统的方法区分某些固定的错误值。</p>
-<h2 id=函数值>函数值</h2>
-<p>在Go中，函数被看作第一类值（first-class values）：函数像其他值一样，拥有类型，可以被赋值给其他变量，传递给函数，从函数返回。对函数值（function value）的调用类似函数调用。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>add</span>(a,b <span style=color:#0b0;font-weight:700>int</span>) (sum <span style=color:#0b0;font-weight:700>int</span>) {
-    sum = a <span style=color:#666>+</span> b 
-}
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-    f = add
-    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>sum</span>(<span style=color:#666>1</span>,<span style=color:#666>2</span>))
-}
-</code></pre></div><p>函数类型的零值是nil。调用值为nil的函数值会引起panic错误：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>var</span> f <span style=color:#a2f;font-weight:700>func</span>(<span style=color:#0b0;font-weight:700>int</span>) <span style=color:#0b0;font-weight:700>int</span>
-    <span style=color:#00a000>f</span>(<span style=color:#666>3</span>) <span style=color:#080;font-style:italic>// 此处f的值为nil, 会引起panic错误
-</span></code></pre></div><h2 id=匿名函数>匿名函数</h2>
-<p>拥有函数名的函数只能在包级语法块中被声明，通过函数字面量（function literal），我们可绕过这一限制，在任何表达式中表示一个函数值。函数字面量的语法和函数声明相似，区别在于func关键字后没有函数名。函数值字面量是一种表达式，它的值被成为匿名函数（anonymous function）。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>squares</span>() <span style=color:#a2f;font-weight:700>func</span>() <span style=color:#0b0;font-weight:700>int</span> {
-    <span style=color:#a2f;font-weight:700>var</span> x <span style=color:#0b0;font-weight:700>int</span>
-    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>func</span>() <span style=color:#0b0;font-weight:700>int</span> {
-        x<span style=color:#666>++</span>
-        <span style=color:#a2f;font-weight:700>return</span> x <span style=color:#666>*</span> x
-    }
-}
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-    f <span style=color:#666>:=</span> <span style=color:#00a000>squares</span>()
-    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>f</span>()) <span style=color:#080;font-style:italic>// &#34;1&#34;
-</span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>f</span>()) <span style=color:#080;font-style:italic>// &#34;4&#34;
-</span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>f</span>()) <span style=color:#080;font-style:italic>// &#34;9&#34;
-</span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>f</span>()) <span style=color:#080;font-style:italic>// &#34;16&#34;
-</span><span style=color:#080;font-style:italic></span>}
-</code></pre></div><h2 id=可变参数>可变参数</h2>
-<p>参数数量可变的函数称为为可变参数函数。典型的例子就是fmt.Printf和类似函数。Printf首先接收一个的必备参数，之后接收任意个数的后续参数。</p>
-<p>在声明可变参数函数时，需要在参数列表的最后一个参数类型之前加上省略符号“&mldr;”，这表示该函数会接收任意数量的该类型参数。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-	fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>sum</span>(<span style=color:#666>1</span>,<span style=color:#666>2</span>,<span style=color:#666>3</span>,<span style=color:#666>4</span>,<span style=color:#666>5</span>)) <span style=color:#080;font-style:italic>// 15
-</span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>var</span> sli = []<span style=color:#0b0;font-weight:700>int</span>{<span style=color:#666>1</span>,<span style=color:#666>2</span>,<span style=color:#666>3</span>,<span style=color:#666>4</span>,<span style=color:#666>5</span>}
-	fmt.<span style=color:#00a000>Println</span>(sli)		<span style=color:#080;font-style:italic>// [1 2 3 4 5]
-</span><span style=color:#080;font-style:italic></span>	fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>sum</span>(sli<span style=color:#666>...</span>)) <span style=color:#080;font-style:italic>// 15
-</span><span style=color:#080;font-style:italic></span>}
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>sum</span>(values <span style=color:#666>...</span><span style=color:#0b0;font-weight:700>int</span>) <span style=color:#0b0;font-weight:700>int</span> {
-	sum <span style=color:#666>:=</span> <span style=color:#666>0</span>
-	<span style=color:#a2f;font-weight:700>for</span> _, v <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> values {
-		sum <span style=color:#666>+=</span> v
-	}
-	<span style=color:#a2f;font-weight:700>return</span> sum
-}
-</code></pre></div><h2 id=panic异常>Panic异常</h2>
-<p>Go的类型系统会在编译时捕获很多错误，但有些错误只能在运行时检查，如数组访问越界、空指针引用等。这些运行时错误会引起painc异常。</p>
-<p>一般而言，<strong>当panic异常发生时，程序会中断运行</strong>，并执行此goroute上的defer函数。</p>
-<p>当某些不应该发生的场景发生时，我们就应该调用panic。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>name <span style=color:#666>:=</span> <span style=color:#b44>&#34;zhaohaiyu&#34;</span>
-	<span style=color:#a2f;font-weight:700>switch</span> name {
-	<span style=color:#a2f;font-weight:700>case</span> <span style=color:#b44>&#34;zhy&#34;</span>:
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;zhy&#34;</span>)
-	<span style=color:#a2f;font-weight:700>case</span> <span style=color:#b44>&#34;haiyuzhao&#34;</span>:
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;haiyuzhao&#34;</span>)
-	<span style=color:#a2f;font-weight:700>default</span>:
-		<span style=color:#a2f>panic</span>(<span style=color:#b44>&#34;没有这个名字&#34;</span>)
-	}
-</code></pre></div><p>虽然Go的panic机制类似于其他语言的异常，但panic的适用场景有一些不同。由于panic会引起程序的崩溃，因此panic一般用于严重错误，如程序内部的逻辑不一致。</p>
-<h2 id=recover捕获异常>Recover捕获异常</h2>
-<p>通常来说，不应该对panic异常做任何处理，但有时，也许我们可以从异常中恢复，至少我们可以在程序崩溃前，做一些操作。</p>
-<p>如果在deferred函数中调用了内置函数recover，并且定义该defer语句的函数发生了panic异常，recover会使程序从panic中恢复，并返回panic value。导致panic异常的函数不会继续运行，但能正常返回。在未发生panic时调用recover，recover会返回nil。</p>
-<p>让我们以语言解析器为例，说明recover的使用场景。考虑到语言解析器的复杂性，即使某个语言解析器目前工作正常，也无法肯定它没有漏洞。因此，当某个异常出现时，我们不会选择让解析器崩溃，而是会将panic异常当作普通的解析错误，并附加额外信息提醒用户报告此错误。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>defer</span> <span style=color:#a2f;font-weight:700>func</span> ()  {
-		<span style=color:#a2f;font-weight:700>if</span> p <span style=color:#666>:=</span> <span style=color:#a2f>recover</span>();  p <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-			fmt.<span style=color:#00a000>Println</span>(p)  <span style=color:#080;font-style:italic>// 主动抛错
-</span><span style=color:#080;font-style:italic></span>            	<span style=color:#080;font-style:italic>// 可以进行写日志等操作
-</span><span style=color:#080;font-style:italic></span>		}
-	}()
-	<span style=color:#a2f>panic</span>(<span style=color:#b44>&#34;主动抛错&#34;</span>)
-</code></pre></div>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=/tags/golang rel=tag title=golang>#golang#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-img>
-<img src=/img/qq_qrcode.png width=129px height=129px>
-<div style=text-align:center>QQ扫一扫交流</div>
-</div>
-<div class=article-copyright-info>
-<p>
-<span>标题：</span>Go函数
-</p>
-<p>
-<span>链接：</span>https://www.zhaohaiyu.com/post/go/go-function/
-</p>
-<p>
-<span>作者：</span>haiyux
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-method/ rel=next title=Go方法>
-<i class="fa fa-chevron-left"></i> Go方法
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-complex-structure/ rel=prev title=Go复杂数据结构>
-Go复杂数据结构
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=ucomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=函数声明>函数声明</h2><p><strong>函数声明包括函数名、形式参数列表、返回值列表（可省略）以及函数体。</strong></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> function<span style=color:#666>-</span><span style=color:#00a000>name</span>(param<span style=color:#666>...</span>) (result<span style=color:#666>...</span>) {
+</span></span><span style=display:flex><span>    body
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>形式参数列表描述了函数的参数名以及参数类型。这些参数作为局部变量，其值由参数调用者提供。返回值列表描述了函数返回值的变量名以及类型。如果函数返回一个无名变量或者没有返回值，返回值列表的括号是可以省略的。如果一个函数声明不包括返回值列表，那么函数体执行完毕后，不会返回任何值。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>hypot</span>(x, y <span style=color:#0b0;font-weight:700>float64</span>) <span style=color:#0b0;font-weight:700>float64</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> math.<span style=color:#00a000>Sqrt</span>(x<span style=color:#666>*</span>x <span style=color:#666>+</span> y<span style=color:#666>*</span>y)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>hypot</span>(<span style=color:#666>3</span>,<span style=color:#666>4</span>)) <span style=color:#080;font-style:italic>// &#34;5&#34;
+</span></span></span></code></pre></div><h2 id=递归>递归</h2><p>函数可以是递归的，这意味着函数可以直接或间接的调用自身。对许多问题而言，递归是一种强有力的技术，例如处理递归的数据结构。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>a</span>(i <span style=color:#0b0;font-weight:700>int</span>) (res <span style=color:#0b0;font-weight:700>int</span>){
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> i <span style=color:#666>==</span> <span style=color:#666>1</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> i 
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> i <span style=color:#666>*</span> <span style=color:#00a000>a</span>(i <span style=color:#666>-</span> <span style=color:#666>1</span>)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>a</span>(<span style=color:#666>5</span>)) <span style=color:#080;font-style:italic>// 120
+</span></span></span></code></pre></div><h2 id=多返回值>多返回值</h2><p>在Go中，一个函数可以返回多个值。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>calculation</span>(a,b <span style=color:#0b0;font-weight:700>int</span>)(add,sub <span style=color:#0b0;font-weight:700>int</span>) {
+</span></span><span style=display:flex><span>	add = a <span style=color:#666>+</span> b
+</span></span><span style=display:flex><span>    sub = a <span style=color:#666>-</span> b
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=错误>错误</h2><p>在Go中有一部分函数总是能成功的运行，对各种可能的输入都做了良好的处理，使得运行时几乎不会失败，除非遇到灾难性的、不可预料的情况，比如运行时的内存溢出。导致这种错误的原因很复杂，难以处理，从错误中恢复的可能性也很低。</p><p>panic是来自被调函数的信号，表示发生了某个已知的bug。一个良好的程序永远不应该发生panic异常。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>value, ok <span style=color:#666>:=</span> cache.<span style=color:#00a000>Lookup</span>(key)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> !ok {
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// ...cache[key] does not exist…
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>}
+</span></span></code></pre></div><h3 id=错误处理策略>错误处理策略</h3><p>当一次函数调用返回错误时，调用者有应该选择何时的方式处理错误。根据情况的不同，有很多处理方式.</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>resp,err <span style=color:#666>:=</span> http.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;https://www.google.com&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>    fmt.<span style=color:#00a000>Println</span>(err)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=文件结尾错误eof>文件结尾错误（EOF）</h3><p>函数经常会返回多种错误，这对终端用户来说可能会很有趣，但对程序而言，这使得情况变得复杂。很多时候，程序必须根据错误类型，作出不同的响应。让我们考虑这样一个例子：从文件中读取n个字节。如果n等于文件的长度，读取过程的任何错误都表示失败。如果n小于文件的长度，调用者会重复的读取固定大小的数据直到文件结束。这会导致调用者必须分别处理由文件结束引起的各种错误。基于这样的原因，io包保证任何由文件结束引起的读取失败都返回同一个错误——io.EOF，该错误在io包中定义：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> io
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;errors&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// EOF is the error returned by Read when no more input is available.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> EOF = errors.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;EOF&#34;</span>)
+</span></span></code></pre></div><p>调用者只需通过简单的比较，就可以检测出这个错误。下面的例子展示了如何从标准输入中读取字符，以及判断文件结束。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>in <span style=color:#666>:=</span> bufio.<span style=color:#00a000>NewReader</span>(os.Stdin)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>for</span> {
+</span></span><span style=display:flex><span>    r, _, err <span style=color:#666>:=</span> in.<span style=color:#00a000>ReadRune</span>()
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>==</span> io.EOF {
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>break</span> <span style=color:#080;font-style:italic>// finished reading
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    }
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;read failed:%v&#34;</span>, err)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// ...use r…
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>}
+</span></span></code></pre></div><p>因为文件结束这种错误不需要更多的描述，所以io.EOF有固定的错误信息——“EOF”。对于其他错误，我们可能需要在错误信息中描述错误的类型和数量，这使得我们不能像io.EOF一样采用固定的错误信息。在7.11节中，我们会提出更系统的方法区分某些固定的错误值。</p><h2 id=函数值>函数值</h2><p>在Go中，函数被看作第一类值（first-class values）：函数像其他值一样，拥有类型，可以被赋值给其他变量，传递给函数，从函数返回。对函数值（function value）的调用类似函数调用。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>add</span>(a,b <span style=color:#0b0;font-weight:700>int</span>) (sum <span style=color:#0b0;font-weight:700>int</span>) {
+</span></span><span style=display:flex><span>    sum = a <span style=color:#666>+</span> b 
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>    f = add
+</span></span><span style=display:flex><span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>sum</span>(<span style=color:#666>1</span>,<span style=color:#666>2</span>))
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>函数类型的零值是nil。调用值为nil的函数值会引起panic错误：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> f <span style=color:#a2f;font-weight:700>func</span>(<span style=color:#0b0;font-weight:700>int</span>) <span style=color:#0b0;font-weight:700>int</span>
+</span></span><span style=display:flex><span>    <span style=color:#00a000>f</span>(<span style=color:#666>3</span>) <span style=color:#080;font-style:italic>// 此处f的值为nil, 会引起panic错误
+</span></span></span></code></pre></div><h2 id=匿名函数>匿名函数</h2><p>拥有函数名的函数只能在包级语法块中被声明，通过函数字面量（function literal），我们可绕过这一限制，在任何表达式中表示一个函数值。函数字面量的语法和函数声明相似，区别在于func关键字后没有函数名。函数值字面量是一种表达式，它的值被成为匿名函数（anonymous function）。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>squares</span>() <span style=color:#a2f;font-weight:700>func</span>() <span style=color:#0b0;font-weight:700>int</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>var</span> x <span style=color:#0b0;font-weight:700>int</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>func</span>() <span style=color:#0b0;font-weight:700>int</span> {
+</span></span><span style=display:flex><span>        x<span style=color:#666>++</span>
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> x <span style=color:#666>*</span> x
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>    f <span style=color:#666>:=</span> <span style=color:#00a000>squares</span>()
+</span></span><span style=display:flex><span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>f</span>()) <span style=color:#080;font-style:italic>// &#34;1&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>f</span>()) <span style=color:#080;font-style:italic>// &#34;4&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>f</span>()) <span style=color:#080;font-style:italic>// &#34;9&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>f</span>()) <span style=color:#080;font-style:italic>// &#34;16&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>}
+</span></span></code></pre></div><h2 id=可变参数>可变参数</h2><p>参数数量可变的函数称为为可变参数函数。典型的例子就是fmt.Printf和类似函数。Printf首先接收一个的必备参数，之后接收任意个数的后续参数。</p><p>在声明可变参数函数时，需要在参数列表的最后一个参数类型之前加上省略符号“&mldr;”，这表示该函数会接收任意数量的该类型参数。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>	fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>sum</span>(<span style=color:#666>1</span>,<span style=color:#666>2</span>,<span style=color:#666>3</span>,<span style=color:#666>4</span>,<span style=color:#666>5</span>)) <span style=color:#080;font-style:italic>// 15
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>var</span> sli = []<span style=color:#0b0;font-weight:700>int</span>{<span style=color:#666>1</span>,<span style=color:#666>2</span>,<span style=color:#666>3</span>,<span style=color:#666>4</span>,<span style=color:#666>5</span>}
+</span></span><span style=display:flex><span>	fmt.<span style=color:#00a000>Println</span>(sli)		<span style=color:#080;font-style:italic>// [1 2 3 4 5]
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	fmt.<span style=color:#00a000>Println</span>(<span style=color:#00a000>sum</span>(sli<span style=color:#666>...</span>)) <span style=color:#080;font-style:italic>// 15
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>sum</span>(values <span style=color:#666>...</span><span style=color:#0b0;font-weight:700>int</span>) <span style=color:#0b0;font-weight:700>int</span> {
+</span></span><span style=display:flex><span>	sum <span style=color:#666>:=</span> <span style=color:#666>0</span>
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>for</span> _, v <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> values {
+</span></span><span style=display:flex><span>		sum <span style=color:#666>+=</span> v
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>return</span> sum
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=panic异常>Panic异常</h2><p>Go的类型系统会在编译时捕获很多错误，但有些错误只能在运行时检查，如数组访问越界、空指针引用等。这些运行时错误会引起painc异常。</p><p>一般而言，<strong>当panic异常发生时，程序会中断运行</strong>，并执行此goroute上的defer函数。</p><p>当某些不应该发生的场景发生时，我们就应该调用panic。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>name <span style=color:#666>:=</span> <span style=color:#b44>&#34;zhaohaiyu&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>switch</span> name {
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>case</span> <span style=color:#b44>&#34;zhy&#34;</span>:
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;zhy&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>case</span> <span style=color:#b44>&#34;haiyuzhao&#34;</span>:
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;haiyuzhao&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>default</span>:
+</span></span><span style=display:flex><span>		<span style=color:#a2f>panic</span>(<span style=color:#b44>&#34;没有这个名字&#34;</span>)
+</span></span><span style=display:flex><span>	}
+</span></span></code></pre></div><p>虽然Go的panic机制类似于其他语言的异常，但panic的适用场景有一些不同。由于panic会引起程序的崩溃，因此panic一般用于严重错误，如程序内部的逻辑不一致。</p><h2 id=recover捕获异常>Recover捕获异常</h2><p>通常来说，不应该对panic异常做任何处理，但有时，也许我们可以从异常中恢复，至少我们可以在程序崩溃前，做一些操作。</p><p>如果在deferred函数中调用了内置函数recover，并且定义该defer语句的函数发生了panic异常，recover会使程序从panic中恢复，并返回panic value。导致panic异常的函数不会继续运行，但能正常返回。在未发生panic时调用recover，recover会返回nil。</p><p>让我们以语言解析器为例，说明recover的使用场景。考虑到语言解析器的复杂性，即使某个语言解析器目前工作正常，也无法肯定它没有漏洞。因此，当某个异常出现时，我们不会选择让解析器崩溃，而是会将panic异常当作普通的解析错误，并附加额外信息提醒用户报告此错误。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>defer</span> <span style=color:#a2f;font-weight:700>func</span> ()  {
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>if</span> p <span style=color:#666>:=</span> <span style=color:#a2f>recover</span>();  p <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>			fmt.<span style=color:#00a000>Println</span>(p)  <span style=color:#080;font-style:italic>// 主动抛错
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>            	<span style=color:#080;font-style:italic>// 可以进行写日志等操作
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>		}
+</span></span><span style=display:flex><span>	}()
+</span></span><span style=display:flex><span>	<span style=color:#a2f>panic</span>(<span style=color:#b44>&#34;主动抛错&#34;</span>)
+</span></span></code></pre></div></div><footer class=post-footer><div class=post-tags><a href=/tags/golang rel=tag title=golang>#golang#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>Go函数</p><p><span>链接：</span>https://www.zhaohaiyu.com/post/go/go-function/</p><p><span>作者：</span>haiyux</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-method/ rel=next title=Go方法><i class="fa fa-chevron-left"></i> Go方法</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-complex-structure/ rel=prev title=Go复杂数据结构>Go复杂数据结构
+<i class="fa fa-chevron-right"></i></a></div></div><div id=ucomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
-<p class=site-author-name itemprop=name>haiyux</p>
-<p class="site-description motion-element" itemprop=description>
-路漫漫其修远兮,吾将上下而求索
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>62</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>8</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>20</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/haiyux/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
-<i class="fa fa-fw fa-envelope"></i>
-Email
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://farer.org/ title=farer target=_blank>farer</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/golang>Golang
-<sup>30</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
-<sup>8</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql
-<sup>7</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/http>HTTP
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/protobuf>Protobuf
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%BF%90%E7%BB%B4>运维
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/grpc>Grpc
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis
-<sup>2</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/ddd>Ddd
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/docker>Docker
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/kratos>Kratos
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/makefile>Makefile
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mq>Mq
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/nginx>Nginx
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/raft>Raft
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/thrift>Thrift
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/traceing>Traceing
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/wire>Wire
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
-<sup>1</sup>
-</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#函数声明>函数声明</a></li>
-<li><a href=#递归>递归</a></li>
-<li><a href=#多返回值>多返回值</a></li>
-<li><a href=#错误>错误</a>
-<ul>
-<li><a href=#错误处理策略>错误处理策略</a></li>
-<li><a href=#文件结尾错误eof>文件结尾错误（EOF）</a></li>
-</ul>
-</li>
-<li><a href=#函数值>函数值</a></li>
-<li><a href=#匿名函数>匿名函数</a></li>
-<li><a href=#可变参数>可变参数</a></li>
-<li><a href=#panic异常>Panic异常</a></li>
-<li><a href=#recover捕获异常>Recover捕获异常</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux><p class=site-author-name itemprop=name>haiyux</p><p class="site-description motion-element" itemprop=description>路漫漫其修远兮,吾将上下而求索</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/haiyux/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=mailto:haiyux@foxmail.com target=_blank title=Email><i class="fa fa-fw fa-envelope"></i>
+Email</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a></li><li class=links-of-blogroll-item><a href=https://farer.org/ title=farer target=_blank>farer</a></li><li class=links-of-blogroll-item><a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a></li><li class=links-of-blogroll-item><a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a></li><li class=links-of-blogroll-item><a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/golang>Golang
+<sup>30</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/http>HTTP
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/protobuf>Protobuf
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/grpc>Grpc
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ddd>Ddd
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/kratos>Kratos
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/makefile>Makefile
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mq>Mq
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/raft>Raft
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/thrift>Thrift
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/traceing>Traceing
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/wire>Wire
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup></a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#函数声明>函数声明</a></li><li><a href=#递归>递归</a></li><li><a href=#多返回值>多返回值</a></li><li><a href=#错误>错误</a><ul><li><a href=#错误处理策略>错误处理策略</a></li><li><a href=#文件结尾错误eof>文件结尾错误（EOF）</a></li></ul></li><li><a href=#函数值>函数值</a></li><li><a href=#匿名函数>匿名函数</a></li><li><a href=#可变参数>可变参数</a></li><li><a href=#panic异常>Panic异常</a></li><li><a href=#recover捕获异常>Recover捕获异常</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>haiyux's blog</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
-</span>
+<span class=copyright-author>haiyux's blog</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.100.1</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.footer').outerHeight(!0),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
-<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
-<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf('MSIE '),n=e.indexOf('Trident/'),s=e.indexOf('Edge/');return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$('#content').height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$('<div />').addClass('scrollbar-measure').prependTo('body'),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$('.back-to-top');$(window).on('scroll',function(){e.toggleClass('back-to-top-on',window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$('#scrollpercent>span').html(a)}),e.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e='.post-toc',s=$(e),t='.active-current';s.on('activate.bs.scrollspy',function(){var t=$(e+' .active').last();n(),t.addClass('active-current')}).on('clear.bs.scrollspy',n),$('body').scrollspy({target:e});function n(){$(e+' '+t).removeClass(t.substring(1))}}function initAffix(){var e=$('.header-inner').height(),t=parseInt($('.footer').outerHeight(!0),10),n=e+10;$('.sidebar-inner').affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on('resize',function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$('.post-toc').css('width','calc(100% + '+t+'px)')}function updateTOCHeight(e){e=e||'auto',$('.post-toc').css('max-height',e)}$(function(){var e,t,n,s,o=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':o}).show(),t=parseInt($('#sidebar').css('margin-top')),n=parseInt($('.sidebar-inner').css('height')),e=t+n,s=$('.content-wrap').height(),s<e&&$('.content-wrap').css('min-height',e),$('.site-nav-toggle').on('click',function(){var e=$('.site-nav'),o=$('.toggle'),t='site-nav-on',i='toggle-close',n=e.hasClass(t),a=n?'slideUp':'slideDown',s=n?'removeClass':'addClass';e.stop()[a]('normal',function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script><script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(s){var t=new AV.Query(s),e=[],n=$(".leancloud_visitors");n.each(function(){e.push($(this).attr("id").trim())}),t.containedIn('url',e),t.find().then(r=>{var t,s,o,a,c,l,i='.leancloud-visitors-count';if(r.length==0){n.find(i).text(0);return}for(t=0;t<r.length;t++)a=r[t],o=a.get('url'),l=a.get('time'),s=document.getElementById(o),$(s).find(i).text(l);for(t=0;t<e.length;t++)o=e[t],s=document.getElementById(o),c=$(s).find(i),c.text()==''&&c.text(0)},e=>{console.log('Query vistors failed: '+e)})}function addCount(s){var t=$(".leancloud_visitors"),e=t.attr('id').trim(),o=t.attr('data-flag-title').trim(),n=new AV.Query('Counter');n.equalTo("url",e),n.find().then(i=>{if(i.length>0){var t,n,a=i[0];a.increment('time',1),a.save(null,{query:new AV.Query('Counter').equalTo('url',e),fetchWhenSave:!0}).then(t=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log('Update vistor failed: '+e)})}else n=new AV.ACL,n.setPublicReadAccess(!0),n.setPublicWriteAccess(!0),t=new s,t.set("title",o),t.set("url",e),t.set("time",1),t.setACL(n),t.save().then(s=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log("Save new vistor failed: "+e)})})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const e=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(e):$('.post-title-link').length>1&&showTime(e)})</script><script type=text/javascript>(function(){var e=document.createElement('script');e.type='text/javascript',e.async=!0,e.setAttribute('issue-term',"pathname"),e.setAttribute('theme',"github-light"),e.setAttribute('repo',"haiyux/haiyux.github.io"),e.crossorigin='anonymous',e.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(e)})()</script><script>(function(){var t,e=document.createElement('script'),n=window.location.protocol.split(':')[0];n==='https'?e.src='https://zz.bdstatic.com/linksubmit/push.js':e.src='http://push.zhanzhang.baidu.com/push.js',t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

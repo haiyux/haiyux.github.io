@@ -1,979 +1,418 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Go viper配置管理 - haiyux's blog </title>
-<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
-<meta name=author content="haiyux">
-<meta property="og:title" content="Go viper配置管理">
-<meta property="og:site_name" content="haiyux's blog">
-<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
-<meta name=title content="Go viper配置管理 - haiyux's blog">
-<meta name=description content="欢迎来到haiyux的博客">
-<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet>
-<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Go viper配置管理 - haiyux's blog</title><meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="haiyux"><meta property="og:title" content="Go viper配置管理"><meta property="og:site_name" content="haiyux's blog"><meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg"><meta name=title content="Go viper配置管理 - haiyux's blog"><meta name=description content="欢迎来到haiyux的博客"><link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico><link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css><link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>haiyux's blog</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class="menu-item menu-item-active">
-<a href=/post/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav> </div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-viper/ itemprop=url>
-Go viper配置管理
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-pushdate>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post/ rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-viper/ itemprop=url>Go viper配置管理</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-01-02">
-2021-01-02
-</time>
-</span>
-<span class=post-category>
-<i class="fa fa-folder-o fa-fw"></i>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-01-02">2021-01-02</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/go itemprop=url rel=index>
-<span itemprop=name>go</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span class=post-wordcount>
-<i class="fa fa-file-word-o fa-fw"></i>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/go itemprop=url rel=index><span itemprop=name>go</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>7143 字</span>
-</span>
-<span class=post-readtime>
-<i class="fa fa-eye fa-fw"></i>
+<span class=leancloud-world-count>7086 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>15分钟</span>
-</span>
-<span id=/post/go/go-viper/ class="leancloud_visitors post-visitor" data-flag-title="Go viper配置管理">
-<i class="fa fa-binoculars fa-fw"></i>
+<span class=leancloud-view-count>15分钟</span></span>
+<span id=/post/go/go-viper/ class="leancloud_visitors post-visitor" data-flag-title="Go viper配置管理"><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=安装>安装</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>go get github.com/spf13/viper
-</code></pre></div><h2 id=viper支持的功能>viper支持的功能</h2>
-<p>1、可以设置默认值
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=安装>安装</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>go get github.com/spf13/viper
+</span></span></code></pre></div><h2 id=viper支持的功能>viper支持的功能</h2><p>1、可以设置默认值
 2、可以加载多种格式的配置文件，如JSON，TOML，YAML，HCL和Java属性配置文件
 3、应用程序运行过程中，保持监听和重新读取配置文件
 4、可以从环境变量读取配置
 5、可以从远程配置系统读取配置
 6、可以读取命令行标志作为配置
 7、可以从缓冲区中读取
-8、设置显式的值</p>
-<ul>
-<li>在GitHub中，作者是这样描述viper对于开发人员的作用：在构建现代化应用程序的过程中，开发人员可以通过使用viper而不必考虑配置文件的格式问题。</li>
-</ul>
-<h2 id=viper具体的帮助>viper具体的帮助</h2>
-<p>1、可以查找、加载和反序列化多种格式的配置文件，如JSON, TOML, YAML, HCL, Java属性配置格式。
+8、设置显式的值</p><ul><li>在GitHub中，作者是这样描述viper对于开发人员的作用：在构建现代化应用程序的过程中，开发人员可以通过使用viper而不必考虑配置文件的格式问题。</li></ul><h2 id=viper具体的帮助>viper具体的帮助</h2><p>1、可以查找、加载和反序列化多种格式的配置文件，如JSON, TOML, YAML, HCL, Java属性配置格式。
 2、提供一种为不同配置选项设置默认值的机制
 3、提供一种通过命令行标志覆盖指定配置选项值的机制
 4、提供了一种别名系统，可以在避免破坏现有代码的前提下，轻松地重命名参数
-5、当用户提供的命令行或配置文件的配置选项与默认的配置选项相同时，可以很容易通过选项值结果看出优先级的差异。</p>
-<h2 id=viper提供的配置方式的优先级顺序如下由高到低>viper提供的配置方式的优先级顺序如下(由高到低)：</h2>
-<p>1.设置显示调用(explicit call to Set)
+5、当用户提供的命令行或配置文件的配置选项与默认的配置选项相同时，可以很容易通过选项值结果看出优先级的差异。</p><h2 id=viper提供的配置方式的优先级顺序如下由高到低>viper提供的配置方式的优先级顺序如下(由高到低)：</h2><p>1.设置显示调用(explicit call to Set)
 2.命令行标志(flag)
 3.环境变量(env)
 4.配置文件(config)
 5.远程键/值存储(key/value store)
-6.默认值(default)</p>
-<h2 id=viper的简单使用>viper的简单使用</h2>
-<h3 id=把值存入viper>把值存入Viper</h3>
-<h4 id=建立默认值>建立默认值</h4>
-<p>一个好的配置系统应该支持默认值。键不需要默认值，但如果没有通过配置文件、环境变量、远程配置或命令行标志（flag）设置键，则默认值非常有用。</p>
-<p>例如：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;ContentDir&#34;</span>, <span style=color:#b44>&#34;content&#34;</span>)
-viper.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;LayoutDir&#34;</span>, <span style=color:#b44>&#34;layouts&#34;</span>)
-viper.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;Taxonomies&#34;</span>, <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#0b0;font-weight:700>string</span>{<span style=color:#b44>&#34;tag&#34;</span>: <span style=color:#b44>&#34;tags&#34;</span>, <span style=color:#b44>&#34;category&#34;</span>: <span style=color:#b44>&#34;categories&#34;</span>})
-</code></pre></div><h4 id=读取配置文件>读取配置文件</h4>
-<p>Viper需要最少知道在哪里查找配置文件的配置。Viper支持JSON、TOML、YAML、HCL、envfile和Java properties格式的配置文件。Viper可以搜索多个路径，但目前单个Viper实例只支持单个配置文件。Viper不默认任何配置搜索路径，将默认决策留给应用程序。</p>
-<p>下面是一个如何使用Viper搜索和读取配置文件的示例。不需要任何特定的路径，但是至少应该提供一个配置文件预期出现的路径。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>SetConfigFile</span>(<span style=color:#b44>&#34;./config.yaml&#34;</span>) <span style=color:#080;font-style:italic>// 指定配置文件路径
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>SetConfigName</span>(<span style=color:#b44>&#34;config&#34;</span>) <span style=color:#080;font-style:italic>// 配置文件名称(无扩展名)
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;yaml&#34;</span>) <span style=color:#080;font-style:italic>// 如果配置文件的名称中没有扩展名，则需要配置此项
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;/etc/appname/&#34;</span>)   <span style=color:#080;font-style:italic>// 查找配置文件所在的路径
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;$HOME/.appname&#34;</span>)  <span style=color:#080;font-style:italic>// 多次调用以添加多个搜索路径
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;.&#34;</span>)               <span style=color:#080;font-style:italic>// 还可以在工作目录中查找配置
-</span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadInConfig</span>() <span style=color:#080;font-style:italic>// 查找并读取配置文件
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> { <span style=color:#080;font-style:italic>// 处理读取配置文件的错误
-</span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;Fatal error config file: %s \n&#34;</span>, err))
-}
-</code></pre></div><p>在加载配置文件出错时，你可以像下面这样处理找不到配置文件的特定情况：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadInConfig</span>(); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-    <span style=color:#a2f;font-weight:700>if</span> _, ok <span style=color:#666>:=</span> err.(viper.ConfigFileNotFoundError); ok {
-        <span style=color:#080;font-style:italic>// 配置文件未找到错误；如果需要可以忽略
-</span><span style=color:#080;font-style:italic></span>    } <span style=color:#a2f;font-weight:700>else</span> {
-        <span style=color:#080;font-style:italic>// 配置文件被找到，但产生了另外的错误
-</span><span style=color:#080;font-style:italic></span>    }
-}
-<span style=color:#080;font-style:italic>// 配置文件找到并成功解析
-</span></code></pre></div><p><em>注意[自1.6起]：</em> 你也可以有不带扩展名的文件，并以编程方式指定其格式。对于位于用户$HOME目录中的配置文件没有任何扩展名，如.bashrc。</p>
-<p><strong>这里补充两个问题供读者解答并自行验证</strong></p>
-<p>当你使用如下方式读取配置时，viper会从./conf目录下查找任何以config为文件名的配置文件，如果同时存在./conf/config.json和./conf/config.yaml两个配置文件的话，viper会从哪个配置文件加载配置呢？</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>SetConfigName</span>(<span style=color:#b44>&#34;config&#34;</span>)
-viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;./conf&#34;</span>)
-</code></pre></div><p>在上面两个语句下搭配使用viper.SetConfigType(&ldquo;yaml&rdquo;)指定配置文件类型可以实现预期的效果吗？</p>
-<h4 id=写入配置文件>写入配置文件</h4>
-<p>从配置文件中读取配置文件是有用的，但是有时你想要存储在运行时所做的所有修改。为此，可以使用下面一组命令，每个命令都有自己的用途:</p>
-<ul>
-<li>WriteConfig - 将当前的viper配置写入预定义的路径并覆盖（如果存在的话）。如果没有预定义的路径，则报错。</li>
-<li>SafeWriteConfig - 将当前的viper配置写入预定义的路径。如果没有预定义的路径，则报错。如果存在，将不会覆盖当前的配置文件。</li>
-<li>WriteConfigAs - 将当前的viper配置写入给定的文件路径。将覆盖给定的文件(如果它存在的话)。</li>
-<li>SafeWriteConfigAs - 将当前的viper配置写入给定的文件路径。不会覆盖给定的文件(如果它存在的话)。</li>
-</ul>
-<p>根据经验，标记为safe的所有方法都不会覆盖任何文件，而是直接创建（如果不存在），而默认行为是创建或截断。</p>
-<p>一个小示例：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>WriteConfig</span>() <span style=color:#080;font-style:italic>// 将当前配置写入“viper.AddConfigPath()”和“viper.SetConfigName”设置的预定义路径
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>SafeWriteConfig</span>()
-viper.<span style=color:#00a000>WriteConfigAs</span>(<span style=color:#b44>&#34;/path/to/my/.config&#34;</span>)
-viper.<span style=color:#00a000>SafeWriteConfigAs</span>(<span style=color:#b44>&#34;/path/to/my/.config&#34;</span>) <span style=color:#080;font-style:italic>// 因为该配置文件写入过，所以会报错
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>SafeWriteConfigAs</span>(<span style=color:#b44>&#34;/path/to/my/.other_config&#34;</span>)
-</code></pre></div><h4 id=监控并重新读取配置文件>监控并重新读取配置文件</h4>
-<p>Viper支持在运行时实时读取配置文件的功能。</p>
-<p>需要重新启动服务器以使配置生效的日子已经一去不复返了，viper驱动的应用程序可以在运行时读取配置文件的更新，而不会错过任何消息。</p>
-<p>只需告诉viper实例watchConfig。可选地，你可以为Viper提供一个回调函数，以便在每次发生更改时运行。</p>
-<h4 id=确保在调用watchconfig之前添加了所有的配置路径><strong>确保在调用WatchConfig()之前添加了所有的配置路径。</strong></h4>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>WatchConfig</span>()
-viper.<span style=color:#00a000>OnConfigChange</span>(<span style=color:#a2f;font-weight:700>func</span>(e fsnotify.Event) {
-  <span style=color:#080;font-style:italic>// 配置文件发生变更之后会调用的回调函数
-</span><span style=color:#080;font-style:italic></span>	fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;Config file changed:&#34;</span>, e.Name)
-})
-</code></pre></div><h4 id=从ioreader读取配置>从io.Reader读取配置</h4>
-<p>Viper预先定义了许多配置源，如文件、环境变量、标志和远程K/V存储，但你不受其约束。你还可以实现自己所需的配置源并将其提供给viper。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;yaml&#34;</span>) <span style=color:#080;font-style:italic>// 或者 viper.SetConfigType(&#34;YAML&#34;)
-</span><span style=color:#080;font-style:italic>// 任何需要将此配置添加到程序中的方法。
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> yamlExample = []<span style=color:#a2f>byte</span>(<span style=color:#b44>`
-</span><span style=color:#b44>Hacker: true
-</span><span style=color:#b44>name: steve
-</span><span style=color:#b44>hobbies:
-</span><span style=color:#b44>- skateboarding
-</span><span style=color:#b44>- snowboarding
-</span><span style=color:#b44>- go
-</span><span style=color:#b44>clothing:
-</span><span style=color:#b44>  jacket: leather
-</span><span style=color:#b44>  trousers: denim
-</span><span style=color:#b44>age: 35
-</span><span style=color:#b44>eyes : brown
-</span><span style=color:#b44>beard: true
-</span><span style=color:#b44>`</span>)
-viper.<span style=color:#00a000>ReadConfig</span>(bytes.<span style=color:#00a000>NewBuffer</span>(yamlExample))
-viper.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;name&#34;</span>) <span style=color:#080;font-style:italic>// 这里会得到 &#34;steve&#34;
-</span></code></pre></div><h4 id=覆盖设置>覆盖设置</h4>
-<p>这些可能来自命令行标志，也可能来自你自己的应用程序逻辑。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>Set</span>(<span style=color:#b44>&#34;Verbose&#34;</span>, <span style=color:#a2f;font-weight:700>true</span>)
-viper.<span style=color:#00a000>Set</span>(<span style=color:#b44>&#34;LogFile&#34;</span>, LogFile)
-</code></pre></div><h4 id=注册和使用别名>注册和使用别名</h4>
-<p>别名允许多个键引用单个值</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>RegisterAlias</span>(<span style=color:#b44>&#34;loud&#34;</span>, <span style=color:#b44>&#34;Verbose&#34;</span>)  <span style=color:#080;font-style:italic>// 注册别名（此处loud和Verbose建立了别名）
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>Set</span>(<span style=color:#b44>&#34;verbose&#34;</span>, <span style=color:#a2f;font-weight:700>true</span>) <span style=color:#080;font-style:italic>// 结果与下一行相同
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>Set</span>(<span style=color:#b44>&#34;loud&#34;</span>, <span style=color:#a2f;font-weight:700>true</span>)   <span style=color:#080;font-style:italic>// 结果与前一行相同
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>GetBool</span>(<span style=color:#b44>&#34;loud&#34;</span>) <span style=color:#080;font-style:italic>// true
-</span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>GetBool</span>(<span style=color:#b44>&#34;verbose&#34;</span>) <span style=color:#080;font-style:italic>// true
-</span></code></pre></div><h4 id=使用环境变量>使用环境变量</h4>
-<p>Viper完全支持环境变量。这使Twelve-Factor App开箱即用。有五种方法可以帮助与ENV协作:</p>
-<ul>
-<li>AutomaticEnv()</li>
-<li>BindEnv(string&mldr;) : error</li>
-<li>SetEnvPrefix(string)</li>
-<li>SetEnvKeyReplacer(string&mldr;) *strings.Replacer</li>
-<li>AllowEmptyEnv(bool)</li>
-</ul>
-<p><em>使用ENV变量时，务必要意识到Viper将ENV变量视为区分大小写。</em></p>
-<p>Viper提供了一种机制来确保ENV变量是惟一的。通过使用SetEnvPrefix，你可以告诉Viper在读取环境变量时使用前缀。BindEnv和AutomaticEnv都将使用这个前缀。</p>
-<p>BindEnv使用一个或两个参数。第一个参数是键名称，第二个是环境变量的名称。环境变量的名称区分大小写。如果没有提供ENV变量名，那么Viper将自动假设ENV变量与以下格式匹配：前缀+ “_” +键名全部大写。当你显式提供ENV变量名（第二个参数）时，它 <strong>不会</strong> 自动添加前缀。例如，如果第二个参数是“id”，Viper将查找环境变量“ID”。</p>
-<p>在使用ENV变量时，需要注意的一件重要事情是，每次访问该值时都将读取它。Viper在调用BindEnv时不固定该值。</p>
-<p>AutomaticEnv是一个强大的助手，尤其是与SetEnvPrefix结合使用时。调用时，Viper会在发出viper.Get请求时随时检查环境变量。它将应用以下规则。它将检查环境变量的名称是否与键匹配（如果设置了EnvPrefix）。</p>
-<p>SetEnvKeyReplacer允许你使用strings.Replacer对象在一定程度上重写 Env 键。如果你希望在Get()调用中使用-或者其他什么符号，但是环境变量里使用_分隔符，那么这个功能是非常有用的。可以在viper_test.go中找到它的使用示例。</p>
-<p>或者，你可以使用带有NewWithOptions工厂函数的EnvKeyReplacer。与SetEnvKeyReplacer不同，它接受StringReplacer接口，允许你编写自定义字符串替换逻辑。</p>
-<p>默认情况下，空环境变量被认为是未设置的，并将返回到下一个配置源。若要将空环境变量视为已设置，请使用AllowEmptyEnv方法。</p>
-<h5 id=env-示例>Env 示例：</h5>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#00a000>SetEnvPrefix</span>(<span style=color:#b44>&#34;spf&#34;</span>) <span style=color:#080;font-style:italic>// 将自动转为大写
-</span><span style=color:#080;font-style:italic></span><span style=color:#00a000>BindEnv</span>(<span style=color:#b44>&#34;id&#34;</span>)
-os.<span style=color:#00a000>Setenv</span>(<span style=color:#b44>&#34;SPF_ID&#34;</span>, <span style=color:#b44>&#34;13&#34;</span>) <span style=color:#080;font-style:italic>// 通常是在应用程序之外完成的
-</span><span style=color:#080;font-style:italic></span>id <span style=color:#666>:=</span> <span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;id&#34;</span>) <span style=color:#080;font-style:italic>// 13
-</span></code></pre></div><h5 id=使用flags>使用Flags</h5>
-<p>Viper 具有绑定到标志的能力。具体来说，Viper支持<a href=https://github.com/spf13/cobra target=_blank rel=noopener>Cobra</a>
-库中使用的Pflag。</p>
-<p>与BindEnv类似，该值不是在调用绑定方法时设置的，而是在访问该方法时设置的。这意味着你可以根据需要尽早进行绑定，即使在init()函数中也是如此。</p>
-<p>对于单个标志，BindPFlag()方法提供此功能。</p>
-<p>例如：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>serverCmd.<span style=color:#00a000>Flags</span>().<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;port&#34;</span>, <span style=color:#666>1138</span>, <span style=color:#b44>&#34;Port to run Application server on&#34;</span>)
-viper.<span style=color:#00a000>BindPFlag</span>(<span style=color:#b44>&#34;port&#34;</span>, serverCmd.<span style=color:#00a000>Flags</span>().<span style=color:#00a000>Lookup</span>(<span style=color:#b44>&#34;port&#34;</span>))
-</code></pre></div><p>你还可以绑定一组现有的pflags （pflag.FlagSet）：</p>
-<p>举个例子：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>pflag.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;flagname&#34;</span>, <span style=color:#666>1234</span>, <span style=color:#b44>&#34;help message for flagname&#34;</span>)
-pflag.<span style=color:#00a000>Parse</span>()
-viper.<span style=color:#00a000>BindPFlags</span>(pflag.CommandLine)
-i <span style=color:#666>:=</span> viper.<span style=color:#00a000>GetInt</span>(<span style=color:#b44>&#34;flagname&#34;</span>) <span style=color:#080;font-style:italic>// 从viper而不是从pflag检索值
-</span></code></pre></div><p>在 Viper 中使用 pflag 并不阻碍其他包中使用标准库中的 flag 包。pflag 包可以通过导入这些 flags 来处理flag包定义的flags。这是通过调用pflag包提供的便利函数AddGoFlagSet()来实现的。</p>
-<p>例如：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> (
-	<span style=color:#b44>&#34;flag&#34;</span>
-	<span style=color:#b44>&#34;github.com/spf13/pflag&#34;</span>
-)
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-	<span style=color:#080;font-style:italic>// 使用标准库 &#34;flag&#34; 包
-</span><span style=color:#080;font-style:italic></span>	flag.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;flagname&#34;</span>, <span style=color:#666>1234</span>, <span style=color:#b44>&#34;help message for flagname&#34;</span>)
-	pflag.CommandLine.<span style=color:#00a000>AddGoFlagSet</span>(flag.CommandLine)
-	pflag.<span style=color:#00a000>Parse</span>()
-	viper.<span style=color:#00a000>BindPFlags</span>(pflag.CommandLine)
-	i <span style=color:#666>:=</span> viper.<span style=color:#00a000>GetInt</span>(<span style=color:#b44>&#34;flagname&#34;</span>) <span style=color:#080;font-style:italic>// 从 viper 检索值
-</span><span style=color:#080;font-style:italic></span>	<span style=color:#666>...</span>
-}
-</code></pre></div><h5 id=flag接口>flag接口</h5>
-<p>如果你不使用Pflag，Viper 提供了两个Go接口来绑定其他 flag 系统。</p>
-<p>FlagValue表示单个flag。这是一个关于如何实现这个接口的非常简单的例子：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>type</span> myFlag <span style=color:#a2f;font-weight:700>struct</span> {}
-<span style=color:#a2f;font-weight:700>func</span> (f myFlag) <span style=color:#00a000>HasChanged</span>() <span style=color:#0b0;font-weight:700>bool</span> { <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span> }
-<span style=color:#a2f;font-weight:700>func</span> (f myFlag) <span style=color:#00a000>Name</span>() <span style=color:#0b0;font-weight:700>string</span> { <span style=color:#a2f;font-weight:700>return</span> <span style=color:#b44>&#34;my-flag-name&#34;</span> }
-<span style=color:#a2f;font-weight:700>func</span> (f myFlag) <span style=color:#00a000>ValueString</span>() <span style=color:#0b0;font-weight:700>string</span> { <span style=color:#a2f;font-weight:700>return</span> <span style=color:#b44>&#34;my-flag-value&#34;</span> }
-<span style=color:#a2f;font-weight:700>func</span> (f myFlag) <span style=color:#00a000>ValueType</span>() <span style=color:#0b0;font-weight:700>string</span> { <span style=color:#a2f;font-weight:700>return</span> <span style=color:#b44>&#34;string&#34;</span> }
-</code></pre></div><p>一旦你的 flag 实现了这个接口，你可以很方便地告诉Viper绑定它：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>viper.BindFlagValue(&#34;my-flag-name&#34;, myFlag{})
-</code></pre></div><p>FlagValueSet代表一组 flags 。这是一个关于如何实现这个接口的非常简单的例子:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>type</span> myFlagSet <span style=color:#a2f;font-weight:700>struct</span> {
-	flags []myFlag
-}
-<span style=color:#a2f;font-weight:700>func</span> (f myFlagSet) <span style=color:#00a000>VisitAll</span>(fn <span style=color:#a2f;font-weight:700>func</span>(FlagValue)) {
-	<span style=color:#a2f;font-weight:700>for</span> _, flag <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> flags {
-		<span style=color:#00a000>fn</span>(flag)
-	}
-}
-</code></pre></div><p>一旦你的flag set实现了这个接口，你就可以很方便地告诉Viper绑定它：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>fSet <span style=color:#666>:=</span> myFlagSet{
-	flags: []myFlag{myFlag{}, myFlag{}},
-}
-viper.<span style=color:#00a000>BindFlagValues</span>(<span style=color:#b44>&#34;my-flags&#34;</span>, fSet)
-</code></pre></div><h4 id=远程keyvalue存储支持>远程Key/Value存储支持</h4>
-<p>在Viper中启用远程支持，需要在代码中匿名导入viper/remote这个包。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>import</span> _ <span style=color:#b44>&#34;github.com/spf13/viper/remote&#34;</span>
-</code></pre></div><p>Viper将读取从Key/Value存储（例如etcd或Consul）中的路径检索到的配置字符串（如JSON、TOML、YAML、HCL、envfile和Java properties格式）。这些值的优先级高于默认值，但是会被从磁盘、flag或环境变量检索到的配置值覆盖。（译注：也就是说Viper加载配置值的优先级为：磁盘上的配置文件>命令行标志位>环境变量>远程Key/Value存储>默认值。）</p>
-<p>Viper使用<a href=https://github.com/bketelsen/crypt target=_blank rel=noopener>crypt</a>
-从K/V存储中检索配置，这意味着如果你有正确的gpg密匙，你可以将配置值加密存储并自动解密。加密是可选的。</p>
-<p>你可以将远程配置与本地配置结合使用，也可以独立使用。</p>
-<p>crypt有一个命令行助手，你可以使用它将配置放入K/V存储中。crypt默认使用在<a href=http://127.0.0.1:4001/ target=_blank rel=noopener>http://127.0.0.1:4001</a>
-的etcd。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ go get github.com/bketelsen/crypt/bin/crypt
-$ crypt <span style=color:#a2f>set</span> -plaintext /config/hugo.json /Users/hugo/settings/config.json
-</code></pre></div><p>确认值已经设置：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ crypt get -plaintext /config/hugo.json
-</code></pre></div><p>有关如何设置加密值或如何使用Consul的示例，请参见crypt文档。</p>
-<h4 id=远程keyvalue存储示例-未加密>远程Key/Value存储示例-未加密</h4>
-<h5 id=etcd>etcd</h5>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>AddRemoteProvider</span>(<span style=color:#b44>&#34;etcd&#34;</span>, <span style=color:#b44>&#34;http://127.0.0.1:4001&#34;</span>,<span style=color:#b44>&#34;/config/hugo.json&#34;</span>)
-viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;json&#34;</span>) <span style=color:#080;font-style:italic>// 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &#34;json&#34;, &#34;toml&#34;, &#34;yaml&#34;, &#34;yml&#34;, &#34;properties&#34;, &#34;props&#34;, &#34;prop&#34;, &#34;env&#34;, &#34;dotenv&#34;
-</span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadRemoteConfig</span>()
-</code></pre></div><h5 id=consul>Consul</h5>
-<p>你需要 Consul Key/Value存储中设置一个Key保存包含所需配置的JSON值。例如，创建一个keyMY_CONSUL_KEY将下面的值存入Consul key/value 存储：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{
-    <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>8080</span>,
-    <span style=color:#b44>&#34;hostname&#34;</span>: <span style=color:#b44>&#34;liwenzhou.com&#34;</span>
-}
-viper.<span style=color:#00a000>AddRemoteProvider</span>(<span style=color:#b44>&#34;consul&#34;</span>, <span style=color:#b44>&#34;localhost:8500&#34;</span>, <span style=color:#b44>&#34;MY_CONSUL_KEY&#34;</span>)
-viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;json&#34;</span>) <span style=color:#080;font-style:italic>// 需要显示设置成json
-</span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadRemoteConfig</span>()
-fmt.<span style=color:#00a000>Println</span>(viper.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;port&#34;</span>)) <span style=color:#080;font-style:italic>// 8080
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(viper.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;hostname&#34;</span>)) <span style=color:#080;font-style:italic>// liwenzhou.com
-</span></code></pre></div><h5 id=firestore>Firestore</h5>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>AddRemoteProvider</span>(<span style=color:#b44>&#34;firestore&#34;</span>, <span style=color:#b44>&#34;google-cloud-project-id&#34;</span>, <span style=color:#b44>&#34;collection/document&#34;</span>)
-viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;json&#34;</span>) <span style=color:#080;font-style:italic>// 配置的格式: &#34;json&#34;, &#34;toml&#34;, &#34;yaml&#34;, &#34;yml&#34;
-</span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadRemoteConfig</span>()
-</code></pre></div><p>当然，你也可以使用SecureRemoteProvider。</p>
-<h4 id=远程keyvalue存储示例-加密>远程Key/Value存储示例-加密</h4>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>AddSecureRemoteProvider</span>(<span style=color:#b44>&#34;etcd&#34;</span>,<span style=color:#b44>&#34;http://127.0.0.1:4001&#34;</span>,<span style=color:#b44>&#34;/config/hugo.json&#34;</span>,<span style=color:#b44>&#34;/etc/secrets/mykeyring.gpg&#34;</span>)
-viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;json&#34;</span>) <span style=color:#080;font-style:italic>// 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &#34;json&#34;, &#34;toml&#34;, &#34;yaml&#34;, &#34;yml&#34;, &#34;properties&#34;, &#34;props&#34;, &#34;prop&#34;, &#34;env&#34;, &#34;dotenv&#34;
-</span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadRemoteConfig</span>()
-</code></pre></div><h4 id=监控etcd中的更改-未加密>监控etcd中的更改-未加密</h4>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>// 或者你可以创建一个新的viper实例
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> runtime_viper = viper.<span style=color:#00a000>New</span>()
-runtime_viper.<span style=color:#00a000>AddRemoteProvider</span>(<span style=color:#b44>&#34;etcd&#34;</span>, <span style=color:#b44>&#34;http://127.0.0.1:4001&#34;</span>, <span style=color:#b44>&#34;/config/hugo.yml&#34;</span>)
-runtime_viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;yaml&#34;</span>) <span style=color:#080;font-style:italic>// 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &#34;json&#34;, &#34;toml&#34;, &#34;yaml&#34;, &#34;yml&#34;, &#34;properties&#34;, &#34;props&#34;, &#34;prop&#34;, &#34;env&#34;, &#34;dotenv&#34;
-</span><span style=color:#080;font-style:italic>// 第一次从远程读取配置
-</span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> runtime_viper.<span style=color:#00a000>ReadRemoteConfig</span>()
-<span style=color:#080;font-style:italic>// 反序列化
-</span><span style=color:#080;font-style:italic></span>runtime_viper.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>runtime_conf)
-<span style=color:#080;font-style:italic>// 开启一个单独的goroutine一直监控远端的变更
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>go</span> <span style=color:#a2f;font-weight:700>func</span>(){
-	<span style=color:#a2f;font-weight:700>for</span> {
-	    time.<span style=color:#00a000>Sleep</span>(time.Second <span style=color:#666>*</span> <span style=color:#666>5</span>) <span style=color:#080;font-style:italic>// 每次请求后延迟一下
-</span><span style=color:#080;font-style:italic></span>	    <span style=color:#080;font-style:italic>// 目前只测试了etcd支持
-</span><span style=color:#080;font-style:italic></span>	    err <span style=color:#666>:=</span> runtime_viper.<span style=color:#00a000>WatchRemoteConfig</span>()
-	    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-	        log.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;unable to read remote config: %v&#34;</span>, err)
-	        <span style=color:#a2f;font-weight:700>continue</span>
-	    }
-	    <span style=color:#080;font-style:italic>// 将新配置反序列化到我们运行时的配置结构体中。你还可以借助channel实现一个通知系统更改的信号
-</span><span style=color:#080;font-style:italic></span>	    runtime_viper.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>runtime_conf)
-	}
-}()
-</code></pre></div><h3 id=从viper获取值>从Viper获取值</h3>
-<p>在Viper中，有几种方法可以根据值的类型获取值。存在以下功能和方法:</p>
-<ul>
-<li>Get(key string) : interface{}</li>
-<li>GetBool(key string) : bool</li>
-<li>GetFloat64(key string) : float64</li>
-<li>GetInt(key string) : int</li>
-<li>GetIntSlice(key string) : []int</li>
-<li>GetString(key string) : string</li>
-<li>GetStringMap(key string) : map[string]interface{}</li>
-<li>GetStringMapString(key string) : map[string]string</li>
-<li>GetStringSlice(key string) : []string</li>
-<li>GetTime(key string) : time.Time</li>
-<li>GetDuration(key string) : time.Duration</li>
-<li>IsSet(key string) : bool</li>
-<li>AllSettings() : map[string]interface{}</li>
-</ul>
-<p>需要认识到的一件重要事情是，每一个Get方法在找不到值的时候都会返回零值。为了检查给定的键是否存在，提供了IsSet()方法。</p>
-<p>例如：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>viper.<span style=color:#00a000>GetString</span>(<span style=color:#b44>&#34;logfile&#34;</span>) <span style=color:#080;font-style:italic>// 不区分大小写的设置和获取
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>if</span> viper.<span style=color:#00a000>GetBool</span>(<span style=color:#b44>&#34;verbose&#34;</span>) {
-    fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;verbose enabled&#34;</span>)
-}
-</code></pre></div><h4 id=访问嵌套的键>访问嵌套的键</h4>
-<p>访问器方法也接受深度嵌套键的格式化路径。例如，如果加载下面的JSON文件：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{
-    <span style=color:#b44>&#34;host&#34;</span>: {
-        <span style=color:#b44>&#34;address&#34;</span>: <span style=color:#b44>&#34;localhost&#34;</span>,
-        <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>5799</span>
-    },
-    <span style=color:#b44>&#34;datastore&#34;</span>: {
-        <span style=color:#b44>&#34;metric&#34;</span>: {
-            <span style=color:#b44>&#34;host&#34;</span>: <span style=color:#b44>&#34;127.0.0.1&#34;</span>,
-            <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>3099</span>
-        },
-        <span style=color:#b44>&#34;warehouse&#34;</span>: {
-            <span style=color:#b44>&#34;host&#34;</span>: <span style=color:#b44>&#34;198.0.0.1&#34;</span>,
-            <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>2112</span>
-        }
-    }
-}
-</code></pre></div><p>Viper可以通过传入.分隔的路径来访问嵌套字段：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#00a000>GetString</span>(<span style=color:#b44>&#34;datastore.metric.host&#34;</span>) <span style=color:#080;font-style:italic>// (返回 &#34;127.0.0.1&#34;)
-</span></code></pre></div><p>这遵守上面建立的优先规则；搜索路径将遍历其余配置注册表，直到找到为止。(译注：因为Viper支持从多种配置来源，例如磁盘上的配置文件>命令行标志位>环境变量>远程Key/Value存储>默认值，我们在查找一个配置的时候如果在当前配置源中没找到，就会继续从后续的配置源查找，直到找到为止。)</p>
-<p>例如，在给定此配置文件的情况下，datastore.metric.host和datastore.metric.port均已定义（并且可以被覆盖）。如果另外在默认值中定义了datastore.metric.protocol，Viper也会找到它。</p>
-<p>然而，如果datastore.metric被直接赋值覆盖（被flag，环境变量，set()方法等等…），那么datastore.metric的所有子键都将变为未定义状态，它们被高优先级配置级别“遮蔽”（shadowed）了。</p>
-<p>最后，如果存在与分隔的键路径匹配的键，则返回其值。例如：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{
-    <span style=color:#b44>&#34;datastore.metric.host&#34;</span>: <span style=color:#b44>&#34;0.0.0.0&#34;</span>,
-    <span style=color:#b44>&#34;host&#34;</span>: {
-        <span style=color:#b44>&#34;address&#34;</span>: <span style=color:#b44>&#34;localhost&#34;</span>,
-        <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>5799</span>
-    },
-    <span style=color:#b44>&#34;datastore&#34;</span>: {
-        <span style=color:#b44>&#34;metric&#34;</span>: {
-            <span style=color:#b44>&#34;host&#34;</span>: <span style=color:#b44>&#34;127.0.0.1&#34;</span>,
-            <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>3099</span>
-        },
-        <span style=color:#b44>&#34;warehouse&#34;</span>: {
-            <span style=color:#b44>&#34;host&#34;</span>: <span style=color:#b44>&#34;198.0.0.1&#34;</span>,
-            <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>2112</span>
-        }
-    }
-}
-<span style=color:#00a000>GetString</span>(<span style=color:#b44>&#34;datastore.metric.host&#34;</span>) <span style=color:#080;font-style:italic>// 返回 &#34;0.0.0.0&#34;
-</span></code></pre></div><h4 id=提取子树>提取子树</h4>
-<p>从Viper中提取子树。</p>
-<p>例如，viper实例现在代表了以下配置：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>cache1</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>max-items</span>:<span style=color:#bbb> </span><span style=color:#666>100</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>item-size</span>:<span style=color:#bbb> </span><span style=color:#666>64</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>cache2</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>max-items</span>:<span style=color:#bbb> </span><span style=color:#666>200</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>item-size</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
-</span></code></pre></div><p>执行后：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>subv <span style=color:#666>:=</span> viper.<span style=color:#00a000>Sub</span>(<span style=color:#b44>&#34;app.cache1&#34;</span>)
-</code></pre></div><p>subv现在就代表：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>max<span style=color:#666>-</span>items: <span style=color:#666>100</span>
-item<span style=color:#666>-</span>size: <span style=color:#666>64</span>
-</code></pre></div><p>假设我们现在有这么一个函数：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>NewCache</span>(cfg <span style=color:#666>*</span>Viper) <span style=color:#666>*</span>Cache {<span style=color:#666>...</span>}
-</code></pre></div><p>它基于subv格式的配置信息创建缓存。现在，可以轻松地分别创建这两个缓存，如下所示：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>cfg1 <span style=color:#666>:=</span> viper.<span style=color:#00a000>Sub</span>(<span style=color:#b44>&#34;app.cache1&#34;</span>)
-cache1 <span style=color:#666>:=</span> <span style=color:#00a000>NewCache</span>(cfg1)
-cfg2 <span style=color:#666>:=</span> viper.<span style=color:#00a000>Sub</span>(<span style=color:#b44>&#34;app.cache2&#34;</span>)
-cache2 <span style=color:#666>:=</span> <span style=color:#00a000>NewCache</span>(cfg2)
-</code></pre></div><h4 id=反序列化>反序列化</h4>
-<p>你还可以选择将所有或特定的值解析到结构体、map等。</p>
-<p>有两种方法可以做到这一点：</p>
-<ul>
-<li>Unmarshal(rawVal interface{}) : error</li>
-<li>UnmarshalKey(key string, rawVal interface{}) : error</li>
-</ul>
-<p>举个例子：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>type</span> config <span style=color:#a2f;font-weight:700>struct</span> {
-	Port <span style=color:#0b0;font-weight:700>int</span>
-	Name <span style=color:#0b0;font-weight:700>string</span>
-	PathMap <span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`mapstructure:&#34;path_map&#34;`</span>
-}
-<span style=color:#a2f;font-weight:700>var</span> C config
-err <span style=color:#666>:=</span> viper.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>C)
-<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-	t.<span style=color:#00a000>Fatalf</span>(<span style=color:#b44>&#34;unable to decode into struct, %v&#34;</span>, err)
-}
-</code></pre></div><p>如果你想要解析那些键本身就包含.(默认的键分隔符）的配置，你需要修改分隔符：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>v <span style=color:#666>:=</span> viper.<span style=color:#00a000>NewWithOptions</span>(viper.<span style=color:#00a000>KeyDelimiter</span>(<span style=color:#b44>&#34;::&#34;</span>))
-v.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;chart::values&#34;</span>, <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}{
-    <span style=color:#b44>&#34;ingress&#34;</span>: <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}{
-        <span style=color:#b44>&#34;annotations&#34;</span>: <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}{
-            <span style=color:#b44>&#34;traefik.frontend.rule.type&#34;</span>:                 <span style=color:#b44>&#34;PathPrefix&#34;</span>,
-            <span style=color:#b44>&#34;traefik.ingress.kubernetes.io/ssl-redirect&#34;</span>: <span style=color:#b44>&#34;true&#34;</span>,
-        },
-    },
-})
-<span style=color:#a2f;font-weight:700>type</span> config <span style=color:#a2f;font-weight:700>struct</span> {
-	Chart <span style=color:#a2f;font-weight:700>struct</span>{
-        Values <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}
-    }
-}
-<span style=color:#a2f;font-weight:700>var</span> C config
-v.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>C)
-</code></pre></div><p>Viper还支持解析到嵌入的结构体：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>/*
-</span><span style=color:#080;font-style:italic>Example config:
-</span><span style=color:#080;font-style:italic>module:
-</span><span style=color:#080;font-style:italic>    enabled: true
-</span><span style=color:#080;font-style:italic>    token: 89h3f98hbwf987h3f98wenf89ehf
-</span><span style=color:#080;font-style:italic>*/</span>
-<span style=color:#a2f;font-weight:700>type</span> config <span style=color:#a2f;font-weight:700>struct</span> {
-	Module <span style=color:#a2f;font-weight:700>struct</span> {
-		Enabled <span style=color:#0b0;font-weight:700>bool</span>
-		moduleConfig <span style=color:#b44>`mapstructure:&#34;,squash&#34;`</span>
-	}
-}
-<span style=color:#080;font-style:italic>// moduleConfig could be in a module specific package
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>type</span> moduleConfig <span style=color:#a2f;font-weight:700>struct</span> {
-	Token <span style=color:#0b0;font-weight:700>string</span>
-}
-<span style=color:#a2f;font-weight:700>var</span> C config
-err <span style=color:#666>:=</span> viper.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>C)
-<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-	t.<span style=color:#00a000>Fatalf</span>(<span style=color:#b44>&#34;unable to decode into struct, %v&#34;</span>, err)
-}
-</code></pre></div><p>Viper在后台使用<a href=https://github.com/mitchellh/mapstructure target=_blank rel=noopener>github.com/mitchellh/mapstructure</a>
-来解析值，其默认情况下使用mapstructuretag。</p>
-<p><strong>注意</strong> 当我们需要将viper读取的配置反序列到我们定义的结构体变量中时，一定要使用mapstructuretag哦！</p>
-<h4 id=序列化成字符串>序列化成字符串</h4>
-<p>你可能需要将viper中保存的所有设置序列化到一个字符串中，而不是将它们写入到一个文件中。你可以将自己喜欢的格式的序列化器与AllSettings()返回的配置一起使用。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>import</span> (
-    yaml <span style=color:#b44>&#34;gopkg.in/yaml.v2&#34;</span>
-    <span style=color:#080;font-style:italic>// ...
-</span><span style=color:#080;font-style:italic></span>)
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>yamlStringSettings</span>() <span style=color:#0b0;font-weight:700>string</span> {
-    c <span style=color:#666>:=</span> viper.<span style=color:#00a000>AllSettings</span>()
-    bs, err <span style=color:#666>:=</span> yaml.<span style=color:#00a000>Marshal</span>(c)
-    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-        log.<span style=color:#00a000>Fatalf</span>(<span style=color:#b44>&#34;unable to marshal config to YAML: %v&#34;</span>, err)
-    }
-    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f>string</span>(bs)
-}
-</code></pre></div><h3 id=使用单个还是多个viper实例>使用单个还是多个Viper实例?</h3>
-<p>Viper是开箱即用的。你不需要配置或初始化即可开始使用Viper。由于大多数应用程序都希望使用单个中央存储库管理它们的配置信息，所以viper包提供了这个功能。它类似于单例模式。</p>
-<p>在上面的所有示例中，它们都以其单例风格的方法演示了如何使用viper。</p>
-<h4 id=使用多个viper实例>使用多个viper实例</h4>
-<p>你还可以在应用程序中创建许多不同的viper实例。每个都有自己独特的一组配置和值。每个人都可以从不同的配置文件，key value存储区等读取数据。每个都可以从不同的配置文件、键值存储等中读取。viper包支持的所有功能都被镜像为viper实例的方法。</p>
-<p>例如：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>x <span style=color:#666>:=</span> viper.<span style=color:#00a000>New</span>()
-y <span style=color:#666>:=</span> viper.<span style=color:#00a000>New</span>()
-x.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;ContentDir&#34;</span>, <span style=color:#b44>&#34;content&#34;</span>)
-y.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;ContentDir&#34;</span>, <span style=color:#b44>&#34;foobar&#34;</span>)
-<span style=color:#080;font-style:italic>//...
-</span></code></pre></div><p>当使用多个viper实例时，由用户来管理不同的viper实例。</p>
-<h4 id=使用viper示例>使用Viper示例</h4>
-<p>假设我们的项目现在有一个./conf/config.yaml配置文件，内容如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>port: <span style=color:#666>8123</span>
-version: <span style=color:#b44>&#34;v1.2.3&#34;</span>
-</code></pre></div><p>接下来通过示例代码演示两种在项目中使用viper管理项目配置信息的方式。</p>
-<h4 id=直接使用viper管理配置>直接使用viper管理配置</h4>
-<p>这里用一个demo演示如何在gin框架搭建的web项目中使用viper，使用viper加载配置文件中的信息，并在代码中直接使用viper.GetXXX()方法获取对应的配置值。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> (
-	<span style=color:#b44>&#34;fmt&#34;</span>
-	<span style=color:#b44>&#34;net/http&#34;</span>
-	<span style=color:#b44>&#34;github.com/gin-gonic/gin&#34;</span>
-	<span style=color:#b44>&#34;github.com/spf13/viper&#34;</span>
-)
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-	viper.<span style=color:#00a000>SetConfigFile</span>(<span style=color:#b44>&#34;config.yaml&#34;</span>) <span style=color:#080;font-style:italic>// 指定配置文件
-</span><span style=color:#080;font-style:italic></span>	viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;./conf/&#34;</span>)     <span style=color:#080;font-style:italic>// 指定查找配置文件的路径
-</span><span style=color:#080;font-style:italic></span>	err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadInConfig</span>()        <span style=color:#080;font-style:italic>// 读取配置信息
-</span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {                    <span style=color:#080;font-style:italic>// 读取配置信息失败
-</span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;Fatal error config file: %s \n&#34;</span>, err))
-	}
-	<span style=color:#080;font-style:italic>// 监控配置文件变化
-</span><span style=color:#080;font-style:italic></span>	viper.<span style=color:#00a000>WatchConfig</span>()
-	r <span style=color:#666>:=</span> gin.<span style=color:#00a000>Default</span>()
-	<span style=color:#080;font-style:italic>// 访问/version的返回值会随配置文件的变化而变化
-</span><span style=color:#080;font-style:italic></span>	r.<span style=color:#00a000>GET</span>(<span style=color:#b44>&#34;/version&#34;</span>, <span style=color:#a2f;font-weight:700>func</span>(c <span style=color:#666>*</span>gin.Context) {
-		c.<span style=color:#00a000>String</span>(http.StatusOK, viper.<span style=color:#00a000>GetString</span>(<span style=color:#b44>&#34;version&#34;</span>))
-	})
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> r.<span style=color:#00a000>Run</span>(
-		fmt.<span style=color:#00a000>Sprintf</span>(<span style=color:#b44>&#34;:%d&#34;</span>, viper.<span style=color:#00a000>GetInt</span>(<span style=color:#b44>&#34;port&#34;</span>))); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		<span style=color:#a2f>panic</span>(err)
-	}
-}
-</code></pre></div><h4 id=使用结构体变量保存配置信息>使用结构体变量保存配置信息</h4>
-<p>除了上面的用法外，我们还可以在项目中定义与配置文件对应的结构体，viper加载完配置信息后使用结构体变量保存配置信息。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> (
-	<span style=color:#b44>&#34;fmt&#34;</span>
-	<span style=color:#b44>&#34;net/http&#34;</span>
-	<span style=color:#b44>&#34;github.com/fsnotify/fsnotify&#34;</span>
-	<span style=color:#b44>&#34;github.com/gin-gonic/gin&#34;</span>
-	<span style=color:#b44>&#34;github.com/spf13/viper&#34;</span>
-)
-<span style=color:#a2f;font-weight:700>type</span> Config <span style=color:#a2f;font-weight:700>struct</span> {
-	Port    <span style=color:#0b0;font-weight:700>int</span>    <span style=color:#b44>`mapstructure:&#34;port&#34;`</span>
-	Version <span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`mapstructure:&#34;version&#34;`</span>
-}
-<span style=color:#a2f;font-weight:700>var</span> Conf = <span style=color:#a2f>new</span>(Config)
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-	viper.<span style=color:#00a000>SetConfigFile</span>(<span style=color:#b44>&#34;./conf/config.yaml&#34;</span>) <span style=color:#080;font-style:italic>// 指定配置文件路径
-</span><span style=color:#080;font-style:italic></span>	err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadInConfig</span>()               <span style=color:#080;font-style:italic>// 读取配置信息
-</span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {                           <span style=color:#080;font-style:italic>// 读取配置信息失败
-</span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;Fatal error config file: %s \n&#34;</span>, err))
-	}
-	<span style=color:#080;font-style:italic>// 将读取的配置信息保存至全局变量Conf
-</span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> viper.<span style=color:#00a000>Unmarshal</span>(Conf); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;unmarshal conf failed, err:%s \n&#34;</span>, err))
-	}
-	<span style=color:#080;font-style:italic>// 监控配置文件变化
-</span><span style=color:#080;font-style:italic></span>	viper.<span style=color:#00a000>WatchConfig</span>()
-	<span style=color:#080;font-style:italic>// 注意！！！配置文件发生变化后要同步到全局变量Conf
-</span><span style=color:#080;font-style:italic></span>	viper.<span style=color:#00a000>OnConfigChange</span>(<span style=color:#a2f;font-weight:700>func</span>(in fsnotify.Event) {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;夭寿啦~配置文件被人修改啦...&#34;</span>)
-		<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> viper.<span style=color:#00a000>Unmarshal</span>(Conf); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-			<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;unmarshal conf failed, err:%s \n&#34;</span>, err))
-		}
-	})
-	r <span style=color:#666>:=</span> gin.<span style=color:#00a000>Default</span>()
-	<span style=color:#080;font-style:italic>// 访问/version的返回值会随配置文件的变化而变化
-</span><span style=color:#080;font-style:italic></span>	r.<span style=color:#00a000>GET</span>(<span style=color:#b44>&#34;/version&#34;</span>, <span style=color:#a2f;font-weight:700>func</span>(c <span style=color:#666>*</span>gin.Context) {
-		c.<span style=color:#00a000>String</span>(http.StatusOK, Conf.Version)
-	})
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> r.<span style=color:#00a000>Run</span>(fmt.<span style=color:#00a000>Sprintf</span>(<span style=color:#b44>&#34;:%d&#34;</span>, Conf.Port)); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		<span style=color:#a2f>panic</span>(err)
-	}
-}
-</code></pre></div><h2 id=参考文章>参考文章</h2>
-<ul>
-<li><a href=https://www.liwenzhou.com/posts/Go/viper_tutorial target=_blank rel=noopener>https://www.liwenzhou.com/posts/Go/viper_tutorial</a>
-</li>
-<li><a href=https://www.jianshu.com/p/7bb4f7f69280 target=_blank rel=noopener>https://www.jianshu.com/p/7bb4f7f69280</a>
-</li>
-</ul>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=/tags/golang rel=tag title=golang>#golang#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-img>
-<img src=/img/qq_qrcode.png width=129px height=129px>
-<div style=text-align:center>QQ扫一扫交流</div>
-</div>
-<div class=article-copyright-info>
-<p>
-<span>标题：</span>Go viper配置管理
-</p>
-<p>
-<span>链接：</span>https://www.zhaohaiyu.com/post/go/go-viper/
-</p>
-<p>
-<span>作者：</span>haiyux
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-zap/ rel=next title="Go zap高性能日志">
-<i class="fa fa-chevron-left"></i> Go zap高性能日志
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-redis/ rel=prev title=Go操作redis>
-Go操作redis
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=ucomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+6.默认值(default)</p><h2 id=viper的简单使用>viper的简单使用</h2><h3 id=把值存入viper>把值存入Viper</h3><h4 id=建立默认值>建立默认值</h4><p>一个好的配置系统应该支持默认值。键不需要默认值，但如果没有通过配置文件、环境变量、远程配置或命令行标志（flag）设置键，则默认值非常有用。</p><p>例如：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;ContentDir&#34;</span>, <span style=color:#b44>&#34;content&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;LayoutDir&#34;</span>, <span style=color:#b44>&#34;layouts&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;Taxonomies&#34;</span>, <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#0b0;font-weight:700>string</span>{<span style=color:#b44>&#34;tag&#34;</span>: <span style=color:#b44>&#34;tags&#34;</span>, <span style=color:#b44>&#34;category&#34;</span>: <span style=color:#b44>&#34;categories&#34;</span>})
+</span></span></code></pre></div><h4 id=读取配置文件>读取配置文件</h4><p>Viper需要最少知道在哪里查找配置文件的配置。Viper支持JSON、TOML、YAML、HCL、envfile和Java properties格式的配置文件。Viper可以搜索多个路径，但目前单个Viper实例只支持单个配置文件。Viper不默认任何配置搜索路径，将默认决策留给应用程序。</p><p>下面是一个如何使用Viper搜索和读取配置文件的示例。不需要任何特定的路径，但是至少应该提供一个配置文件预期出现的路径。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>SetConfigFile</span>(<span style=color:#b44>&#34;./config.yaml&#34;</span>) <span style=color:#080;font-style:italic>// 指定配置文件路径
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>SetConfigName</span>(<span style=color:#b44>&#34;config&#34;</span>) <span style=color:#080;font-style:italic>// 配置文件名称(无扩展名)
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;yaml&#34;</span>) <span style=color:#080;font-style:italic>// 如果配置文件的名称中没有扩展名，则需要配置此项
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;/etc/appname/&#34;</span>)   <span style=color:#080;font-style:italic>// 查找配置文件所在的路径
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;$HOME/.appname&#34;</span>)  <span style=color:#080;font-style:italic>// 多次调用以添加多个搜索路径
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;.&#34;</span>)               <span style=color:#080;font-style:italic>// 还可以在工作目录中查找配置
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadInConfig</span>() <span style=color:#080;font-style:italic>// 查找并读取配置文件
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> { <span style=color:#080;font-style:italic>// 处理读取配置文件的错误
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;Fatal error config file: %s \n&#34;</span>, err))
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>在加载配置文件出错时，你可以像下面这样处理找不到配置文件的特定情况：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadInConfig</span>(); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> _, ok <span style=color:#666>:=</span> err.(viper.ConfigFileNotFoundError); ok {
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>// 配置文件未找到错误；如果需要可以忽略
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    } <span style=color:#a2f;font-weight:700>else</span> {
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>// 配置文件被找到，但产生了另外的错误
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// 配置文件找到并成功解析
+</span></span></span></code></pre></div><p><em>注意[自1.6起]：</em> 你也可以有不带扩展名的文件，并以编程方式指定其格式。对于位于用户$HOME目录中的配置文件没有任何扩展名，如.bashrc。</p><p><strong>这里补充两个问题供读者解答并自行验证</strong></p><p>当你使用如下方式读取配置时，viper会从./conf目录下查找任何以config为文件名的配置文件，如果同时存在./conf/config.json和./conf/config.yaml两个配置文件的话，viper会从哪个配置文件加载配置呢？</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>SetConfigName</span>(<span style=color:#b44>&#34;config&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;./conf&#34;</span>)
+</span></span></code></pre></div><p>在上面两个语句下搭配使用viper.SetConfigType(&ldquo;yaml&rdquo;)指定配置文件类型可以实现预期的效果吗？</p><h4 id=写入配置文件>写入配置文件</h4><p>从配置文件中读取配置文件是有用的，但是有时你想要存储在运行时所做的所有修改。为此，可以使用下面一组命令，每个命令都有自己的用途:</p><ul><li>WriteConfig - 将当前的viper配置写入预定义的路径并覆盖（如果存在的话）。如果没有预定义的路径，则报错。</li><li>SafeWriteConfig - 将当前的viper配置写入预定义的路径。如果没有预定义的路径，则报错。如果存在，将不会覆盖当前的配置文件。</li><li>WriteConfigAs - 将当前的viper配置写入给定的文件路径。将覆盖给定的文件(如果它存在的话)。</li><li>SafeWriteConfigAs - 将当前的viper配置写入给定的文件路径。不会覆盖给定的文件(如果它存在的话)。</li></ul><p>根据经验，标记为safe的所有方法都不会覆盖任何文件，而是直接创建（如果不存在），而默认行为是创建或截断。</p><p>一个小示例：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>WriteConfig</span>() <span style=color:#080;font-style:italic>// 将当前配置写入“viper.AddConfigPath()”和“viper.SetConfigName”设置的预定义路径
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>SafeWriteConfig</span>()
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>WriteConfigAs</span>(<span style=color:#b44>&#34;/path/to/my/.config&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>SafeWriteConfigAs</span>(<span style=color:#b44>&#34;/path/to/my/.config&#34;</span>) <span style=color:#080;font-style:italic>// 因为该配置文件写入过，所以会报错
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>SafeWriteConfigAs</span>(<span style=color:#b44>&#34;/path/to/my/.other_config&#34;</span>)
+</span></span></code></pre></div><h4 id=监控并重新读取配置文件>监控并重新读取配置文件</h4><p>Viper支持在运行时实时读取配置文件的功能。</p><p>需要重新启动服务器以使配置生效的日子已经一去不复返了，viper驱动的应用程序可以在运行时读取配置文件的更新，而不会错过任何消息。</p><p>只需告诉viper实例watchConfig。可选地，你可以为Viper提供一个回调函数，以便在每次发生更改时运行。</p><h4 id=确保在调用watchconfig之前添加了所有的配置路径><strong>确保在调用WatchConfig()之前添加了所有的配置路径。</strong></h4><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>WatchConfig</span>()
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>OnConfigChange</span>(<span style=color:#a2f;font-weight:700>func</span>(e fsnotify.Event) {
+</span></span><span style=display:flex><span>  <span style=color:#080;font-style:italic>// 配置文件发生变更之后会调用的回调函数
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;Config file changed:&#34;</span>, e.Name)
+</span></span><span style=display:flex><span>})
+</span></span></code></pre></div><h4 id=从ioreader读取配置>从io.Reader读取配置</h4><p>Viper预先定义了许多配置源，如文件、环境变量、标志和远程K/V存储，但你不受其约束。你还可以实现自己所需的配置源并将其提供给viper。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;yaml&#34;</span>) <span style=color:#080;font-style:italic>// 或者 viper.SetConfigType(&#34;YAML&#34;)
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// 任何需要将此配置添加到程序中的方法。
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> yamlExample = []<span style=color:#a2f>byte</span>(<span style=color:#b44>`
+</span></span></span><span style=display:flex><span><span style=color:#b44>Hacker: true
+</span></span></span><span style=display:flex><span><span style=color:#b44>name: steve
+</span></span></span><span style=display:flex><span><span style=color:#b44>hobbies:
+</span></span></span><span style=display:flex><span><span style=color:#b44>- skateboarding
+</span></span></span><span style=display:flex><span><span style=color:#b44>- snowboarding
+</span></span></span><span style=display:flex><span><span style=color:#b44>- go
+</span></span></span><span style=display:flex><span><span style=color:#b44>clothing:
+</span></span></span><span style=display:flex><span><span style=color:#b44>  jacket: leather
+</span></span></span><span style=display:flex><span><span style=color:#b44>  trousers: denim
+</span></span></span><span style=display:flex><span><span style=color:#b44>age: 35
+</span></span></span><span style=display:flex><span><span style=color:#b44>eyes : brown
+</span></span></span><span style=display:flex><span><span style=color:#b44>beard: true
+</span></span></span><span style=display:flex><span><span style=color:#b44>`</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>ReadConfig</span>(bytes.<span style=color:#00a000>NewBuffer</span>(yamlExample))
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;name&#34;</span>) <span style=color:#080;font-style:italic>// 这里会得到 &#34;steve&#34;
+</span></span></span></code></pre></div><h4 id=覆盖设置>覆盖设置</h4><p>这些可能来自命令行标志，也可能来自你自己的应用程序逻辑。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>Set</span>(<span style=color:#b44>&#34;Verbose&#34;</span>, <span style=color:#a2f;font-weight:700>true</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>Set</span>(<span style=color:#b44>&#34;LogFile&#34;</span>, LogFile)
+</span></span></code></pre></div><h4 id=注册和使用别名>注册和使用别名</h4><p>别名允许多个键引用单个值</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>RegisterAlias</span>(<span style=color:#b44>&#34;loud&#34;</span>, <span style=color:#b44>&#34;Verbose&#34;</span>)  <span style=color:#080;font-style:italic>// 注册别名（此处loud和Verbose建立了别名）
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>Set</span>(<span style=color:#b44>&#34;verbose&#34;</span>, <span style=color:#a2f;font-weight:700>true</span>) <span style=color:#080;font-style:italic>// 结果与下一行相同
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>Set</span>(<span style=color:#b44>&#34;loud&#34;</span>, <span style=color:#a2f;font-weight:700>true</span>)   <span style=color:#080;font-style:italic>// 结果与前一行相同
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>GetBool</span>(<span style=color:#b44>&#34;loud&#34;</span>) <span style=color:#080;font-style:italic>// true
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>viper.<span style=color:#00a000>GetBool</span>(<span style=color:#b44>&#34;verbose&#34;</span>) <span style=color:#080;font-style:italic>// true
+</span></span></span></code></pre></div><h4 id=使用环境变量>使用环境变量</h4><p>Viper完全支持环境变量。这使Twelve-Factor App开箱即用。有五种方法可以帮助与ENV协作:</p><ul><li>AutomaticEnv()</li><li>BindEnv(string&mldr;) : error</li><li>SetEnvPrefix(string)</li><li>SetEnvKeyReplacer(string&mldr;) *strings.Replacer</li><li>AllowEmptyEnv(bool)</li></ul><p><em>使用ENV变量时，务必要意识到Viper将ENV变量视为区分大小写。</em></p><p>Viper提供了一种机制来确保ENV变量是惟一的。通过使用SetEnvPrefix，你可以告诉Viper在读取环境变量时使用前缀。BindEnv和AutomaticEnv都将使用这个前缀。</p><p>BindEnv使用一个或两个参数。第一个参数是键名称，第二个是环境变量的名称。环境变量的名称区分大小写。如果没有提供ENV变量名，那么Viper将自动假设ENV变量与以下格式匹配：前缀+ “_” +键名全部大写。当你显式提供ENV变量名（第二个参数）时，它 <strong>不会</strong> 自动添加前缀。例如，如果第二个参数是“id”，Viper将查找环境变量“ID”。</p><p>在使用ENV变量时，需要注意的一件重要事情是，每次访问该值时都将读取它。Viper在调用BindEnv时不固定该值。</p><p>AutomaticEnv是一个强大的助手，尤其是与SetEnvPrefix结合使用时。调用时，Viper会在发出viper.Get请求时随时检查环境变量。它将应用以下规则。它将检查环境变量的名称是否与键匹配（如果设置了EnvPrefix）。</p><p>SetEnvKeyReplacer允许你使用strings.Replacer对象在一定程度上重写 Env 键。如果你希望在Get()调用中使用-或者其他什么符号，但是环境变量里使用_分隔符，那么这个功能是非常有用的。可以在viper_test.go中找到它的使用示例。</p><p>或者，你可以使用带有NewWithOptions工厂函数的EnvKeyReplacer。与SetEnvKeyReplacer不同，它接受StringReplacer接口，允许你编写自定义字符串替换逻辑。</p><p>默认情况下，空环境变量被认为是未设置的，并将返回到下一个配置源。若要将空环境变量视为已设置，请使用AllowEmptyEnv方法。</p><h5 id=env-示例>Env 示例：</h5><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#00a000>SetEnvPrefix</span>(<span style=color:#b44>&#34;spf&#34;</span>) <span style=color:#080;font-style:italic>// 将自动转为大写
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#00a000>BindEnv</span>(<span style=color:#b44>&#34;id&#34;</span>)
+</span></span><span style=display:flex><span>os.<span style=color:#00a000>Setenv</span>(<span style=color:#b44>&#34;SPF_ID&#34;</span>, <span style=color:#b44>&#34;13&#34;</span>) <span style=color:#080;font-style:italic>// 通常是在应用程序之外完成的
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>id <span style=color:#666>:=</span> <span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;id&#34;</span>) <span style=color:#080;font-style:italic>// 13
+</span></span></span></code></pre></div><h5 id=使用flags>使用Flags</h5><p>Viper 具有绑定到标志的能力。具体来说，Viper支持<a href=https://github.com/spf13/cobra target=_blank rel=noopener>Cobra</a>
+库中使用的Pflag。</p><p>与BindEnv类似，该值不是在调用绑定方法时设置的，而是在访问该方法时设置的。这意味着你可以根据需要尽早进行绑定，即使在init()函数中也是如此。</p><p>对于单个标志，BindPFlag()方法提供此功能。</p><p>例如：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>serverCmd.<span style=color:#00a000>Flags</span>().<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;port&#34;</span>, <span style=color:#666>1138</span>, <span style=color:#b44>&#34;Port to run Application server on&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>BindPFlag</span>(<span style=color:#b44>&#34;port&#34;</span>, serverCmd.<span style=color:#00a000>Flags</span>().<span style=color:#00a000>Lookup</span>(<span style=color:#b44>&#34;port&#34;</span>))
+</span></span></code></pre></div><p>你还可以绑定一组现有的pflags （pflag.FlagSet）：</p><p>举个例子：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>pflag.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;flagname&#34;</span>, <span style=color:#666>1234</span>, <span style=color:#b44>&#34;help message for flagname&#34;</span>)
+</span></span><span style=display:flex><span>pflag.<span style=color:#00a000>Parse</span>()
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>BindPFlags</span>(pflag.CommandLine)
+</span></span><span style=display:flex><span>i <span style=color:#666>:=</span> viper.<span style=color:#00a000>GetInt</span>(<span style=color:#b44>&#34;flagname&#34;</span>) <span style=color:#080;font-style:italic>// 从viper而不是从pflag检索值
+</span></span></span></code></pre></div><p>在 Viper 中使用 pflag 并不阻碍其他包中使用标准库中的 flag 包。pflag 包可以通过导入这些 flags 来处理flag包定义的flags。这是通过调用pflag包提供的便利函数AddGoFlagSet()来实现的。</p><p>例如：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;flag&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;github.com/spf13/pflag&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 使用标准库 &#34;flag&#34; 包
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	flag.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;flagname&#34;</span>, <span style=color:#666>1234</span>, <span style=color:#b44>&#34;help message for flagname&#34;</span>)
+</span></span><span style=display:flex><span>	pflag.CommandLine.<span style=color:#00a000>AddGoFlagSet</span>(flag.CommandLine)
+</span></span><span style=display:flex><span>	pflag.<span style=color:#00a000>Parse</span>()
+</span></span><span style=display:flex><span>	viper.<span style=color:#00a000>BindPFlags</span>(pflag.CommandLine)
+</span></span><span style=display:flex><span>	i <span style=color:#666>:=</span> viper.<span style=color:#00a000>GetInt</span>(<span style=color:#b44>&#34;flagname&#34;</span>) <span style=color:#080;font-style:italic>// 从 viper 检索值
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	<span style=color:#666>...</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h5 id=flag接口>flag接口</h5><p>如果你不使用Pflag，Viper 提供了两个Go接口来绑定其他 flag 系统。</p><p>FlagValue表示单个flag。这是一个关于如何实现这个接口的非常简单的例子：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>type</span> myFlag <span style=color:#a2f;font-weight:700>struct</span> {}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> (f myFlag) <span style=color:#00a000>HasChanged</span>() <span style=color:#0b0;font-weight:700>bool</span> { <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span> }
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> (f myFlag) <span style=color:#00a000>Name</span>() <span style=color:#0b0;font-weight:700>string</span> { <span style=color:#a2f;font-weight:700>return</span> <span style=color:#b44>&#34;my-flag-name&#34;</span> }
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> (f myFlag) <span style=color:#00a000>ValueString</span>() <span style=color:#0b0;font-weight:700>string</span> { <span style=color:#a2f;font-weight:700>return</span> <span style=color:#b44>&#34;my-flag-value&#34;</span> }
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> (f myFlag) <span style=color:#00a000>ValueType</span>() <span style=color:#0b0;font-weight:700>string</span> { <span style=color:#a2f;font-weight:700>return</span> <span style=color:#b44>&#34;string&#34;</span> }
+</span></span></code></pre></div><p>一旦你的 flag 实现了这个接口，你可以很方便地告诉Viper绑定它：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>viper.BindFlagValue(&#34;my-flag-name&#34;, myFlag{})
+</span></span></code></pre></div><p>FlagValueSet代表一组 flags 。这是一个关于如何实现这个接口的非常简单的例子:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>type</span> myFlagSet <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>	flags []myFlag
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> (f myFlagSet) <span style=color:#00a000>VisitAll</span>(fn <span style=color:#a2f;font-weight:700>func</span>(FlagValue)) {
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>for</span> _, flag <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> flags {
+</span></span><span style=display:flex><span>		<span style=color:#00a000>fn</span>(flag)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>一旦你的flag set实现了这个接口，你就可以很方便地告诉Viper绑定它：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>fSet <span style=color:#666>:=</span> myFlagSet{
+</span></span><span style=display:flex><span>	flags: []myFlag{myFlag{}, myFlag{}},
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>BindFlagValues</span>(<span style=color:#b44>&#34;my-flags&#34;</span>, fSet)
+</span></span></code></pre></div><h4 id=远程keyvalue存储支持>远程Key/Value存储支持</h4><p>在Viper中启用远程支持，需要在代码中匿名导入viper/remote这个包。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> _ <span style=color:#b44>&#34;github.com/spf13/viper/remote&#34;</span>
+</span></span></code></pre></div><p>Viper将读取从Key/Value存储（例如etcd或Consul）中的路径检索到的配置字符串（如JSON、TOML、YAML、HCL、envfile和Java properties格式）。这些值的优先级高于默认值，但是会被从磁盘、flag或环境变量检索到的配置值覆盖。（译注：也就是说Viper加载配置值的优先级为：磁盘上的配置文件>命令行标志位>环境变量>远程Key/Value存储>默认值。）</p><p>Viper使用<a href=https://github.com/bketelsen/crypt target=_blank rel=noopener>crypt</a>
+从K/V存储中检索配置，这意味着如果你有正确的gpg密匙，你可以将配置值加密存储并自动解密。加密是可选的。</p><p>你可以将远程配置与本地配置结合使用，也可以独立使用。</p><p>crypt有一个命令行助手，你可以使用它将配置放入K/V存储中。crypt默认使用在<a href=http://127.0.0.1:4001/ target=_blank rel=noopener>http://127.0.0.1:4001</a>
+的etcd。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ go get github.com/bketelsen/crypt/bin/crypt
+</span></span><span style=display:flex><span>$ crypt <span style=color:#a2f>set</span> -plaintext /config/hugo.json /Users/hugo/settings/config.json
+</span></span></code></pre></div><p>确认值已经设置：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ crypt get -plaintext /config/hugo.json
+</span></span></code></pre></div><p>有关如何设置加密值或如何使用Consul的示例，请参见crypt文档。</p><h4 id=远程keyvalue存储示例-未加密>远程Key/Value存储示例-未加密</h4><h5 id=etcd>etcd</h5><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>AddRemoteProvider</span>(<span style=color:#b44>&#34;etcd&#34;</span>, <span style=color:#b44>&#34;http://127.0.0.1:4001&#34;</span>,<span style=color:#b44>&#34;/config/hugo.json&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;json&#34;</span>) <span style=color:#080;font-style:italic>// 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &#34;json&#34;, &#34;toml&#34;, &#34;yaml&#34;, &#34;yml&#34;, &#34;properties&#34;, &#34;props&#34;, &#34;prop&#34;, &#34;env&#34;, &#34;dotenv&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadRemoteConfig</span>()
+</span></span></code></pre></div><h5 id=consul>Consul</h5><p>你需要 Consul Key/Value存储中设置一个Key保存包含所需配置的JSON值。例如，创建一个keyMY_CONSUL_KEY将下面的值存入Consul key/value 存储：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>8080</span>,
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;hostname&#34;</span>: <span style=color:#b44>&#34;liwenzhou.com&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>AddRemoteProvider</span>(<span style=color:#b44>&#34;consul&#34;</span>, <span style=color:#b44>&#34;localhost:8500&#34;</span>, <span style=color:#b44>&#34;MY_CONSUL_KEY&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;json&#34;</span>) <span style=color:#080;font-style:italic>// 需要显示设置成json
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadRemoteConfig</span>()
+</span></span><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(viper.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;port&#34;</span>)) <span style=color:#080;font-style:italic>// 8080
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(viper.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;hostname&#34;</span>)) <span style=color:#080;font-style:italic>// liwenzhou.com
+</span></span></span></code></pre></div><h5 id=firestore>Firestore</h5><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>AddRemoteProvider</span>(<span style=color:#b44>&#34;firestore&#34;</span>, <span style=color:#b44>&#34;google-cloud-project-id&#34;</span>, <span style=color:#b44>&#34;collection/document&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;json&#34;</span>) <span style=color:#080;font-style:italic>// 配置的格式: &#34;json&#34;, &#34;toml&#34;, &#34;yaml&#34;, &#34;yml&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadRemoteConfig</span>()
+</span></span></code></pre></div><p>当然，你也可以使用SecureRemoteProvider。</p><h4 id=远程keyvalue存储示例-加密>远程Key/Value存储示例-加密</h4><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>AddSecureRemoteProvider</span>(<span style=color:#b44>&#34;etcd&#34;</span>,<span style=color:#b44>&#34;http://127.0.0.1:4001&#34;</span>,<span style=color:#b44>&#34;/config/hugo.json&#34;</span>,<span style=color:#b44>&#34;/etc/secrets/mykeyring.gpg&#34;</span>)
+</span></span><span style=display:flex><span>viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;json&#34;</span>) <span style=color:#080;font-style:italic>// 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &#34;json&#34;, &#34;toml&#34;, &#34;yaml&#34;, &#34;yml&#34;, &#34;properties&#34;, &#34;props&#34;, &#34;prop&#34;, &#34;env&#34;, &#34;dotenv&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadRemoteConfig</span>()
+</span></span></code></pre></div><h4 id=监控etcd中的更改-未加密>监控etcd中的更改-未加密</h4><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>// 或者你可以创建一个新的viper实例
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> runtime_viper = viper.<span style=color:#00a000>New</span>()
+</span></span><span style=display:flex><span>runtime_viper.<span style=color:#00a000>AddRemoteProvider</span>(<span style=color:#b44>&#34;etcd&#34;</span>, <span style=color:#b44>&#34;http://127.0.0.1:4001&#34;</span>, <span style=color:#b44>&#34;/config/hugo.yml&#34;</span>)
+</span></span><span style=display:flex><span>runtime_viper.<span style=color:#00a000>SetConfigType</span>(<span style=color:#b44>&#34;yaml&#34;</span>) <span style=color:#080;font-style:italic>// 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &#34;json&#34;, &#34;toml&#34;, &#34;yaml&#34;, &#34;yml&#34;, &#34;properties&#34;, &#34;props&#34;, &#34;prop&#34;, &#34;env&#34;, &#34;dotenv&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// 第一次从远程读取配置
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>err <span style=color:#666>:=</span> runtime_viper.<span style=color:#00a000>ReadRemoteConfig</span>()
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// 反序列化
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>runtime_viper.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>runtime_conf)
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// 开启一个单独的goroutine一直监控远端的变更
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>go</span> <span style=color:#a2f;font-weight:700>func</span>(){
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>for</span> {
+</span></span><span style=display:flex><span>	    time.<span style=color:#00a000>Sleep</span>(time.Second <span style=color:#666>*</span> <span style=color:#666>5</span>) <span style=color:#080;font-style:italic>// 每次请求后延迟一下
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	    <span style=color:#080;font-style:italic>// 目前只测试了etcd支持
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	    err <span style=color:#666>:=</span> runtime_viper.<span style=color:#00a000>WatchRemoteConfig</span>()
+</span></span><span style=display:flex><span>	    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>	        log.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;unable to read remote config: %v&#34;</span>, err)
+</span></span><span style=display:flex><span>	        <span style=color:#a2f;font-weight:700>continue</span>
+</span></span><span style=display:flex><span>	    }
+</span></span><span style=display:flex><span>	    <span style=color:#080;font-style:italic>// 将新配置反序列化到我们运行时的配置结构体中。你还可以借助channel实现一个通知系统更改的信号
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	    runtime_viper.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>runtime_conf)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}()
+</span></span></code></pre></div><h3 id=从viper获取值>从Viper获取值</h3><p>在Viper中，有几种方法可以根据值的类型获取值。存在以下功能和方法:</p><ul><li>Get(key string) : interface{}</li><li>GetBool(key string) : bool</li><li>GetFloat64(key string) : float64</li><li>GetInt(key string) : int</li><li>GetIntSlice(key string) : []int</li><li>GetString(key string) : string</li><li>GetStringMap(key string) : map[string]interface{}</li><li>GetStringMapString(key string) : map[string]string</li><li>GetStringSlice(key string) : []string</li><li>GetTime(key string) : time.Time</li><li>GetDuration(key string) : time.Duration</li><li>IsSet(key string) : bool</li><li>AllSettings() : map[string]interface{}</li></ul><p>需要认识到的一件重要事情是，每一个Get方法在找不到值的时候都会返回零值。为了检查给定的键是否存在，提供了IsSet()方法。</p><p>例如：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>viper.<span style=color:#00a000>GetString</span>(<span style=color:#b44>&#34;logfile&#34;</span>) <span style=color:#080;font-style:italic>// 不区分大小写的设置和获取
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>if</span> viper.<span style=color:#00a000>GetBool</span>(<span style=color:#b44>&#34;verbose&#34;</span>) {
+</span></span><span style=display:flex><span>    fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;verbose enabled&#34;</span>)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h4 id=访问嵌套的键>访问嵌套的键</h4><p>访问器方法也接受深度嵌套键的格式化路径。例如，如果加载下面的JSON文件：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;host&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;address&#34;</span>: <span style=color:#b44>&#34;localhost&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>5799</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;datastore&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;metric&#34;</span>: {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;host&#34;</span>: <span style=color:#b44>&#34;127.0.0.1&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>3099</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;warehouse&#34;</span>: {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;host&#34;</span>: <span style=color:#b44>&#34;198.0.0.1&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>2112</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Viper可以通过传入.分隔的路径来访问嵌套字段：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#00a000>GetString</span>(<span style=color:#b44>&#34;datastore.metric.host&#34;</span>) <span style=color:#080;font-style:italic>// (返回 &#34;127.0.0.1&#34;)
+</span></span></span></code></pre></div><p>这遵守上面建立的优先规则；搜索路径将遍历其余配置注册表，直到找到为止。(译注：因为Viper支持从多种配置来源，例如磁盘上的配置文件>命令行标志位>环境变量>远程Key/Value存储>默认值，我们在查找一个配置的时候如果在当前配置源中没找到，就会继续从后续的配置源查找，直到找到为止。)</p><p>例如，在给定此配置文件的情况下，datastore.metric.host和datastore.metric.port均已定义（并且可以被覆盖）。如果另外在默认值中定义了datastore.metric.protocol，Viper也会找到它。</p><p>然而，如果datastore.metric被直接赋值覆盖（被flag，环境变量，set()方法等等…），那么datastore.metric的所有子键都将变为未定义状态，它们被高优先级配置级别“遮蔽”（shadowed）了。</p><p>最后，如果存在与分隔的键路径匹配的键，则返回其值。例如：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;datastore.metric.host&#34;</span>: <span style=color:#b44>&#34;0.0.0.0&#34;</span>,
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;host&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;address&#34;</span>: <span style=color:#b44>&#34;localhost&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>5799</span>
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;datastore&#34;</span>: {
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;metric&#34;</span>: {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;host&#34;</span>: <span style=color:#b44>&#34;127.0.0.1&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>3099</span>
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;warehouse&#34;</span>: {
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;host&#34;</span>: <span style=color:#b44>&#34;198.0.0.1&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;port&#34;</span>: <span style=color:#666>2112</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#00a000>GetString</span>(<span style=color:#b44>&#34;datastore.metric.host&#34;</span>) <span style=color:#080;font-style:italic>// 返回 &#34;0.0.0.0&#34;
+</span></span></span></code></pre></div><h4 id=提取子树>提取子树</h4><p>从Viper中提取子树。</p><p>例如，viper实例现在代表了以下配置：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:green;font-weight:700>app</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>cache1</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>max-items</span>:<span style=color:#bbb> </span><span style=color:#666>100</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>item-size</span>:<span style=color:#bbb> </span><span style=color:#666>64</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:green;font-weight:700>cache2</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>max-items</span>:<span style=color:#bbb> </span><span style=color:#666>200</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:green;font-weight:700>item-size</span>:<span style=color:#bbb> </span><span style=color:#666>80</span><span style=color:#bbb>
+</span></span></span></code></pre></div><p>执行后：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>subv <span style=color:#666>:=</span> viper.<span style=color:#00a000>Sub</span>(<span style=color:#b44>&#34;app.cache1&#34;</span>)
+</span></span></code></pre></div><p>subv现在就代表：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>max<span style=color:#666>-</span>items: <span style=color:#666>100</span>
+</span></span><span style=display:flex><span>item<span style=color:#666>-</span>size: <span style=color:#666>64</span>
+</span></span></code></pre></div><p>假设我们现在有这么一个函数：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>NewCache</span>(cfg <span style=color:#666>*</span>Viper) <span style=color:#666>*</span>Cache {<span style=color:#666>...</span>}
+</span></span></code></pre></div><p>它基于subv格式的配置信息创建缓存。现在，可以轻松地分别创建这两个缓存，如下所示：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>cfg1 <span style=color:#666>:=</span> viper.<span style=color:#00a000>Sub</span>(<span style=color:#b44>&#34;app.cache1&#34;</span>)
+</span></span><span style=display:flex><span>cache1 <span style=color:#666>:=</span> <span style=color:#00a000>NewCache</span>(cfg1)
+</span></span><span style=display:flex><span>cfg2 <span style=color:#666>:=</span> viper.<span style=color:#00a000>Sub</span>(<span style=color:#b44>&#34;app.cache2&#34;</span>)
+</span></span><span style=display:flex><span>cache2 <span style=color:#666>:=</span> <span style=color:#00a000>NewCache</span>(cfg2)
+</span></span></code></pre></div><h4 id=反序列化>反序列化</h4><p>你还可以选择将所有或特定的值解析到结构体、map等。</p><p>有两种方法可以做到这一点：</p><ul><li>Unmarshal(rawVal interface{}) : error</li><li>UnmarshalKey(key string, rawVal interface{}) : error</li></ul><p>举个例子：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>type</span> config <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>	Port <span style=color:#0b0;font-weight:700>int</span>
+</span></span><span style=display:flex><span>	Name <span style=color:#0b0;font-weight:700>string</span>
+</span></span><span style=display:flex><span>	PathMap <span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`mapstructure:&#34;path_map&#34;`</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> C config
+</span></span><span style=display:flex><span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>C)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>	t.<span style=color:#00a000>Fatalf</span>(<span style=color:#b44>&#34;unable to decode into struct, %v&#34;</span>, err)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>如果你想要解析那些键本身就包含.(默认的键分隔符）的配置，你需要修改分隔符：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>v <span style=color:#666>:=</span> viper.<span style=color:#00a000>NewWithOptions</span>(viper.<span style=color:#00a000>KeyDelimiter</span>(<span style=color:#b44>&#34;::&#34;</span>))
+</span></span><span style=display:flex><span>v.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;chart::values&#34;</span>, <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}{
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;ingress&#34;</span>: <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}{
+</span></span><span style=display:flex><span>        <span style=color:#b44>&#34;annotations&#34;</span>: <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}{
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;traefik.frontend.rule.type&#34;</span>:                 <span style=color:#b44>&#34;PathPrefix&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#b44>&#34;traefik.ingress.kubernetes.io/ssl-redirect&#34;</span>: <span style=color:#b44>&#34;true&#34;</span>,
+</span></span><span style=display:flex><span>        },
+</span></span><span style=display:flex><span>    },
+</span></span><span style=display:flex><span>})
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>type</span> config <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>	Chart <span style=color:#a2f;font-weight:700>struct</span>{
+</span></span><span style=display:flex><span>        Values <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> C config
+</span></span><span style=display:flex><span>v.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>C)
+</span></span></code></pre></div><p>Viper还支持解析到嵌入的结构体：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>/*
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>Example config:
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>module:
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>    enabled: true
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>    token: 89h3f98hbwf987h3f98wenf89ehf
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>*/</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>type</span> config <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>	Module <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>		Enabled <span style=color:#0b0;font-weight:700>bool</span>
+</span></span><span style=display:flex><span>		moduleConfig <span style=color:#b44>`mapstructure:&#34;,squash&#34;`</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// moduleConfig could be in a module specific package
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>type</span> moduleConfig <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>	Token <span style=color:#0b0;font-weight:700>string</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> C config
+</span></span><span style=display:flex><span>err <span style=color:#666>:=</span> viper.<span style=color:#00a000>Unmarshal</span>(<span style=color:#666>&amp;</span>C)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>	t.<span style=color:#00a000>Fatalf</span>(<span style=color:#b44>&#34;unable to decode into struct, %v&#34;</span>, err)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Viper在后台使用<a href=https://github.com/mitchellh/mapstructure target=_blank rel=noopener>github.com/mitchellh/mapstructure</a>
+来解析值，其默认情况下使用mapstructuretag。</p><p><strong>注意</strong> 当我们需要将viper读取的配置反序列到我们定义的结构体变量中时，一定要使用mapstructuretag哦！</p><h4 id=序列化成字符串>序列化成字符串</h4><p>你可能需要将viper中保存的所有设置序列化到一个字符串中，而不是将它们写入到一个文件中。你可以将自己喜欢的格式的序列化器与AllSettings()返回的配置一起使用。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>    yaml <span style=color:#b44>&#34;gopkg.in/yaml.v2&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// ...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>yamlStringSettings</span>() <span style=color:#0b0;font-weight:700>string</span> {
+</span></span><span style=display:flex><span>    c <span style=color:#666>:=</span> viper.<span style=color:#00a000>AllSettings</span>()
+</span></span><span style=display:flex><span>    bs, err <span style=color:#666>:=</span> yaml.<span style=color:#00a000>Marshal</span>(c)
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>        log.<span style=color:#00a000>Fatalf</span>(<span style=color:#b44>&#34;unable to marshal config to YAML: %v&#34;</span>, err)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f>string</span>(bs)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=使用单个还是多个viper实例>使用单个还是多个Viper实例?</h3><p>Viper是开箱即用的。你不需要配置或初始化即可开始使用Viper。由于大多数应用程序都希望使用单个中央存储库管理它们的配置信息，所以viper包提供了这个功能。它类似于单例模式。</p><p>在上面的所有示例中，它们都以其单例风格的方法演示了如何使用viper。</p><h4 id=使用多个viper实例>使用多个viper实例</h4><p>你还可以在应用程序中创建许多不同的viper实例。每个都有自己独特的一组配置和值。每个人都可以从不同的配置文件，key value存储区等读取数据。每个都可以从不同的配置文件、键值存储等中读取。viper包支持的所有功能都被镜像为viper实例的方法。</p><p>例如：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>x <span style=color:#666>:=</span> viper.<span style=color:#00a000>New</span>()
+</span></span><span style=display:flex><span>y <span style=color:#666>:=</span> viper.<span style=color:#00a000>New</span>()
+</span></span><span style=display:flex><span>x.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;ContentDir&#34;</span>, <span style=color:#b44>&#34;content&#34;</span>)
+</span></span><span style=display:flex><span>y.<span style=color:#00a000>SetDefault</span>(<span style=color:#b44>&#34;ContentDir&#34;</span>, <span style=color:#b44>&#34;foobar&#34;</span>)
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>//...
+</span></span></span></code></pre></div><p>当使用多个viper实例时，由用户来管理不同的viper实例。</p><h4 id=使用viper示例>使用Viper示例</h4><p>假设我们的项目现在有一个./conf/config.yaml配置文件，内容如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>port: <span style=color:#666>8123</span>
+</span></span><span style=display:flex><span>version: <span style=color:#b44>&#34;v1.2.3&#34;</span>
+</span></span></code></pre></div><p>接下来通过示例代码演示两种在项目中使用viper管理项目配置信息的方式。</p><h4 id=直接使用viper管理配置>直接使用viper管理配置</h4><p>这里用一个demo演示如何在gin框架搭建的web项目中使用viper，使用viper加载配置文件中的信息，并在代码中直接使用viper.GetXXX()方法获取对应的配置值。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;net/http&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;github.com/spf13/viper&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>	viper.<span style=color:#00a000>SetConfigFile</span>(<span style=color:#b44>&#34;config.yaml&#34;</span>) <span style=color:#080;font-style:italic>// 指定配置文件
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	viper.<span style=color:#00a000>AddConfigPath</span>(<span style=color:#b44>&#34;./conf/&#34;</span>)     <span style=color:#080;font-style:italic>// 指定查找配置文件的路径
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadInConfig</span>()        <span style=color:#080;font-style:italic>// 读取配置信息
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {                    <span style=color:#080;font-style:italic>// 读取配置信息失败
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;Fatal error config file: %s \n&#34;</span>, err))
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 监控配置文件变化
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	viper.<span style=color:#00a000>WatchConfig</span>()
+</span></span><span style=display:flex><span>	r <span style=color:#666>:=</span> gin.<span style=color:#00a000>Default</span>()
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 访问/version的返回值会随配置文件的变化而变化
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	r.<span style=color:#00a000>GET</span>(<span style=color:#b44>&#34;/version&#34;</span>, <span style=color:#a2f;font-weight:700>func</span>(c <span style=color:#666>*</span>gin.Context) {
+</span></span><span style=display:flex><span>		c.<span style=color:#00a000>String</span>(http.StatusOK, viper.<span style=color:#00a000>GetString</span>(<span style=color:#b44>&#34;version&#34;</span>))
+</span></span><span style=display:flex><span>	})
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> r.<span style=color:#00a000>Run</span>(
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Sprintf</span>(<span style=color:#b44>&#34;:%d&#34;</span>, viper.<span style=color:#00a000>GetInt</span>(<span style=color:#b44>&#34;port&#34;</span>))); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a2f>panic</span>(err)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h4 id=使用结构体变量保存配置信息>使用结构体变量保存配置信息</h4><p>除了上面的用法外，我们还可以在项目中定义与配置文件对应的结构体，viper加载完配置信息后使用结构体变量保存配置信息。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;net/http&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;github.com/fsnotify/fsnotify&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;github.com/spf13/viper&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>type</span> Config <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>	Port    <span style=color:#0b0;font-weight:700>int</span>    <span style=color:#b44>`mapstructure:&#34;port&#34;`</span>
+</span></span><span style=display:flex><span>	Version <span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`mapstructure:&#34;version&#34;`</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> Conf = <span style=color:#a2f>new</span>(Config)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>	viper.<span style=color:#00a000>SetConfigFile</span>(<span style=color:#b44>&#34;./conf/config.yaml&#34;</span>) <span style=color:#080;font-style:italic>// 指定配置文件路径
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	err <span style=color:#666>:=</span> viper.<span style=color:#00a000>ReadInConfig</span>()               <span style=color:#080;font-style:italic>// 读取配置信息
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {                           <span style=color:#080;font-style:italic>// 读取配置信息失败
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>		<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;Fatal error config file: %s \n&#34;</span>, err))
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 将读取的配置信息保存至全局变量Conf
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> viper.<span style=color:#00a000>Unmarshal</span>(Conf); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;unmarshal conf failed, err:%s \n&#34;</span>, err))
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 监控配置文件变化
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	viper.<span style=color:#00a000>WatchConfig</span>()
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 注意！！！配置文件发生变化后要同步到全局变量Conf
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	viper.<span style=color:#00a000>OnConfigChange</span>(<span style=color:#a2f;font-weight:700>func</span>(in fsnotify.Event) {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;夭寿啦~配置文件被人修改啦...&#34;</span>)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> viper.<span style=color:#00a000>Unmarshal</span>(Conf); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>			<span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;unmarshal conf failed, err:%s \n&#34;</span>, err))
+</span></span><span style=display:flex><span>		}
+</span></span><span style=display:flex><span>	})
+</span></span><span style=display:flex><span>	r <span style=color:#666>:=</span> gin.<span style=color:#00a000>Default</span>()
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 访问/version的返回值会随配置文件的变化而变化
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	r.<span style=color:#00a000>GET</span>(<span style=color:#b44>&#34;/version&#34;</span>, <span style=color:#a2f;font-weight:700>func</span>(c <span style=color:#666>*</span>gin.Context) {
+</span></span><span style=display:flex><span>		c.<span style=color:#00a000>String</span>(http.StatusOK, Conf.Version)
+</span></span><span style=display:flex><span>	})
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> r.<span style=color:#00a000>Run</span>(fmt.<span style=color:#00a000>Sprintf</span>(<span style=color:#b44>&#34;:%d&#34;</span>, Conf.Port)); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a2f>panic</span>(err)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=参考文章>参考文章</h2><ul><li><a href=https://www.liwenzhou.com/posts/Go/viper_tutorial target=_blank rel=noopener>https://www.liwenzhou.com/posts/Go/viper_tutorial</a></li><li><a href=https://www.jianshu.com/p/7bb4f7f69280 target=_blank rel=noopener>https://www.jianshu.com/p/7bb4f7f69280</a></li></ul></div><footer class=post-footer><div class=post-tags><a href=/tags/golang rel=tag title=golang>#golang#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>Go viper配置管理</p><p><span>链接：</span>https://www.zhaohaiyu.com/post/go/go-viper/</p><p><span>作者：</span>haiyux</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-zap/ rel=next title="Go zap高性能日志"><i class="fa fa-chevron-left"></i> Go zap高性能日志</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-redis/ rel=prev title=Go操作redis>Go操作redis
+<i class="fa fa-chevron-right"></i></a></div></div><div id=ucomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
-<p class=site-author-name itemprop=name>haiyux</p>
-<p class="site-description motion-element" itemprop=description>
-路漫漫其修远兮,吾将上下而求索
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>62</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>8</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>20</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/haiyux/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
-<i class="fa fa-fw fa-envelope"></i>
-Email
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://farer.org/ title=farer target=_blank>farer</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/golang>Golang
-<sup>30</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
-<sup>8</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql
-<sup>7</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/http>HTTP
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/protobuf>Protobuf
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%BF%90%E7%BB%B4>运维
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/grpc>Grpc
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis
-<sup>2</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/ddd>Ddd
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/docker>Docker
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/kratos>Kratos
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/makefile>Makefile
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mq>Mq
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/nginx>Nginx
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/raft>Raft
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/thrift>Thrift
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/traceing>Traceing
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/wire>Wire
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
-<sup>1</sup>
-</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#安装>安装</a></li>
-<li><a href=#viper支持的功能>viper支持的功能</a></li>
-<li><a href=#viper具体的帮助>viper具体的帮助</a></li>
-<li><a href=#viper提供的配置方式的优先级顺序如下由高到低>viper提供的配置方式的优先级顺序如下(由高到低)：</a></li>
-<li><a href=#viper的简单使用>viper的简单使用</a>
-<ul>
-<li><a href=#把值存入viper>把值存入Viper</a></li>
-<li><a href=#从viper获取值>从Viper获取值</a></li>
-<li><a href=#使用单个还是多个viper实例>使用单个还是多个Viper实例?</a></li>
-</ul>
-</li>
-<li><a href=#参考文章>参考文章</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux><p class=site-author-name itemprop=name>haiyux</p><p class="site-description motion-element" itemprop=description>路漫漫其修远兮,吾将上下而求索</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/haiyux/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=mailto:haiyux@foxmail.com target=_blank title=Email><i class="fa fa-fw fa-envelope"></i>
+Email</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a></li><li class=links-of-blogroll-item><a href=https://farer.org/ title=farer target=_blank>farer</a></li><li class=links-of-blogroll-item><a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a></li><li class=links-of-blogroll-item><a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a></li><li class=links-of-blogroll-item><a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/golang>Golang
+<sup>30</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/http>HTTP
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/protobuf>Protobuf
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/grpc>Grpc
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ddd>Ddd
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/kratos>Kratos
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/makefile>Makefile
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mq>Mq
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/raft>Raft
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/thrift>Thrift
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/traceing>Traceing
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/wire>Wire
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup></a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#安装>安装</a></li><li><a href=#viper支持的功能>viper支持的功能</a></li><li><a href=#viper具体的帮助>viper具体的帮助</a></li><li><a href=#viper提供的配置方式的优先级顺序如下由高到低>viper提供的配置方式的优先级顺序如下(由高到低)：</a></li><li><a href=#viper的简单使用>viper的简单使用</a><ul><li><a href=#把值存入viper>把值存入Viper</a></li><li><a href=#从viper获取值>从Viper获取值</a></li><li><a href=#使用单个还是多个viper实例>使用单个还是多个Viper实例?</a></li></ul></li><li><a href=#参考文章>参考文章</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>haiyux's blog</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
-</span>
+<span class=copyright-author>haiyux's blog</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.100.1</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.footer').outerHeight(!0),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
-<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
-<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf('MSIE '),n=e.indexOf('Trident/'),s=e.indexOf('Edge/');return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$('#content').height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$('<div />').addClass('scrollbar-measure').prependTo('body'),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$('.back-to-top');$(window).on('scroll',function(){e.toggleClass('back-to-top-on',window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$('#scrollpercent>span').html(a)}),e.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e='.post-toc',s=$(e),t='.active-current';s.on('activate.bs.scrollspy',function(){var t=$(e+' .active').last();n(),t.addClass('active-current')}).on('clear.bs.scrollspy',n),$('body').scrollspy({target:e});function n(){$(e+' '+t).removeClass(t.substring(1))}}function initAffix(){var e=$('.header-inner').height(),t=parseInt($('.footer').outerHeight(!0),10),n=e+10;$('.sidebar-inner').affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on('resize',function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$('.post-toc').css('width','calc(100% + '+t+'px)')}function updateTOCHeight(e){e=e||'auto',$('.post-toc').css('max-height',e)}$(function(){var e,t,n,s,o=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':o}).show(),t=parseInt($('#sidebar').css('margin-top')),n=parseInt($('.sidebar-inner').css('height')),e=t+n,s=$('.content-wrap').height(),s<e&&$('.content-wrap').css('min-height',e),$('.site-nav-toggle').on('click',function(){var e=$('.site-nav'),o=$('.toggle'),t='site-nav-on',i='toggle-close',n=e.hasClass(t),a=n?'slideUp':'slideDown',s=n?'removeClass':'addClass';e.stop()[a]('normal',function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script><script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(s){var t=new AV.Query(s),e=[],n=$(".leancloud_visitors");n.each(function(){e.push($(this).attr("id").trim())}),t.containedIn('url',e),t.find().then(r=>{var t,s,o,a,c,l,i='.leancloud-visitors-count';if(r.length==0){n.find(i).text(0);return}for(t=0;t<r.length;t++)a=r[t],o=a.get('url'),l=a.get('time'),s=document.getElementById(o),$(s).find(i).text(l);for(t=0;t<e.length;t++)o=e[t],s=document.getElementById(o),c=$(s).find(i),c.text()==''&&c.text(0)},e=>{console.log('Query vistors failed: '+e)})}function addCount(s){var t=$(".leancloud_visitors"),e=t.attr('id').trim(),o=t.attr('data-flag-title').trim(),n=new AV.Query('Counter');n.equalTo("url",e),n.find().then(i=>{if(i.length>0){var t,n,a=i[0];a.increment('time',1),a.save(null,{query:new AV.Query('Counter').equalTo('url',e),fetchWhenSave:!0}).then(t=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log('Update vistor failed: '+e)})}else n=new AV.ACL,n.setPublicReadAccess(!0),n.setPublicWriteAccess(!0),t=new s,t.set("title",o),t.set("url",e),t.set("time",1),t.setACL(n),t.save().then(s=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log("Save new vistor failed: "+e)})})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const e=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(e):$('.post-title-link').length>1&&showTime(e)})</script><script type=text/javascript>(function(){var e=document.createElement('script');e.type='text/javascript',e.async=!0,e.setAttribute('issue-term',"pathname"),e.setAttribute('theme',"github-light"),e.setAttribute('repo',"haiyux/haiyux.github.io"),e.crossorigin='anonymous',e.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(e)})()</script><script>(function(){var t,e=document.createElement('script'),n=window.location.protocol.split(':')[0];n==='https'?e.src='https://zz.bdstatic.com/linksubmit/push.js':e.src='http://push.zhanzhang.baidu.com/push.js',t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

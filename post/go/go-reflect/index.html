@@ -1,748 +1,289 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Go Reflect - haiyux's blog </title>
-<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
-<meta name=author content="haiyux">
-<meta property="og:title" content="Go Reflect">
-<meta property="og:site_name" content="haiyux's blog">
-<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
-<meta name=title content="Go Reflect - haiyux's blog">
-<meta name=description content="欢迎来到haiyux的博客">
-<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet>
-<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Go Reflect - haiyux's blog</title><meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="haiyux"><meta property="og:title" content="Go Reflect"><meta property="og:site_name" content="haiyux's blog"><meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg"><meta name=title content="Go Reflect - haiyux's blog"><meta name=description content="欢迎来到haiyux的博客"><link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico><link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css><link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>haiyux's blog</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class="menu-item menu-item-active">
-<a href=/post/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav> </div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-reflect/ itemprop=url>
-Go Reflect
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-pushdate>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post/ rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-reflect/ itemprop=url>Go Reflect</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2019-02-09">
-2019-02-09
-</time>
-</span>
-<span class=post-category>
-<i class="fa fa-folder-o fa-fw"></i>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2019-02-09">2019-02-09</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/go itemprop=url rel=index>
-<span itemprop=name>go</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span class=post-wordcount>
-<i class="fa fa-file-word-o fa-fw"></i>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/go itemprop=url rel=index><span itemprop=name>go</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>5572 字</span>
-</span>
-<span class=post-readtime>
-<i class="fa fa-eye fa-fw"></i>
+<span class=leancloud-world-count>5572 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>12分钟</span>
-</span>
-<span id=/post/go/go-reflect/ class="leancloud_visitors post-visitor" data-flag-title="Go Reflect">
-<i class="fa fa-binoculars fa-fw"></i>
+<span class=leancloud-view-count>12分钟</span></span>
+<span id=/post/go/go-reflect/ class="leancloud_visitors post-visitor" data-flag-title="Go Reflect"><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=变量的内在机制>变量的内在机制</h2>
-<p>Go语言中的变量是分为两部分的:</p>
-<ul>
-<li>类型信息：预先定义好的元信息。</li>
-<li>值信息：程序运行过程中可动态变化的。</li>
-</ul>
-<h2 id=反射介绍>反射介绍</h2>
-<p>反射是指在程序运行期对程序本身进行访问和修改的能力。程序在编译时，变量被转换为内存地址，变量名不会被编译器写入到可执行部分。在运行程序时，程序无法获取自身的信息。</p>
-<p>支持反射的语言可以在程序编译期将变量的反射信息，如字段名称、类型信息、结构体信息等整合到可执行文件中，并给程序提供接口访问反射信息，这样就可以在程序运行期获取类型的反射信息，并且有能力修改它们。</p>
-<p>Go程序在运行期使用reflect包访问程序的反射信息。</p>
-<p>在上一篇博客中我们介绍了空接口。 空接口可以存储任意类型的变量，那我们如何知道这个空接口保存的数据是什么呢？ 反射就是在运行时动态的获取一个变量的类型信息和值信息。</p>
-<h2 id=reflect包>reflect包</h2>
-<p>在Go语言的反射机制中，任何接口值都由是<code>一个具体类型</code>和<code>具体类型的值</code>两部分组成的(我们在上一篇接口的博客中有介绍相关概念)。 在Go语言中反射的相关功能由内置的reflect包提供，任意接口值在反射中都可以理解为由<code>reflect.Type</code>和<code>reflect.Value</code>两部分组成，并且reflect包提供了<code>reflect.TypeOf</code>和<code>reflect.ValueOf</code>两个函数来获取任意对象的Value和Type。</p>
-<h2 id=reflecttype-和-reflectvalue>reflect.Type 和 reflect.Value</h2>
-<p>反射是由 reflect 包提供的。它定义了两个重要的类型，Type 和 Value。一个 Type 表示一个Go类型。它是一个接口，有许多方法来区分类型以及检查它们的组成部分，例如一个结构体的成员或一个函数的参数等。唯一能反映 reflect.Type 实现的是接口的类型描述信息（§7.5），也正是这个实体标识了接口值的动态类型。</p>
-<p>函数 reflect.TypeOf 接受任意的 interface{} 类型，并以 reflect.Type 形式返回其动态类型：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>t <span style=color:#666>:=</span> reflect.<span style=color:#00a000>TypeOf</span>(<span style=color:#666>3</span>)  <span style=color:#080;font-style:italic>// a reflect.Type
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(t.<span style=color:#00a000>String</span>()) <span style=color:#080;font-style:italic>// &#34;int&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(t)          <span style=color:#080;font-style:italic>// &#34;int&#34;
-</span></code></pre></div><p>其中 TypeOf(3) 调用将值 3 传给 interface{} 参数。回到 7.5节 的将一个具体的值转为接口类型会有一个隐式的接口转换操作，它会创建一个包含两个信息的接口值：操作数的动态类型（这里是 int）和它的动态的值（这里是 3）。</p>
-<p>因为 reflect.TypeOf 返回的是一个动态类型的接口值，它总是返回具体的类型。因此，下面的代码将打印 &ldquo;*os.File&rdquo; 而不是 &ldquo;io.Writer&rdquo;。稍后，我们将看到能够表达接口类型的 reflect.Type。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=color:#a2f;font-weight:700>var</span> w io.Writer = os.Stdout
-fmt.<span style=color:#00a000>Println</span>(reflect.<span style=color:#00a000>TypeOf</span>(w)) <span style=color:#080;font-style:italic>// &#34;*os.File&#34;
-</span></code></pre></div><p>要注意的是 reflect.Type 接口是满足 fmt.Stringer 接口的。因为打印一个接口的动态类型对于调试和日志是有帮助的， fmt.Printf 提供了一个缩写 %T 参数，内部使用 reflect.TypeOf 来输出：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;%T\n&#34;</span>, <span style=color:#666>3</span>) <span style=color:#080;font-style:italic>// &#34;int&#34;
-</span></code></pre></div><p>reflect 包中另一个重要的类型是 Value。一个 reflect.Value 可以装载任意类型的值。函数 reflect.ValueOf 接受任意的 interface{} 类型，并返回一个装载着其动态值的 reflect.Value。和 reflect.TypeOf 类似，reflect.ValueOf 返回的结果也是具体的类型，但是 reflect.Value 也可以持有一个接口值。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>v <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>) <span style=color:#080;font-style:italic>// a reflect.Value
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(v)          <span style=color:#080;font-style:italic>// &#34;3&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;%v\n&#34;</span>, v)   <span style=color:#080;font-style:italic>// &#34;3&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(v.<span style=color:#00a000>String</span>()) <span style=color:#080;font-style:italic>// NOTE: &#34;&lt;int Value&gt;&#34;
-</span></code></pre></div><p>和 reflect.Type 类似，reflect.Value 也满足 fmt.Stringer 接口，但是除非 Value 持有的是字符串，否则 String 方法只返回其类型。而使用 fmt 包的 %v 标志参数会对 reflect.Values 特殊处理。</p>
-<p>对 Value 调用 Type 方法将返回具体类型所对应的 reflect.Type：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>t <span style=color:#666>:=</span> v.<span style=color:#00a000>Type</span>()           <span style=color:#080;font-style:italic>// a reflect.Type
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(t.<span style=color:#00a000>String</span>()) <span style=color:#080;font-style:italic>// &#34;int&#34;
-</span></code></pre></div><p>reflect.ValueOf 的逆操作是 reflect.Value.Interface 方法。它返回一个 interface{} 类型，装载着与 reflect.Value 相同的具体值：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>v <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>) <span style=color:#080;font-style:italic>// a reflect.Value
-</span><span style=color:#080;font-style:italic></span>x <span style=color:#666>:=</span> v.<span style=color:#00a000>Interface</span>()      <span style=color:#080;font-style:italic>// an interface{}
-</span><span style=color:#080;font-style:italic></span>i <span style=color:#666>:=</span> x.(<span style=color:#0b0;font-weight:700>int</span>)            <span style=color:#080;font-style:italic>// an int
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;%d\n&#34;</span>, i)   <span style=color:#080;font-style:italic>// &#34;3&#34;
-</span></code></pre></div><p>reflect.Value 和 interface{} 都能装载任意的值。所不同的是，一个空的接口隐藏了值内部的表示方式和所有方法，因此只有我们知道具体的动态类型才能使用类型断言来访问内部的值（就像上面那样），内部值我们没法访问。相比之下，一个 Value 则有很多方法来检查其内容，无论它的具体类型是什么。让我们再次尝试实现我们的格式化函数 format.Any。</p>
-<p>我们使用 reflect.Value 的 Kind 方法来替代之前的类型 switch。虽然还是有无穷多的类型，但是它们的 kinds 类型却是有限的：Bool、String 和 所有数字类型的基础类型；Array 和 Struct 对应的聚合类型；Chan、Func、Ptr、Slice 和 Map 对应的引用类型；interface 类型；还有表示空值的 Invalid 类型。（空的 reflect.Value 的 kind 即为 Invalid。）</p>
-<p><em>gopl.io/ch12/format</em></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=color:#a2f;font-weight:700>package</span> format
-
-<span style=color:#a2f;font-weight:700>import</span> (
-    <span style=color:#b44>&#34;reflect&#34;</span>
-    <span style=color:#b44>&#34;strconv&#34;</span>
-)
-
-<span style=color:#080;font-style:italic>// Any formats any value as a string.
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Any</span>(value <span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>string</span> {
-    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#00a000>formatAtom</span>(reflect.<span style=color:#00a000>ValueOf</span>(value))
-}
-
-<span style=color:#080;font-style:italic>// formatAtom formats a value without inspecting its internal structure.
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>formatAtom</span>(v reflect.Value) <span style=color:#0b0;font-weight:700>string</span> {
-    <span style=color:#a2f;font-weight:700>switch</span> v.<span style=color:#00a000>Kind</span>() {
-    <span style=color:#a2f;font-weight:700>case</span> reflect.Invalid:
-        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#b44>&#34;invalid&#34;</span>
-    <span style=color:#a2f;font-weight:700>case</span> reflect.Int, reflect.Int8, reflect.Int16,
-        reflect.Int32, reflect.Int64:
-        <span style=color:#a2f;font-weight:700>return</span> strconv.<span style=color:#00a000>FormatInt</span>(v.<span style=color:#00a000>Int</span>(), <span style=color:#666>10</span>)
-    <span style=color:#a2f;font-weight:700>case</span> reflect.Uint, reflect.Uint8, reflect.Uint16,
-        reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-        <span style=color:#a2f;font-weight:700>return</span> strconv.<span style=color:#00a000>FormatUint</span>(v.<span style=color:#00a000>Uint</span>(), <span style=color:#666>10</span>)
-    <span style=color:#080;font-style:italic>// ...floating-point and complex cases omitted for brevity...
-</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>case</span> reflect.Bool:
-        <span style=color:#a2f;font-weight:700>return</span> strconv.<span style=color:#00a000>FormatBool</span>(v.<span style=color:#00a000>Bool</span>())
-    <span style=color:#a2f;font-weight:700>case</span> reflect.String:
-        <span style=color:#a2f;font-weight:700>return</span> strconv.<span style=color:#00a000>Quote</span>(v.<span style=color:#00a000>String</span>())
-    <span style=color:#a2f;font-weight:700>case</span> reflect.Chan, reflect.Func, reflect.Ptr, reflect.Slice, reflect.Map:
-        <span style=color:#a2f;font-weight:700>return</span> v.<span style=color:#00a000>Type</span>().<span style=color:#00a000>String</span>() <span style=color:#666>+</span> <span style=color:#b44>&#34; 0x&#34;</span> <span style=color:#666>+</span>
-            strconv.<span style=color:#00a000>FormatUint</span>(<span style=color:#a2f>uint64</span>(v.<span style=color:#00a000>Pointer</span>()), <span style=color:#666>16</span>)
-    <span style=color:#a2f;font-weight:700>default</span>: <span style=color:#080;font-style:italic>// reflect.Array, reflect.Struct, reflect.Interface
-</span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>return</span> v.<span style=color:#00a000>Type</span>().<span style=color:#00a000>String</span>() <span style=color:#666>+</span> <span style=color:#b44>&#34; value&#34;</span>
-    }
-}
-</code></pre></div><p>到目前为止，我们的函数将每个值视作一个不可分割没有内部结构的物品，因此它叫 formatAtom。对于聚合类型（结构体和数组）和接口，只是打印值的类型，对于引用类型（channels、functions、pointers、slices 和 maps），打印类型和十六进制的引用地址。虽然还不够理想，但是依然是一个重大的进步，并且 Kind 只关心底层表示，format.Any 也支持具名类型。例如：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=color:#a2f;font-weight:700>var</span> x <span style=color:#0b0;font-weight:700>int64</span> = <span style=color:#666>1</span>
-<span style=color:#a2f;font-weight:700>var</span> d time.Duration = <span style=color:#666>1</span> <span style=color:#666>*</span> time.Nanosecond
-fmt.<span style=color:#00a000>Println</span>(format.<span style=color:#00a000>Any</span>(x))                  <span style=color:#080;font-style:italic>// &#34;1&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(format.<span style=color:#00a000>Any</span>(d))                  <span style=color:#080;font-style:italic>// &#34;1&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(format.<span style=color:#00a000>Any</span>([]<span style=color:#0b0;font-weight:700>int64</span>{x}))         <span style=color:#080;font-style:italic>// &#34;[]int64 0x8202b87b0&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(format.<span style=color:#00a000>Any</span>([]time.Duration{d})) <span style=color:#080;font-style:italic>// &#34;[]time.Duration 0x8202b87e0&#34;
-</span></code></pre></div><h2 id=通过reflectvalue修改值>通过reflect.Value修改值</h2>
-<p>到目前为止，反射还只是程序中变量的另一种读取方式。然而，在本节中我们将重点讨论如何通过反射机制来修改变量。</p>
-<p>回想一下，Go语言中类似x、x.f[1]和*p形式的表达式都可以表示变量，但是其它如x + 1和f(2)则不是变量。一个变量就是一个可寻址的内存空间，里面存储了一个值，并且存储的值可以通过内存地址来更新。</p>
-<p>对于reflect.Values也有类似的区别。有一些reflect.Values是可取地址的；其它一些则不可以。考虑以下的声明语句：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>x <span style=color:#666>:=</span> <span style=color:#666>2</span>                   <span style=color:#080;font-style:italic>// value   type    variable?
-</span><span style=color:#080;font-style:italic></span>a <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>2</span>)  <span style=color:#080;font-style:italic>// 2       int     no
-</span><span style=color:#080;font-style:italic></span>b <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(x)  <span style=color:#080;font-style:italic>// 2       int     no
-</span><span style=color:#080;font-style:italic></span>c <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>x) <span style=color:#080;font-style:italic>// &amp;x      *int    no
-</span><span style=color:#080;font-style:italic></span>d <span style=color:#666>:=</span> c.<span style=color:#00a000>Elem</span>()            <span style=color:#080;font-style:italic>// 2       int     yes (x)
-</span></code></pre></div><p>其中a对应的变量不可取地址。因为a中的值仅仅是整数2的拷贝副本。b中的值也同样不可取地址。c中的值还是不可取地址，它只是一个指针<code>&x</code>的拷贝。实际上，所有通过reflect.ValueOf(x)返回的reflect.Value都是不可取地址的。但是对于d，它是c的解引用方式生成的，指向另一个变量，因此是可取地址的。我们可以通过调用reflect.ValueOf(&x).Elem()，来获取任意变量x对应的可取地址的Value。</p>
-<p>我们可以通过调用reflect.Value的CanAddr方法来判断其是否可以被取地址：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>fmt.<span style=color:#00a000>Println</span>(a.<span style=color:#00a000>CanAddr</span>()) <span style=color:#080;font-style:italic>// &#34;false&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(b.<span style=color:#00a000>CanAddr</span>()) <span style=color:#080;font-style:italic>// &#34;false&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(c.<span style=color:#00a000>CanAddr</span>()) <span style=color:#080;font-style:italic>// &#34;false&#34;
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(d.<span style=color:#00a000>CanAddr</span>()) <span style=color:#080;font-style:italic>// &#34;true&#34;
-</span></code></pre></div><p>每当我们通过指针间接地获取的reflect.Value都是可取地址的，即使开始的是一个不可取地址的Value。在反射机制中，所有关于是否支持取地址的规则都是类似的。例如，slice的索引表达式e[i]将隐式地包含一个指针，它就是可取地址的，即使开始的e表达式不支持也没有关系。以此类推，reflect.ValueOf(e).Index(i)对应的值也是可取地址的，即使原始的reflect.ValueOf(e)不支持也没有关系。</p>
-<p>要从变量对应的可取地址的reflect.Value来访问变量需要三个步骤。第一步是调用Addr()方法，它返回一个Value，里面保存了指向变量的指针。然后是在Value上调用Interface()方法，也就是返回一个interface{}，里面包含指向变量的指针。最后，如果我们知道变量的类型，我们可以使用类型的断言机制将得到的interface{}类型的接口强制转为普通的类型指针。这样我们就可以通过这个普通指针来更新变量了：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>x <span style=color:#666>:=</span> <span style=color:#666>2</span>
-d <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>x).<span style=color:#00a000>Elem</span>()   <span style=color:#080;font-style:italic>// d refers to the variable x
-</span><span style=color:#080;font-style:italic></span>px <span style=color:#666>:=</span> d.<span style=color:#00a000>Addr</span>().<span style=color:#00a000>Interface</span>().(<span style=color:#666>*</span><span style=color:#0b0;font-weight:700>int</span>) <span style=color:#080;font-style:italic>// px := &amp;x
-</span><span style=color:#080;font-style:italic></span><span style=color:#666>*</span>px = <span style=color:#666>3</span>                           <span style=color:#080;font-style:italic>// x = 3
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(x)                    <span style=color:#080;font-style:italic>// &#34;3&#34;
-</span></code></pre></div><p>或者，不使用指针，而是通过调用可取地址的reflect.Value的reflect.Value.Set方法来更新对应的值：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>d.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>4</span>))
-fmt.<span style=color:#00a000>Println</span>(x) <span style=color:#080;font-style:italic>// &#34;4&#34;
-</span></code></pre></div><p>Set方法将在运行时执行和编译时进行类似的可赋值性约束的检查。以上代码，变量和值都是int类型，但是如果变量是int64类型，那么程序将抛出一个panic异常，所以关键问题是要确保改类型的变量可以接受对应的值：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>d.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#a2f>int64</span>(<span style=color:#666>5</span>))) <span style=color:#080;font-style:italic>// panic: int64 is not assignable to int
-</span></code></pre></div><p>同样，对一个不可取地址的reflect.Value调用Set方法也会导致panic异常：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>x <span style=color:#666>:=</span> <span style=color:#666>2</span>
-b <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(x)
-b.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>)) <span style=color:#080;font-style:italic>// panic: Set using unaddressable value
-</span></code></pre></div><p>这里有很多用于基本数据类型的Set方法：SetInt、SetUint、SetString和SetFloat等。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>d <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>x).<span style=color:#00a000>Elem</span>()
-d.<span style=color:#00a000>SetInt</span>(<span style=color:#666>3</span>)
-fmt.<span style=color:#00a000>Println</span>(x) <span style=color:#080;font-style:italic>// &#34;3&#34;
-</span></code></pre></div><p>从某种程度上说，这些Set方法总是尽可能地完成任务。以SetInt为例，只要变量是某种类型的有符号整数就可以工作，即使是一些命名的类型、甚至只要底层数据类型是有符号整数就可以，而且如果对于变量类型值太大的话会被自动截断。但需要谨慎的是：对于一个引用interface{}类型的reflect.Value调用SetInt会导致panic异常，即使那个interface{}变量对于整数类型也不行。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>x <span style=color:#666>:=</span> <span style=color:#666>1</span>
-rx <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>x).<span style=color:#00a000>Elem</span>()
-rx.<span style=color:#00a000>SetInt</span>(<span style=color:#666>2</span>)                     <span style=color:#080;font-style:italic>// OK, x = 2
-</span><span style=color:#080;font-style:italic></span>rx.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>))       <span style=color:#080;font-style:italic>// OK, x = 3
-</span><span style=color:#080;font-style:italic></span>rx.<span style=color:#00a000>SetString</span>(<span style=color:#b44>&#34;hello&#34;</span>)            <span style=color:#080;font-style:italic>// panic: string is not assignable to int
-</span><span style=color:#080;font-style:italic></span>rx.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#b44>&#34;hello&#34;</span>)) <span style=color:#080;font-style:italic>// panic: string is not assignable to int
-</span><span style=color:#080;font-style:italic></span>
-<span style=color:#a2f;font-weight:700>var</span> y <span style=color:#a2f;font-weight:700>interface</span>{}
-ry <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>y).<span style=color:#00a000>Elem</span>()
-ry.<span style=color:#00a000>SetInt</span>(<span style=color:#666>2</span>)                     <span style=color:#080;font-style:italic>// panic: SetInt called on interface Value
-</span><span style=color:#080;font-style:italic></span>ry.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>))       <span style=color:#080;font-style:italic>// OK, y = int(3)
-</span><span style=color:#080;font-style:italic></span>ry.<span style=color:#00a000>SetString</span>(<span style=color:#b44>&#34;hello&#34;</span>)            <span style=color:#080;font-style:italic>// panic: SetString called on interface Value
-</span><span style=color:#080;font-style:italic></span>ry.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#b44>&#34;hello&#34;</span>)) <span style=color:#080;font-style:italic>// OK, y = &#34;hello&#34;
-</span></code></pre></div><p>当我们用Display显示os.Stdout结构时，我们发现反射可以越过Go语言的导出规则的限制读取结构体中未导出的成员，比如在类Unix系统上os.File结构体中的fd int成员。然而，利用反射机制并不能修改这些未导出的成员：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>stdout <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(os.Stdout).<span style=color:#00a000>Elem</span>() <span style=color:#080;font-style:italic>// *os.Stdout, an os.File var
-</span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(stdout.<span style=color:#00a000>Type</span>())                  <span style=color:#080;font-style:italic>// &#34;os.File&#34;
-</span><span style=color:#080;font-style:italic></span>fd <span style=color:#666>:=</span> stdout.<span style=color:#00a000>FieldByName</span>(<span style=color:#b44>&#34;fd&#34;</span>)
-fmt.<span style=color:#00a000>Println</span>(fd.<span style=color:#00a000>Int</span>()) <span style=color:#080;font-style:italic>// &#34;1&#34;
-</span><span style=color:#080;font-style:italic></span>fd.<span style=color:#00a000>SetInt</span>(<span style=color:#666>2</span>)          <span style=color:#080;font-style:italic>// panic: unexported field
-</span></code></pre></div><p>一个可取地址的reflect.Value会记录一个结构体成员是否是未导出成员，如果是的话则拒绝修改操作。因此，CanAddr方法并不能正确反映一个变量是否是可以被修改的。另一个相关的方法CanSet是用于检查对应的reflect.Value是否是可取地址并可被修改的：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>fmt.<span style=color:#00a000>Println</span>(fd.<span style=color:#00a000>CanAddr</span>(), fd.<span style=color:#00a000>CanSet</span>()) <span style=color:#080;font-style:italic>// &#34;true false&#34;
-</span></code></pre></div><h2 id=获取结构体字段标签>获取结构体字段标签</h2>
-<p>在4.5节我们使用构体成员标签用于设置对应JSON对应的名字。其中json成员标签让我们可以选择成员的名字和抑制零值成员的输出。在本节，我们将看到如何通过反射机制类获取成员标签。</p>
-<p>对于一个web服务，大部分HTTP处理函数要做的第一件事情就是展开请求中的参数到本地变量中。我们定义了一个工具函数，叫params.Unpack，通过使用结构体成员标签机制来让HTTP处理函数解析请求参数更方便。</p>
-<p>首先，我们看看如何使用它。下面的search函数是一个HTTP请求处理函数。它定义了一个匿名结构体类型的变量，用结构体的每个成员表示HTTP请求的参数。其中结构体成员标签指明了对于请求参数的名字，为了减少URL的长度这些参数名通常都是神秘的缩略词。Unpack将请求参数填充到合适的结构体成员中，这样我们可以方便地通过合适的类型类来访问这些参数。</p>
-<p><em>gopl.io/ch12/search</em></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;gopl.io/ch12/params&#34;</span>
-
-<span style=color:#080;font-style:italic>// search implements the /search URL endpoint.
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>search</span>(resp http.ResponseWriter, req <span style=color:#666>*</span>http.Request) {
-    <span style=color:#a2f;font-weight:700>var</span> data <span style=color:#a2f;font-weight:700>struct</span> {
-        Labels     []<span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`http:&#34;l&#34;`</span>
-        MaxResults <span style=color:#0b0;font-weight:700>int</span>      <span style=color:#b44>`http:&#34;max&#34;`</span>
-        Exact      <span style=color:#0b0;font-weight:700>bool</span>     <span style=color:#b44>`http:&#34;x&#34;`</span>
-    }
-    data.MaxResults = <span style=color:#666>10</span> <span style=color:#080;font-style:italic>// set default
-</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> params.<span style=color:#00a000>Unpack</span>(req, <span style=color:#666>&amp;</span>data); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-        http.<span style=color:#00a000>Error</span>(resp, err.<span style=color:#00a000>Error</span>(), http.StatusBadRequest) <span style=color:#080;font-style:italic>// 400
-</span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>return</span>
-    }
-
-    <span style=color:#080;font-style:italic>// ...rest of handler...
-</span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Fprintf</span>(resp, <span style=color:#b44>&#34;Search: %+v\n&#34;</span>, data)
-}
-</code></pre></div><p>下面的Unpack函数主要完成三件事情。第一，它调用req.ParseForm()来解析HTTP请求。然后，req.Form将包含所有的请求参数，不管HTTP客户端使用的是GET还是POST请求方法。</p>
-<p>下一步，Unpack函数将构建每个结构体成员有效参数名字到成员变量的映射。如果结构体成员有成员标签的话，有效参数名字可能和实际的成员名字不相同。reflect.Type的Field方法将返回一个reflect.StructField，里面含有每个成员的名字、类型和可选的成员标签等信息。其中成员标签信息对应reflect.StructTag类型的字符串，并且提供了Get方法用于解析和根据特定key提取的子串，例如这里的http:"&mldr;&ldquo;形式的子串。</p>
-<p><em>gopl.io/ch12/params</em></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=color:#080;font-style:italic>// Unpack populates the fields of the struct pointed to by ptr
-</span><span style=color:#080;font-style:italic>// from the HTTP request parameters in req.
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Unpack</span>(req <span style=color:#666>*</span>http.Request, ptr <span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>error</span> {
-    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> req.<span style=color:#00a000>ParseForm</span>(); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-        <span style=color:#a2f;font-weight:700>return</span> err
-    }
-
-    <span style=color:#080;font-style:italic>// Build map of fields keyed by effective name.
-</span><span style=color:#080;font-style:italic></span>    fields <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]reflect.Value)
-    v <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(ptr).<span style=color:#00a000>Elem</span>() <span style=color:#080;font-style:italic>// the struct variable
-</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; v.<span style=color:#00a000>NumField</span>(); i<span style=color:#666>++</span> {
-        fieldInfo <span style=color:#666>:=</span> v.<span style=color:#00a000>Type</span>().<span style=color:#00a000>Field</span>(i) <span style=color:#080;font-style:italic>// a reflect.StructField
-</span><span style=color:#080;font-style:italic></span>        tag <span style=color:#666>:=</span> fieldInfo.Tag           <span style=color:#080;font-style:italic>// a reflect.StructTag
-</span><span style=color:#080;font-style:italic></span>        name <span style=color:#666>:=</span> tag.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;http&#34;</span>)
-        <span style=color:#a2f;font-weight:700>if</span> name <span style=color:#666>==</span> <span style=color:#b44>&#34;&#34;</span> {
-            name = strings.<span style=color:#00a000>ToLower</span>(fieldInfo.Name)
-        }
-        fields[name] = v.<span style=color:#00a000>Field</span>(i)
-    }
-
-    <span style=color:#080;font-style:italic>// Update struct field for each parameter in the request.
-</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>for</span> name, values <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> req.Form {
-        f <span style=color:#666>:=</span> fields[name]
-        <span style=color:#a2f;font-weight:700>if</span> !f.<span style=color:#00a000>IsValid</span>() {
-            <span style=color:#a2f;font-weight:700>continue</span> <span style=color:#080;font-style:italic>// ignore unrecognized HTTP parameters
-</span><span style=color:#080;font-style:italic></span>        }
-        <span style=color:#a2f;font-weight:700>for</span> _, value <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> values {
-            <span style=color:#a2f;font-weight:700>if</span> f.<span style=color:#00a000>Kind</span>() <span style=color:#666>==</span> reflect.Slice {
-                elem <span style=color:#666>:=</span> reflect.<span style=color:#00a000>New</span>(f.<span style=color:#00a000>Type</span>().<span style=color:#00a000>Elem</span>()).<span style=color:#00a000>Elem</span>()
-                <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> <span style=color:#00a000>populate</span>(elem, value); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-                    <span style=color:#a2f;font-weight:700>return</span> fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;%s: %v&#34;</span>, name, err)
-                }
-                f.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>Append</span>(f, elem))
-            } <span style=color:#a2f;font-weight:700>else</span> {
-                <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> <span style=color:#00a000>populate</span>(f, value); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-                    <span style=color:#a2f;font-weight:700>return</span> fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;%s: %v&#34;</span>, name, err)
-                }
-            }
-        }
-    }
-    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>
-}
-</code></pre></div><p>最后，Unpack遍历HTTP请求的name/valu参数键值对，并且根据更新相应的结构体成员。回想一下，同一个名字的参数可能出现多次。如果发生这种情况，并且对应的结构体成员是一个slice，那么就将所有的参数添加到slice中。其它情况，对应的成员值将被覆盖，只有最后一次出现的参数值才是起作用的。</p>
-<p>populate函数小心用请求的字符串类型参数值来填充单一的成员v（或者是slice类型成员中的单一的元素）。目前，它仅支持字符串、有符号整数和布尔型。其中其它的类型将留做练习任务。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>populate</span>(v reflect.Value, value <span style=color:#0b0;font-weight:700>string</span>) <span style=color:#0b0;font-weight:700>error</span> {
-    <span style=color:#a2f;font-weight:700>switch</span> v.<span style=color:#00a000>Kind</span>() {
-    <span style=color:#a2f;font-weight:700>case</span> reflect.String:
-        v.<span style=color:#00a000>SetString</span>(value)
-
-    <span style=color:#a2f;font-weight:700>case</span> reflect.Int:
-        i, err <span style=color:#666>:=</span> strconv.<span style=color:#00a000>ParseInt</span>(value, <span style=color:#666>10</span>, <span style=color:#666>64</span>)
-        <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-            <span style=color:#a2f;font-weight:700>return</span> err
-        }
-        v.<span style=color:#00a000>SetInt</span>(i)
-
-    <span style=color:#a2f;font-weight:700>case</span> reflect.Bool:
-        b, err <span style=color:#666>:=</span> strconv.<span style=color:#00a000>ParseBool</span>(value)
-        <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-            <span style=color:#a2f;font-weight:700>return</span> err
-        }
-        v.<span style=color:#00a000>SetBool</span>(b)
-
-    <span style=color:#a2f;font-weight:700>default</span>:
-        <span style=color:#a2f;font-weight:700>return</span> fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;unsupported kind %s&#34;</span>, v.<span style=color:#00a000>Type</span>())
-    }
-    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>
-}
-</code></pre></div><p>如果我们上上面的处理程序添加到一个web服务器，则可以产生以下的会话：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ go build gopl.io/ch12/search
-$ ./search &amp;
-$ ./fetch &#39;http://localhost:12345/search&#39;
-Search: {Labels:[] MaxResults:10 Exact:false}
-$ ./fetch &#39;http://localhost:12345/search?l=golang&amp;l=programming&#39;
-Search: {Labels:[golang programming] MaxResults:10 Exact:false}
-$ ./fetch &#39;http://localhost:12345/search?l=golang&amp;l=programming&amp;max=100&#39;
-Search: {Labels:[golang programming] MaxResults:100 Exact:false}
-$ ./fetch &#39;http://localhost:12345/search?x=true&amp;l=golang&amp;l=programming&#39;
-Search: {Labels:[golang programming] MaxResults:10 Exact:true}
-$ ./fetch &#39;http://localhost:12345/search?q=hello&amp;x=123&#39;
-x: strconv.ParseBool: parsing &#34;123&#34;: invalid syntax
-$ ./fetch &#39;http://localhost:12345/search?q=hello&amp;max=lots&#39;
-max: strconv.ParseInt: parsing &#34;lots&#34;: invalid syntax
-</code></pre></div><h2 id=显示一个类型的方法集>显示一个类型的方法集</h2>
-<p>我们的最后一个例子是使用reflect.Type来打印任意值的类型和枚举它的方法：</p>
-<p><em>gopl.io/ch12/methods</em></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=color:#080;font-style:italic>// Print prints the method set of the value x.
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Print</span>(x <span style=color:#a2f;font-weight:700>interface</span>{}) {
-    v <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(x)
-    t <span style=color:#666>:=</span> v.<span style=color:#00a000>Type</span>()
-    fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;type %s\n&#34;</span>, t)
-
-    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; v.<span style=color:#00a000>NumMethod</span>(); i<span style=color:#666>++</span> {
-        methType <span style=color:#666>:=</span> v.<span style=color:#00a000>Method</span>(i).<span style=color:#00a000>Type</span>()
-        fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;func (%s) %s%s\n&#34;</span>, t, t.<span style=color:#00a000>Method</span>(i).Name,
-            strings.<span style=color:#00a000>TrimPrefix</span>(methType.<span style=color:#00a000>String</span>(), <span style=color:#b44>&#34;func&#34;</span>))
-    }
-}
-</code></pre></div><p>reflect.Type和reflect.Value都提供了一个Method方法。每次t.Method(i)调用将一个reflect.Method的实例，对应一个用于描述一个方法的名称和类型的结构体。每次v.Method(i)方法调用都返回一个reflect.Value以表示对应的值（§6.4），也就是一个方法是帮到它的接收者的。使用reflect.Value.Call方法（我们这里没有演示），将可以调用一个Func类型的Value，但是这个例子中只用到了它的类型。</p>
-<p>这是属于time.Duration和<code>*strings.Replacer</code>两个类型的方法：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go>methods.<span style=color:#00a000>Print</span>(time.Hour)
-<span style=color:#080;font-style:italic>// Output:
-</span><span style=color:#080;font-style:italic>// type time.Duration
-</span><span style=color:#080;font-style:italic>// func (time.Duration) Hours() float64
-</span><span style=color:#080;font-style:italic>// func (time.Duration) Minutes() float64
-</span><span style=color:#080;font-style:italic>// func (time.Duration) Nanoseconds() int64
-</span><span style=color:#080;font-style:italic>// func (time.Duration) Seconds() float64
-</span><span style=color:#080;font-style:italic>// func (time.Duration) String() string
-</span><span style=color:#080;font-style:italic></span>
-methods.<span style=color:#00a000>Print</span>(<span style=color:#a2f>new</span>(strings.Replacer))
-<span style=color:#080;font-style:italic>// Output:
-</span><span style=color:#080;font-style:italic>// type *strings.Replacer
-</span><span style=color:#080;font-style:italic>// func (*strings.Replacer) Replace(string) string
-</span><span style=color:#080;font-style:italic>// func (*strings.Replacer) WriteString(io.Writer, string) (int, error)
-</span></code></pre></div><p>参考文章：</p>
-<ul>
-<li>《go语言圣经》</li>
-<li><a href=https://www.liwenzhou.com/posts/Go/13_reflect target=_blank rel=noopener>https://www.liwenzhou.com/posts/Go/13_reflect</a>
-</li>
-</ul>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=/tags/golang rel=tag title=golang>#golang#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-img>
-<img src=/img/qq_qrcode.png width=129px height=129px>
-<div style=text-align:center>QQ扫一扫交流</div>
-</div>
-<div class=article-copyright-info>
-<p>
-<span>标题：</span>Go Reflect
-</p>
-<p>
-<span>链接：</span>https://www.zhaohaiyu.com/post/go/go-reflect/
-</p>
-<p>
-<span>作者：</span>haiyux
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-file/ rel=next title=Go文件系统>
-<i class="fa fa-chevron-left"></i> Go文件系统
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-concurrent/ rel=prev title=Go并发>
-Go并发
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=ucomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=变量的内在机制>变量的内在机制</h2><p>Go语言中的变量是分为两部分的:</p><ul><li>类型信息：预先定义好的元信息。</li><li>值信息：程序运行过程中可动态变化的。</li></ul><h2 id=反射介绍>反射介绍</h2><p>反射是指在程序运行期对程序本身进行访问和修改的能力。程序在编译时，变量被转换为内存地址，变量名不会被编译器写入到可执行部分。在运行程序时，程序无法获取自身的信息。</p><p>支持反射的语言可以在程序编译期将变量的反射信息，如字段名称、类型信息、结构体信息等整合到可执行文件中，并给程序提供接口访问反射信息，这样就可以在程序运行期获取类型的反射信息，并且有能力修改它们。</p><p>Go程序在运行期使用reflect包访问程序的反射信息。</p><p>在上一篇博客中我们介绍了空接口。 空接口可以存储任意类型的变量，那我们如何知道这个空接口保存的数据是什么呢？ 反射就是在运行时动态的获取一个变量的类型信息和值信息。</p><h2 id=reflect包>reflect包</h2><p>在Go语言的反射机制中，任何接口值都由是<code>一个具体类型</code>和<code>具体类型的值</code>两部分组成的(我们在上一篇接口的博客中有介绍相关概念)。 在Go语言中反射的相关功能由内置的reflect包提供，任意接口值在反射中都可以理解为由<code>reflect.Type</code>和<code>reflect.Value</code>两部分组成，并且reflect包提供了<code>reflect.TypeOf</code>和<code>reflect.ValueOf</code>两个函数来获取任意对象的Value和Type。</p><h2 id=reflecttype-和-reflectvalue>reflect.Type 和 reflect.Value</h2><p>反射是由 reflect 包提供的。它定义了两个重要的类型，Type 和 Value。一个 Type 表示一个Go类型。它是一个接口，有许多方法来区分类型以及检查它们的组成部分，例如一个结构体的成员或一个函数的参数等。唯一能反映 reflect.Type 实现的是接口的类型描述信息（§7.5），也正是这个实体标识了接口值的动态类型。</p><p>函数 reflect.TypeOf 接受任意的 interface{} 类型，并以 reflect.Type 形式返回其动态类型：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>t <span style=color:#666>:=</span> reflect.<span style=color:#00a000>TypeOf</span>(<span style=color:#666>3</span>)  <span style=color:#080;font-style:italic>// a reflect.Type
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(t.<span style=color:#00a000>String</span>()) <span style=color:#080;font-style:italic>// &#34;int&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(t)          <span style=color:#080;font-style:italic>// &#34;int&#34;
+</span></span></span></code></pre></div><p>其中 TypeOf(3) 调用将值 3 传给 interface{} 参数。回到 7.5节 的将一个具体的值转为接口类型会有一个隐式的接口转换操作，它会创建一个包含两个信息的接口值：操作数的动态类型（这里是 int）和它的动态的值（这里是 3）。</p><p>因为 reflect.TypeOf 返回的是一个动态类型的接口值，它总是返回具体的类型。因此，下面的代码将打印 &ldquo;*os.File&rdquo; 而不是 &ldquo;io.Writer&rdquo;。稍后，我们将看到能够表达接口类型的 reflect.Type。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> w io.Writer = os.Stdout
+</span></span><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(reflect.<span style=color:#00a000>TypeOf</span>(w)) <span style=color:#080;font-style:italic>// &#34;*os.File&#34;
+</span></span></span></code></pre></div><p>要注意的是 reflect.Type 接口是满足 fmt.Stringer 接口的。因为打印一个接口的动态类型对于调试和日志是有帮助的， fmt.Printf 提供了一个缩写 %T 参数，内部使用 reflect.TypeOf 来输出：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;%T\n&#34;</span>, <span style=color:#666>3</span>) <span style=color:#080;font-style:italic>// &#34;int&#34;
+</span></span></span></code></pre></div><p>reflect 包中另一个重要的类型是 Value。一个 reflect.Value 可以装载任意类型的值。函数 reflect.ValueOf 接受任意的 interface{} 类型，并返回一个装载着其动态值的 reflect.Value。和 reflect.TypeOf 类似，reflect.ValueOf 返回的结果也是具体的类型，但是 reflect.Value 也可以持有一个接口值。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>v <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>) <span style=color:#080;font-style:italic>// a reflect.Value
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(v)          <span style=color:#080;font-style:italic>// &#34;3&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;%v\n&#34;</span>, v)   <span style=color:#080;font-style:italic>// &#34;3&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(v.<span style=color:#00a000>String</span>()) <span style=color:#080;font-style:italic>// NOTE: &#34;&lt;int Value&gt;&#34;
+</span></span></span></code></pre></div><p>和 reflect.Type 类似，reflect.Value 也满足 fmt.Stringer 接口，但是除非 Value 持有的是字符串，否则 String 方法只返回其类型。而使用 fmt 包的 %v 标志参数会对 reflect.Values 特殊处理。</p><p>对 Value 调用 Type 方法将返回具体类型所对应的 reflect.Type：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>t <span style=color:#666>:=</span> v.<span style=color:#00a000>Type</span>()           <span style=color:#080;font-style:italic>// a reflect.Type
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(t.<span style=color:#00a000>String</span>()) <span style=color:#080;font-style:italic>// &#34;int&#34;
+</span></span></span></code></pre></div><p>reflect.ValueOf 的逆操作是 reflect.Value.Interface 方法。它返回一个 interface{} 类型，装载着与 reflect.Value 相同的具体值：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>v <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>) <span style=color:#080;font-style:italic>// a reflect.Value
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>x <span style=color:#666>:=</span> v.<span style=color:#00a000>Interface</span>()      <span style=color:#080;font-style:italic>// an interface{}
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>i <span style=color:#666>:=</span> x.(<span style=color:#0b0;font-weight:700>int</span>)            <span style=color:#080;font-style:italic>// an int
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;%d\n&#34;</span>, i)   <span style=color:#080;font-style:italic>// &#34;3&#34;
+</span></span></span></code></pre></div><p>reflect.Value 和 interface{} 都能装载任意的值。所不同的是，一个空的接口隐藏了值内部的表示方式和所有方法，因此只有我们知道具体的动态类型才能使用类型断言来访问内部的值（就像上面那样），内部值我们没法访问。相比之下，一个 Value 则有很多方法来检查其内容，无论它的具体类型是什么。让我们再次尝试实现我们的格式化函数 format.Any。</p><p>我们使用 reflect.Value 的 Kind 方法来替代之前的类型 switch。虽然还是有无穷多的类型，但是它们的 kinds 类型却是有限的：Bool、String 和 所有数字类型的基础类型；Array 和 Struct 对应的聚合类型；Chan、Func、Ptr、Slice 和 Map 对应的引用类型；interface 类型；还有表示空值的 Invalid 类型。（空的 reflect.Value 的 kind 即为 Invalid。）</p><p><em>gopl.io/ch12/format</em></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> format
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;reflect&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;strconv&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// Any formats any value as a string.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Any</span>(value <span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>string</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#00a000>formatAtom</span>(reflect.<span style=color:#00a000>ValueOf</span>(value))
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// formatAtom formats a value without inspecting its internal structure.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>formatAtom</span>(v reflect.Value) <span style=color:#0b0;font-weight:700>string</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>switch</span> v.<span style=color:#00a000>Kind</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>case</span> reflect.Invalid:
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#b44>&#34;invalid&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>case</span> reflect.Int, reflect.Int8, reflect.Int16,
+</span></span><span style=display:flex><span>        reflect.Int32, reflect.Int64:
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> strconv.<span style=color:#00a000>FormatInt</span>(v.<span style=color:#00a000>Int</span>(), <span style=color:#666>10</span>)
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>case</span> reflect.Uint, reflect.Uint8, reflect.Uint16,
+</span></span><span style=display:flex><span>        reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> strconv.<span style=color:#00a000>FormatUint</span>(v.<span style=color:#00a000>Uint</span>(), <span style=color:#666>10</span>)
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// ...floating-point and complex cases omitted for brevity...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>case</span> reflect.Bool:
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> strconv.<span style=color:#00a000>FormatBool</span>(v.<span style=color:#00a000>Bool</span>())
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>case</span> reflect.String:
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> strconv.<span style=color:#00a000>Quote</span>(v.<span style=color:#00a000>String</span>())
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>case</span> reflect.Chan, reflect.Func, reflect.Ptr, reflect.Slice, reflect.Map:
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> v.<span style=color:#00a000>Type</span>().<span style=color:#00a000>String</span>() <span style=color:#666>+</span> <span style=color:#b44>&#34; 0x&#34;</span> <span style=color:#666>+</span>
+</span></span><span style=display:flex><span>            strconv.<span style=color:#00a000>FormatUint</span>(<span style=color:#a2f>uint64</span>(v.<span style=color:#00a000>Pointer</span>()), <span style=color:#666>16</span>)
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>default</span>: <span style=color:#080;font-style:italic>// reflect.Array, reflect.Struct, reflect.Interface
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>return</span> v.<span style=color:#00a000>Type</span>().<span style=color:#00a000>String</span>() <span style=color:#666>+</span> <span style=color:#b44>&#34; value&#34;</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>到目前为止，我们的函数将每个值视作一个不可分割没有内部结构的物品，因此它叫 formatAtom。对于聚合类型（结构体和数组）和接口，只是打印值的类型，对于引用类型（channels、functions、pointers、slices 和 maps），打印类型和十六进制的引用地址。虽然还不够理想，但是依然是一个重大的进步，并且 Kind 只关心底层表示，format.Any 也支持具名类型。例如：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> x <span style=color:#0b0;font-weight:700>int64</span> = <span style=color:#666>1</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> d time.Duration = <span style=color:#666>1</span> <span style=color:#666>*</span> time.Nanosecond
+</span></span><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(format.<span style=color:#00a000>Any</span>(x))                  <span style=color:#080;font-style:italic>// &#34;1&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(format.<span style=color:#00a000>Any</span>(d))                  <span style=color:#080;font-style:italic>// &#34;1&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(format.<span style=color:#00a000>Any</span>([]<span style=color:#0b0;font-weight:700>int64</span>{x}))         <span style=color:#080;font-style:italic>// &#34;[]int64 0x8202b87b0&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(format.<span style=color:#00a000>Any</span>([]time.Duration{d})) <span style=color:#080;font-style:italic>// &#34;[]time.Duration 0x8202b87e0&#34;
+</span></span></span></code></pre></div><h2 id=通过reflectvalue修改值>通过reflect.Value修改值</h2><p>到目前为止，反射还只是程序中变量的另一种读取方式。然而，在本节中我们将重点讨论如何通过反射机制来修改变量。</p><p>回想一下，Go语言中类似x、x.f[1]和*p形式的表达式都可以表示变量，但是其它如x + 1和f(2)则不是变量。一个变量就是一个可寻址的内存空间，里面存储了一个值，并且存储的值可以通过内存地址来更新。</p><p>对于reflect.Values也有类似的区别。有一些reflect.Values是可取地址的；其它一些则不可以。考虑以下的声明语句：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>x <span style=color:#666>:=</span> <span style=color:#666>2</span>                   <span style=color:#080;font-style:italic>// value   type    variable?
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>a <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>2</span>)  <span style=color:#080;font-style:italic>// 2       int     no
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>b <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(x)  <span style=color:#080;font-style:italic>// 2       int     no
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>c <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>x) <span style=color:#080;font-style:italic>// &amp;x      *int    no
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>d <span style=color:#666>:=</span> c.<span style=color:#00a000>Elem</span>()            <span style=color:#080;font-style:italic>// 2       int     yes (x)
+</span></span></span></code></pre></div><p>其中a对应的变量不可取地址。因为a中的值仅仅是整数2的拷贝副本。b中的值也同样不可取地址。c中的值还是不可取地址，它只是一个指针<code>&x</code>的拷贝。实际上，所有通过reflect.ValueOf(x)返回的reflect.Value都是不可取地址的。但是对于d，它是c的解引用方式生成的，指向另一个变量，因此是可取地址的。我们可以通过调用reflect.ValueOf(&x).Elem()，来获取任意变量x对应的可取地址的Value。</p><p>我们可以通过调用reflect.Value的CanAddr方法来判断其是否可以被取地址：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(a.<span style=color:#00a000>CanAddr</span>()) <span style=color:#080;font-style:italic>// &#34;false&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(b.<span style=color:#00a000>CanAddr</span>()) <span style=color:#080;font-style:italic>// &#34;false&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(c.<span style=color:#00a000>CanAddr</span>()) <span style=color:#080;font-style:italic>// &#34;false&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(d.<span style=color:#00a000>CanAddr</span>()) <span style=color:#080;font-style:italic>// &#34;true&#34;
+</span></span></span></code></pre></div><p>每当我们通过指针间接地获取的reflect.Value都是可取地址的，即使开始的是一个不可取地址的Value。在反射机制中，所有关于是否支持取地址的规则都是类似的。例如，slice的索引表达式e[i]将隐式地包含一个指针，它就是可取地址的，即使开始的e表达式不支持也没有关系。以此类推，reflect.ValueOf(e).Index(i)对应的值也是可取地址的，即使原始的reflect.ValueOf(e)不支持也没有关系。</p><p>要从变量对应的可取地址的reflect.Value来访问变量需要三个步骤。第一步是调用Addr()方法，它返回一个Value，里面保存了指向变量的指针。然后是在Value上调用Interface()方法，也就是返回一个interface{}，里面包含指向变量的指针。最后，如果我们知道变量的类型，我们可以使用类型的断言机制将得到的interface{}类型的接口强制转为普通的类型指针。这样我们就可以通过这个普通指针来更新变量了：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>x <span style=color:#666>:=</span> <span style=color:#666>2</span>
+</span></span><span style=display:flex><span>d <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>x).<span style=color:#00a000>Elem</span>()   <span style=color:#080;font-style:italic>// d refers to the variable x
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>px <span style=color:#666>:=</span> d.<span style=color:#00a000>Addr</span>().<span style=color:#00a000>Interface</span>().(<span style=color:#666>*</span><span style=color:#0b0;font-weight:700>int</span>) <span style=color:#080;font-style:italic>// px := &amp;x
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#666>*</span>px = <span style=color:#666>3</span>                           <span style=color:#080;font-style:italic>// x = 3
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(x)                    <span style=color:#080;font-style:italic>// &#34;3&#34;
+</span></span></span></code></pre></div><p>或者，不使用指针，而是通过调用可取地址的reflect.Value的reflect.Value.Set方法来更新对应的值：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>d.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>4</span>))
+</span></span><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(x) <span style=color:#080;font-style:italic>// &#34;4&#34;
+</span></span></span></code></pre></div><p>Set方法将在运行时执行和编译时进行类似的可赋值性约束的检查。以上代码，变量和值都是int类型，但是如果变量是int64类型，那么程序将抛出一个panic异常，所以关键问题是要确保改类型的变量可以接受对应的值：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>d.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#a2f>int64</span>(<span style=color:#666>5</span>))) <span style=color:#080;font-style:italic>// panic: int64 is not assignable to int
+</span></span></span></code></pre></div><p>同样，对一个不可取地址的reflect.Value调用Set方法也会导致panic异常：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>x <span style=color:#666>:=</span> <span style=color:#666>2</span>
+</span></span><span style=display:flex><span>b <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(x)
+</span></span><span style=display:flex><span>b.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>)) <span style=color:#080;font-style:italic>// panic: Set using unaddressable value
+</span></span></span></code></pre></div><p>这里有很多用于基本数据类型的Set方法：SetInt、SetUint、SetString和SetFloat等。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>d <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>x).<span style=color:#00a000>Elem</span>()
+</span></span><span style=display:flex><span>d.<span style=color:#00a000>SetInt</span>(<span style=color:#666>3</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(x) <span style=color:#080;font-style:italic>// &#34;3&#34;
+</span></span></span></code></pre></div><p>从某种程度上说，这些Set方法总是尽可能地完成任务。以SetInt为例，只要变量是某种类型的有符号整数就可以工作，即使是一些命名的类型、甚至只要底层数据类型是有符号整数就可以，而且如果对于变量类型值太大的话会被自动截断。但需要谨慎的是：对于一个引用interface{}类型的reflect.Value调用SetInt会导致panic异常，即使那个interface{}变量对于整数类型也不行。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>x <span style=color:#666>:=</span> <span style=color:#666>1</span>
+</span></span><span style=display:flex><span>rx <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>x).<span style=color:#00a000>Elem</span>()
+</span></span><span style=display:flex><span>rx.<span style=color:#00a000>SetInt</span>(<span style=color:#666>2</span>)                     <span style=color:#080;font-style:italic>// OK, x = 2
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>rx.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>))       <span style=color:#080;font-style:italic>// OK, x = 3
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>rx.<span style=color:#00a000>SetString</span>(<span style=color:#b44>&#34;hello&#34;</span>)            <span style=color:#080;font-style:italic>// panic: string is not assignable to int
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>rx.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#b44>&#34;hello&#34;</span>)) <span style=color:#080;font-style:italic>// panic: string is not assignable to int
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> y <span style=color:#a2f;font-weight:700>interface</span>{}
+</span></span><span style=display:flex><span>ry <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>&amp;</span>y).<span style=color:#00a000>Elem</span>()
+</span></span><span style=display:flex><span>ry.<span style=color:#00a000>SetInt</span>(<span style=color:#666>2</span>)                     <span style=color:#080;font-style:italic>// panic: SetInt called on interface Value
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>ry.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#666>3</span>))       <span style=color:#080;font-style:italic>// OK, y = int(3)
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>ry.<span style=color:#00a000>SetString</span>(<span style=color:#b44>&#34;hello&#34;</span>)            <span style=color:#080;font-style:italic>// panic: SetString called on interface Value
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>ry.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>ValueOf</span>(<span style=color:#b44>&#34;hello&#34;</span>)) <span style=color:#080;font-style:italic>// OK, y = &#34;hello&#34;
+</span></span></span></code></pre></div><p>当我们用Display显示os.Stdout结构时，我们发现反射可以越过Go语言的导出规则的限制读取结构体中未导出的成员，比如在类Unix系统上os.File结构体中的fd int成员。然而，利用反射机制并不能修改这些未导出的成员：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>stdout <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(os.Stdout).<span style=color:#00a000>Elem</span>() <span style=color:#080;font-style:italic>// *os.Stdout, an os.File var
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fmt.<span style=color:#00a000>Println</span>(stdout.<span style=color:#00a000>Type</span>())                  <span style=color:#080;font-style:italic>// &#34;os.File&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fd <span style=color:#666>:=</span> stdout.<span style=color:#00a000>FieldByName</span>(<span style=color:#b44>&#34;fd&#34;</span>)
+</span></span><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(fd.<span style=color:#00a000>Int</span>()) <span style=color:#080;font-style:italic>// &#34;1&#34;
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>fd.<span style=color:#00a000>SetInt</span>(<span style=color:#666>2</span>)          <span style=color:#080;font-style:italic>// panic: unexported field
+</span></span></span></code></pre></div><p>一个可取地址的reflect.Value会记录一个结构体成员是否是未导出成员，如果是的话则拒绝修改操作。因此，CanAddr方法并不能正确反映一个变量是否是可以被修改的。另一个相关的方法CanSet是用于检查对应的reflect.Value是否是可取地址并可被修改的：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>fmt.<span style=color:#00a000>Println</span>(fd.<span style=color:#00a000>CanAddr</span>(), fd.<span style=color:#00a000>CanSet</span>()) <span style=color:#080;font-style:italic>// &#34;true false&#34;
+</span></span></span></code></pre></div><h2 id=获取结构体字段标签>获取结构体字段标签</h2><p>在4.5节我们使用构体成员标签用于设置对应JSON对应的名字。其中json成员标签让我们可以选择成员的名字和抑制零值成员的输出。在本节，我们将看到如何通过反射机制类获取成员标签。</p><p>对于一个web服务，大部分HTTP处理函数要做的第一件事情就是展开请求中的参数到本地变量中。我们定义了一个工具函数，叫params.Unpack，通过使用结构体成员标签机制来让HTTP处理函数解析请求参数更方便。</p><p>首先，我们看看如何使用它。下面的search函数是一个HTTP请求处理函数。它定义了一个匿名结构体类型的变量，用结构体的每个成员表示HTTP请求的参数。其中结构体成员标签指明了对于请求参数的名字，为了减少URL的长度这些参数名通常都是神秘的缩略词。Unpack将请求参数填充到合适的结构体成员中，这样我们可以方便地通过合适的类型类来访问这些参数。</p><p><em>gopl.io/ch12/search</em></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;gopl.io/ch12/params&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// search implements the /search URL endpoint.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>search</span>(resp http.ResponseWriter, req <span style=color:#666>*</span>http.Request) {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>var</span> data <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>        Labels     []<span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`http:&#34;l&#34;`</span>
+</span></span><span style=display:flex><span>        MaxResults <span style=color:#0b0;font-weight:700>int</span>      <span style=color:#b44>`http:&#34;max&#34;`</span>
+</span></span><span style=display:flex><span>        Exact      <span style=color:#0b0;font-weight:700>bool</span>     <span style=color:#b44>`http:&#34;x&#34;`</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    data.MaxResults = <span style=color:#666>10</span> <span style=color:#080;font-style:italic>// set default
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> params.<span style=color:#00a000>Unpack</span>(req, <span style=color:#666>&amp;</span>data); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>        http.<span style=color:#00a000>Error</span>(resp, err.<span style=color:#00a000>Error</span>(), http.StatusBadRequest) <span style=color:#080;font-style:italic>// 400
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// ...rest of handler...
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    fmt.<span style=color:#00a000>Fprintf</span>(resp, <span style=color:#b44>&#34;Search: %+v\n&#34;</span>, data)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>下面的Unpack函数主要完成三件事情。第一，它调用req.ParseForm()来解析HTTP请求。然后，req.Form将包含所有的请求参数，不管HTTP客户端使用的是GET还是POST请求方法。</p><p>下一步，Unpack函数将构建每个结构体成员有效参数名字到成员变量的映射。如果结构体成员有成员标签的话，有效参数名字可能和实际的成员名字不相同。reflect.Type的Field方法将返回一个reflect.StructField，里面含有每个成员的名字、类型和可选的成员标签等信息。其中成员标签信息对应reflect.StructTag类型的字符串，并且提供了Get方法用于解析和根据特定key提取的子串，例如这里的http:"&mldr;&ldquo;形式的子串。</p><p><em>gopl.io/ch12/params</em></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span><span style=color:#080;font-style:italic>// Unpack populates the fields of the struct pointed to by ptr
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// from the HTTP request parameters in req.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Unpack</span>(req <span style=color:#666>*</span>http.Request, ptr <span style=color:#a2f;font-weight:700>interface</span>{}) <span style=color:#0b0;font-weight:700>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> req.<span style=color:#00a000>ParseForm</span>(); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> err
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// Build map of fields keyed by effective name.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    fields <span style=color:#666>:=</span> <span style=color:#a2f>make</span>(<span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]reflect.Value)
+</span></span><span style=display:flex><span>    v <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(ptr).<span style=color:#00a000>Elem</span>() <span style=color:#080;font-style:italic>// the struct variable
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; v.<span style=color:#00a000>NumField</span>(); i<span style=color:#666>++</span> {
+</span></span><span style=display:flex><span>        fieldInfo <span style=color:#666>:=</span> v.<span style=color:#00a000>Type</span>().<span style=color:#00a000>Field</span>(i) <span style=color:#080;font-style:italic>// a reflect.StructField
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        tag <span style=color:#666>:=</span> fieldInfo.Tag           <span style=color:#080;font-style:italic>// a reflect.StructTag
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        name <span style=color:#666>:=</span> tag.<span style=color:#00a000>Get</span>(<span style=color:#b44>&#34;http&#34;</span>)
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>if</span> name <span style=color:#666>==</span> <span style=color:#b44>&#34;&#34;</span> {
+</span></span><span style=display:flex><span>            name = strings.<span style=color:#00a000>ToLower</span>(fieldInfo.Name)
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        fields[name] = v.<span style=color:#00a000>Field</span>(i)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// Update struct field for each parameter in the request.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>for</span> name, values <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> req.Form {
+</span></span><span style=display:flex><span>        f <span style=color:#666>:=</span> fields[name]
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>if</span> !f.<span style=color:#00a000>IsValid</span>() {
+</span></span><span style=display:flex><span>            <span style=color:#a2f;font-weight:700>continue</span> <span style=color:#080;font-style:italic>// ignore unrecognized HTTP parameters
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        }
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>for</span> _, value <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> values {
+</span></span><span style=display:flex><span>            <span style=color:#a2f;font-weight:700>if</span> f.<span style=color:#00a000>Kind</span>() <span style=color:#666>==</span> reflect.Slice {
+</span></span><span style=display:flex><span>                elem <span style=color:#666>:=</span> reflect.<span style=color:#00a000>New</span>(f.<span style=color:#00a000>Type</span>().<span style=color:#00a000>Elem</span>()).<span style=color:#00a000>Elem</span>()
+</span></span><span style=display:flex><span>                <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> <span style=color:#00a000>populate</span>(elem, value); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#a2f;font-weight:700>return</span> fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;%s: %v&#34;</span>, name, err)
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>                f.<span style=color:#00a000>Set</span>(reflect.<span style=color:#00a000>Append</span>(f, elem))
+</span></span><span style=display:flex><span>            } <span style=color:#a2f;font-weight:700>else</span> {
+</span></span><span style=display:flex><span>                <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> <span style=color:#00a000>populate</span>(f, value); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>                    <span style=color:#a2f;font-weight:700>return</span> fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;%s: %v&#34;</span>, name, err)
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>最后，Unpack遍历HTTP请求的name/valu参数键值对，并且根据更新相应的结构体成员。回想一下，同一个名字的参数可能出现多次。如果发生这种情况，并且对应的结构体成员是一个slice，那么就将所有的参数添加到slice中。其它情况，对应的成员值将被覆盖，只有最后一次出现的参数值才是起作用的。</p><p>populate函数小心用请求的字符串类型参数值来填充单一的成员v（或者是slice类型成员中的单一的元素）。目前，它仅支持字符串、有符号整数和布尔型。其中其它的类型将留做练习任务。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>populate</span>(v reflect.Value, value <span style=color:#0b0;font-weight:700>string</span>) <span style=color:#0b0;font-weight:700>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>switch</span> v.<span style=color:#00a000>Kind</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>case</span> reflect.String:
+</span></span><span style=display:flex><span>        v.<span style=color:#00a000>SetString</span>(value)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>case</span> reflect.Int:
+</span></span><span style=display:flex><span>        i, err <span style=color:#666>:=</span> strconv.<span style=color:#00a000>ParseInt</span>(value, <span style=color:#666>10</span>, <span style=color:#666>64</span>)
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a2f;font-weight:700>return</span> err
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        v.<span style=color:#00a000>SetInt</span>(i)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>case</span> reflect.Bool:
+</span></span><span style=display:flex><span>        b, err <span style=color:#666>:=</span> strconv.<span style=color:#00a000>ParseBool</span>(value)
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a2f;font-weight:700>return</span> err
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        v.<span style=color:#00a000>SetBool</span>(b)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>default</span>:
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> fmt.<span style=color:#00a000>Errorf</span>(<span style=color:#b44>&#34;unsupported kind %s&#34;</span>, v.<span style=color:#00a000>Type</span>())
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>如果我们上上面的处理程序添加到一个web服务器，则可以产生以下的会话：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>$ go build gopl.io/ch12/search
+</span></span><span style=display:flex><span>$ ./search &amp;
+</span></span><span style=display:flex><span>$ ./fetch &#39;http://localhost:12345/search&#39;
+</span></span><span style=display:flex><span>Search: {Labels:[] MaxResults:10 Exact:false}
+</span></span><span style=display:flex><span>$ ./fetch &#39;http://localhost:12345/search?l=golang&amp;l=programming&#39;
+</span></span><span style=display:flex><span>Search: {Labels:[golang programming] MaxResults:10 Exact:false}
+</span></span><span style=display:flex><span>$ ./fetch &#39;http://localhost:12345/search?l=golang&amp;l=programming&amp;max=100&#39;
+</span></span><span style=display:flex><span>Search: {Labels:[golang programming] MaxResults:100 Exact:false}
+</span></span><span style=display:flex><span>$ ./fetch &#39;http://localhost:12345/search?x=true&amp;l=golang&amp;l=programming&#39;
+</span></span><span style=display:flex><span>Search: {Labels:[golang programming] MaxResults:10 Exact:true}
+</span></span><span style=display:flex><span>$ ./fetch &#39;http://localhost:12345/search?q=hello&amp;x=123&#39;
+</span></span><span style=display:flex><span>x: strconv.ParseBool: parsing &#34;123&#34;: invalid syntax
+</span></span><span style=display:flex><span>$ ./fetch &#39;http://localhost:12345/search?q=hello&amp;max=lots&#39;
+</span></span><span style=display:flex><span>max: strconv.ParseInt: parsing &#34;lots&#34;: invalid syntax
+</span></span></code></pre></div><h2 id=显示一个类型的方法集>显示一个类型的方法集</h2><p>我们的最后一个例子是使用reflect.Type来打印任意值的类型和枚举它的方法：</p><p><em>gopl.io/ch12/methods</em></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span><span style=color:#080;font-style:italic>// Print prints the method set of the value x.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>Print</span>(x <span style=color:#a2f;font-weight:700>interface</span>{}) {
+</span></span><span style=display:flex><span>    v <span style=color:#666>:=</span> reflect.<span style=color:#00a000>ValueOf</span>(x)
+</span></span><span style=display:flex><span>    t <span style=color:#666>:=</span> v.<span style=color:#00a000>Type</span>()
+</span></span><span style=display:flex><span>    fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;type %s\n&#34;</span>, t)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>for</span> i <span style=color:#666>:=</span> <span style=color:#666>0</span>; i &lt; v.<span style=color:#00a000>NumMethod</span>(); i<span style=color:#666>++</span> {
+</span></span><span style=display:flex><span>        methType <span style=color:#666>:=</span> v.<span style=color:#00a000>Method</span>(i).<span style=color:#00a000>Type</span>()
+</span></span><span style=display:flex><span>        fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;func (%s) %s%s\n&#34;</span>, t, t.<span style=color:#00a000>Method</span>(i).Name,
+</span></span><span style=display:flex><span>            strings.<span style=color:#00a000>TrimPrefix</span>(methType.<span style=color:#00a000>String</span>(), <span style=color:#b44>&#34;func&#34;</span>))
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>reflect.Type和reflect.Value都提供了一个Method方法。每次t.Method(i)调用将一个reflect.Method的实例，对应一个用于描述一个方法的名称和类型的结构体。每次v.Method(i)方法调用都返回一个reflect.Value以表示对应的值（§6.4），也就是一个方法是帮到它的接收者的。使用reflect.Value.Call方法（我们这里没有演示），将可以调用一个Func类型的Value，但是这个例子中只用到了它的类型。</p><p>这是属于time.Duration和<code>*strings.Replacer</code>两个类型的方法：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Go data-lang=Go><span style=display:flex><span>methods.<span style=color:#00a000>Print</span>(time.Hour)
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// Output:
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// type time.Duration
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// func (time.Duration) Hours() float64
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// func (time.Duration) Minutes() float64
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// func (time.Duration) Nanoseconds() int64
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// func (time.Duration) Seconds() float64
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// func (time.Duration) String() string
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>
+</span></span><span style=display:flex><span>methods.<span style=color:#00a000>Print</span>(<span style=color:#a2f>new</span>(strings.Replacer))
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// Output:
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// type *strings.Replacer
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// func (*strings.Replacer) Replace(string) string
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// func (*strings.Replacer) WriteString(io.Writer, string) (int, error)
+</span></span></span></code></pre></div><p>参考文章：</p><ul><li>《go语言圣经》</li><li><a href=https://www.liwenzhou.com/posts/Go/13_reflect target=_blank rel=noopener>https://www.liwenzhou.com/posts/Go/13_reflect</a></li></ul></div><footer class=post-footer><div class=post-tags><a href=/tags/golang rel=tag title=golang>#golang#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>Go Reflect</p><p><span>链接：</span>https://www.zhaohaiyu.com/post/go/go-reflect/</p><p><span>作者：</span>haiyux</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-file/ rel=next title=Go文件系统><i class="fa fa-chevron-left"></i> Go文件系统</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-concurrent/ rel=prev title=Go并发>Go并发
+<i class="fa fa-chevron-right"></i></a></div></div><div id=ucomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
-<p class=site-author-name itemprop=name>haiyux</p>
-<p class="site-description motion-element" itemprop=description>
-路漫漫其修远兮,吾将上下而求索
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>62</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>8</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>20</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/haiyux/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
-<i class="fa fa-fw fa-envelope"></i>
-Email
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://farer.org/ title=farer target=_blank>farer</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/golang>Golang
-<sup>30</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
-<sup>8</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql
-<sup>7</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/http>HTTP
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/protobuf>Protobuf
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%BF%90%E7%BB%B4>运维
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/grpc>Grpc
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis
-<sup>2</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/ddd>Ddd
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/docker>Docker
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/kratos>Kratos
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/makefile>Makefile
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mq>Mq
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/nginx>Nginx
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/raft>Raft
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/thrift>Thrift
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/traceing>Traceing
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/wire>Wire
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
-<sup>1</sup>
-</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#变量的内在机制>变量的内在机制</a></li>
-<li><a href=#反射介绍>反射介绍</a></li>
-<li><a href=#reflect包>reflect包</a></li>
-<li><a href=#reflecttype-和-reflectvalue>reflect.Type 和 reflect.Value</a></li>
-<li><a href=#通过reflectvalue修改值>通过reflect.Value修改值</a></li>
-<li><a href=#获取结构体字段标签>获取结构体字段标签</a></li>
-<li><a href=#显示一个类型的方法集>显示一个类型的方法集</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux><p class=site-author-name itemprop=name>haiyux</p><p class="site-description motion-element" itemprop=description>路漫漫其修远兮,吾将上下而求索</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/haiyux/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=mailto:haiyux@foxmail.com target=_blank title=Email><i class="fa fa-fw fa-envelope"></i>
+Email</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a></li><li class=links-of-blogroll-item><a href=https://farer.org/ title=farer target=_blank>farer</a></li><li class=links-of-blogroll-item><a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a></li><li class=links-of-blogroll-item><a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a></li><li class=links-of-blogroll-item><a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/golang>Golang
+<sup>30</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/http>HTTP
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/protobuf>Protobuf
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/grpc>Grpc
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ddd>Ddd
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/kratos>Kratos
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/makefile>Makefile
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mq>Mq
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/raft>Raft
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/thrift>Thrift
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/traceing>Traceing
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/wire>Wire
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup></a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#变量的内在机制>变量的内在机制</a></li><li><a href=#反射介绍>反射介绍</a></li><li><a href=#reflect包>reflect包</a></li><li><a href=#reflecttype-和-reflectvalue>reflect.Type 和 reflect.Value</a></li><li><a href=#通过reflectvalue修改值>通过reflect.Value修改值</a></li><li><a href=#获取结构体字段标签>获取结构体字段标签</a></li><li><a href=#显示一个类型的方法集>显示一个类型的方法集</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>haiyux's blog</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
-</span>
+<span class=copyright-author>haiyux's blog</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.100.1</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.footer').outerHeight(!0),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
-<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
-<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf('MSIE '),n=e.indexOf('Trident/'),s=e.indexOf('Edge/');return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$('#content').height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$('<div />').addClass('scrollbar-measure').prependTo('body'),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$('.back-to-top');$(window).on('scroll',function(){e.toggleClass('back-to-top-on',window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$('#scrollpercent>span').html(a)}),e.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e='.post-toc',s=$(e),t='.active-current';s.on('activate.bs.scrollspy',function(){var t=$(e+' .active').last();n(),t.addClass('active-current')}).on('clear.bs.scrollspy',n),$('body').scrollspy({target:e});function n(){$(e+' '+t).removeClass(t.substring(1))}}function initAffix(){var e=$('.header-inner').height(),t=parseInt($('.footer').outerHeight(!0),10),n=e+10;$('.sidebar-inner').affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on('resize',function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$('.post-toc').css('width','calc(100% + '+t+'px)')}function updateTOCHeight(e){e=e||'auto',$('.post-toc').css('max-height',e)}$(function(){var e,t,n,s,o=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':o}).show(),t=parseInt($('#sidebar').css('margin-top')),n=parseInt($('.sidebar-inner').css('height')),e=t+n,s=$('.content-wrap').height(),s<e&&$('.content-wrap').css('min-height',e),$('.site-nav-toggle').on('click',function(){var e=$('.site-nav'),o=$('.toggle'),t='site-nav-on',i='toggle-close',n=e.hasClass(t),a=n?'slideUp':'slideDown',s=n?'removeClass':'addClass';e.stop()[a]('normal',function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script><script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(s){var t=new AV.Query(s),e=[],n=$(".leancloud_visitors");n.each(function(){e.push($(this).attr("id").trim())}),t.containedIn('url',e),t.find().then(r=>{var t,s,o,a,c,l,i='.leancloud-visitors-count';if(r.length==0){n.find(i).text(0);return}for(t=0;t<r.length;t++)a=r[t],o=a.get('url'),l=a.get('time'),s=document.getElementById(o),$(s).find(i).text(l);for(t=0;t<e.length;t++)o=e[t],s=document.getElementById(o),c=$(s).find(i),c.text()==''&&c.text(0)},e=>{console.log('Query vistors failed: '+e)})}function addCount(s){var t=$(".leancloud_visitors"),e=t.attr('id').trim(),o=t.attr('data-flag-title').trim(),n=new AV.Query('Counter');n.equalTo("url",e),n.find().then(i=>{if(i.length>0){var t,n,a=i[0];a.increment('time',1),a.save(null,{query:new AV.Query('Counter').equalTo('url',e),fetchWhenSave:!0}).then(t=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log('Update vistor failed: '+e)})}else n=new AV.ACL,n.setPublicReadAccess(!0),n.setPublicWriteAccess(!0),t=new s,t.set("title",o),t.set("url",e),t.set("time",1),t.setACL(n),t.save().then(s=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log("Save new vistor failed: "+e)})})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const e=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(e):$('.post-title-link').length>1&&showTime(e)})</script><script type=text/javascript>(function(){var e=document.createElement('script');e.type='text/javascript',e.async=!0,e.setAttribute('issue-term',"pathname"),e.setAttribute('theme',"github-light"),e.setAttribute('repo',"haiyux/haiyux.github.io"),e.crossorigin='anonymous',e.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(e)})()</script><script>(function(){var t,e=document.createElement('script'),n=window.location.protocol.split(':')[0];n==='https'?e.src='https://zz.bdstatic.com/linksubmit/push.js':e.src='http://push.zhanzhang.baidu.com/push.js',t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

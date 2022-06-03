@@ -1,574 +1,166 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Go操作redis - haiyux's blog </title>
-<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
-<meta name=author content="haiyux">
-<meta property="og:title" content="Go操作redis">
-<meta property="og:site_name" content="haiyux's blog">
-<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
-<meta name=title content="Go操作redis - haiyux's blog">
-<meta name=description content="欢迎来到haiyux的博客">
-<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet>
-<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Go操作redis - haiyux's blog</title><meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="haiyux"><meta property="og:title" content="Go操作redis"><meta property="og:site_name" content="haiyux's blog"><meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg"><meta name=title content="Go操作redis - haiyux's blog"><meta name=description content="欢迎来到haiyux的博客"><link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico><link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css><link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>haiyux's blog</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class="menu-item menu-item-active">
-<a href=/post/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav> </div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-redis/ itemprop=url>
-Go操作redis
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-pushdate>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post/ rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-redis/ itemprop=url>Go操作redis</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-01-01">
-2021-01-01
-</time>
-</span>
-<span class=post-category>
-<i class="fa fa-folder-o fa-fw"></i>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-01-01">2021-01-01</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/go itemprop=url rel=index>
-<span itemprop=name>go</span>
-</a>
-&nbsp;
-</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/cache itemprop=url rel=index>
-<span itemprop=name>cache</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span class=post-wordcount>
-<i class="fa fa-file-word-o fa-fw"></i>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/go itemprop=url rel=index><span itemprop=name>go</span></a>
+&nbsp;</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/cache itemprop=url rel=index><span itemprop=name>cache</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>411 字</span>
-</span>
-<span class=post-readtime>
-<i class="fa fa-eye fa-fw"></i>
+<span class=leancloud-world-count>411 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>1分钟</span>
-</span>
-<span id=/post/go/go-redis/ class="leancloud_visitors post-visitor" data-flag-title=Go操作redis>
-<i class="fa fa-binoculars fa-fw"></i>
+<span class=leancloud-view-count>1分钟</span></span>
+<span id=/post/go/go-redis/ class="leancloud_visitors post-visitor" data-flag-title=Go操作redis><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=安装>安装</h2>
-<p>下载第三方包:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>go get -u github.com/go-redis/redis/v9
-</code></pre></div><h2 id=连接>连接</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>// 定义一个rdis客户端
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> redisdb <span style=color:#666>*</span>redis.Client
-<span style=color:#080;font-style:italic>// 初始化
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>initClient</span>() (err <span style=color:#0b0;font-weight:700>error</span>) {
-	redisdb = redis.<span style=color:#00a000>NewClient</span>(<span style=color:#666>&amp;</span>redis.Options{
-		Addr:     <span style=color:#b44>&#34;localhost:6379&#34;</span>, <span style=color:#080;font-style:italic>// post端口
-</span><span style=color:#080;font-style:italic></span>		Password: <span style=color:#b44>&#34;&#34;</span>, <span style=color:#080;font-style:italic>// 密码
-</span><span style=color:#080;font-style:italic></span>		DB:       <span style=color:#666>0</span>,  <span style=color:#080;font-style:italic>// 使用redis的库
-</span><span style=color:#080;font-style:italic></span>	})
-	_, err = redisdb.<span style=color:#00a000>Ping</span>(context.<span style=color:#00a000>Background</span>()).<span style=color:#00a000>Result</span>()
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;连接失败&#34;</span>)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	<span style=color:#a2f;font-weight:700>return</span>
-}
-</code></pre></div><h2 id=使用>使用</h2>
-<h3 id=setget示例>set/get示例</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>redisExample</span>() {
-	ctx <span style=color:#666>:=</span> context.<span style=color:#00a000>Background</span>()
-	err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>Set</span>(ctx, <span style=color:#b44>&#34;score&#34;</span>, <span style=color:#666>100</span>, <span style=color:#666>0</span>).<span style=color:#00a000>Err</span>()
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;set score failed, err:%v\n&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	val, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>Get</span>(ctx, <span style=color:#b44>&#34;score&#34;</span>).<span style=color:#00a000>Result</span>()
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;get score failed, err:%v\n&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;score&#34;</span>, val)
-	val2, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>Get</span>(ctx, <span style=color:#b44>&#34;name&#34;</span>).<span style=color:#00a000>Result</span>()
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>==</span> redis.Nil {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;name does not exist&#34;</span>)
-	} <span style=color:#a2f;font-weight:700>else</span> <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;get name failed, err:%v\n&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	} <span style=color:#a2f;font-weight:700>else</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;name&#34;</span>, val2)
-	}
-}
-</code></pre></div><h3 id=zset示例>zset示例</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>redisExample2</span>() {
-	ctx <span style=color:#666>:=</span> context.<span style=color:#00a000>Background</span>()
-	zsetKey <span style=color:#666>:=</span> <span style=color:#b44>&#34;language_rank&#34;</span>
-	languages <span style=color:#666>:=</span> []<span style=color:#666>*</span>redis.Z{
-		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>90.0</span>, Member: <span style=color:#b44>&#34;Golang&#34;</span>},
-		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>98.0</span>, Member: <span style=color:#b44>&#34;Java&#34;</span>},
-		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>95.0</span>, Member: <span style=color:#b44>&#34;Python&#34;</span>},
-		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>97.0</span>, Member: <span style=color:#b44>&#34;JavaScript&#34;</span>},
-		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>99.0</span>, Member: <span style=color:#b44>&#34;C/C++&#34;</span>},
-	}
-	<span style=color:#080;font-style:italic>// ZADD
-</span><span style=color:#080;font-style:italic></span>	num, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>ZAdd</span>(ctx, zsetKey, languages<span style=color:#666>...</span>).<span style=color:#00a000>Result</span>()
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zadd failed, err:%v\n&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zadd %d succ.\n&#34;</span>, num)
-	<span style=color:#080;font-style:italic>// 把Golang的分数加10
-</span><span style=color:#080;font-style:italic></span>	newScore, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>ZIncrBy</span>(ctx, zsetKey, <span style=color:#666>10.0</span>, <span style=color:#b44>&#34;Golang&#34;</span>).<span style=color:#00a000>Result</span>()
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zincrby failed, err:%v\n&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;Golang&#39;s score is %f now.\n&#34;</span>, newScore)
-	<span style=color:#080;font-style:italic>// 取分数最高的3个
-</span><span style=color:#080;font-style:italic></span>	ret, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>ZRevRangeWithScores</span>(ctx, zsetKey, <span style=color:#666>0</span>, <span style=color:#666>2</span>).<span style=color:#00a000>Result</span>()
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zrevrange failed, err:%v\n&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	<span style=color:#a2f;font-weight:700>for</span> _, z <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> ret {
-		fmt.<span style=color:#00a000>Println</span>(z.Member, z.Score)
-	}
-	<span style=color:#080;font-style:italic>// 取95~100分的
-</span><span style=color:#080;font-style:italic></span>	op <span style=color:#666>:=</span> <span style=color:#666>&amp;</span>redis.ZRangeBy{
-		Min: <span style=color:#b44>&#34;95&#34;</span>,
-		Max: <span style=color:#b44>&#34;100&#34;</span>,
-	}
-	ret, err = redisdb.<span style=color:#00a000>ZRangeByScoreWithScores</span>(ctx, zsetKey, op).<span style=color:#00a000>Result</span>()
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zrangebyscore failed, err:%v\n&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	<span style=color:#a2f;font-weight:700>for</span> _, z <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> ret {
-		fmt.<span style=color:#00a000>Println</span>(z.Member, z.Score)
-	}
-}
-</code></pre></div><p>输出结果如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ ./06redis_demo 
-zadd <span style=color:#666>0</span> succ.
-Golang<span>&#39;</span>s score is 100.000000 now.
-Golang <span style=color:#666>100</span>
-C/C++ <span style=color:#666>99</span>
-Java <span style=color:#666>98</span>
-JavaScript <span style=color:#666>97</span>
-Java <span style=color:#666>98</span>
-C/C++ <span style=color:#666>99</span>
-Golang <span style=color:#666>100</span>
-</code></pre></div>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=/tags/golang rel=tag title=golang>#golang#</a>
-<a href=/tags/redis rel=tag title=redis>#redis#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-img>
-<img src=/img/qq_qrcode.png width=129px height=129px>
-<div style=text-align:center>QQ扫一扫交流</div>
-</div>
-<div class=article-copyright-info>
-<p>
-<span>标题：</span>Go操作redis
-</p>
-<p>
-<span>链接：</span>https://www.zhaohaiyu.com/post/go/go-redis/
-</p>
-<p>
-<span>作者：</span>haiyux
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-viper/ rel=next title="Go viper配置管理">
-<i class="fa fa-chevron-left"></i> Go viper配置管理
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/operations/docker/ rel=prev title=Docker>
-Docker
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=ucomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=安装>安装</h2><p>下载第三方包:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>go get -u github.com/go-redis/redis/v9
+</span></span></code></pre></div><h2 id=连接>连接</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>// 定义一个rdis客户端
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> redisdb <span style=color:#666>*</span>redis.Client
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// 初始化
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>initClient</span>() (err <span style=color:#0b0;font-weight:700>error</span>) {
+</span></span><span style=display:flex><span>	redisdb = redis.<span style=color:#00a000>NewClient</span>(<span style=color:#666>&amp;</span>redis.Options{
+</span></span><span style=display:flex><span>		Addr:     <span style=color:#b44>&#34;localhost:6379&#34;</span>, <span style=color:#080;font-style:italic>// post端口
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>		Password: <span style=color:#b44>&#34;&#34;</span>, <span style=color:#080;font-style:italic>// 密码
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>		DB:       <span style=color:#666>0</span>,  <span style=color:#080;font-style:italic>// 使用redis的库
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	})
+</span></span><span style=display:flex><span>	_, err = redisdb.<span style=color:#00a000>Ping</span>(context.<span style=color:#00a000>Background</span>()).<span style=color:#00a000>Result</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;连接失败&#34;</span>)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=使用>使用</h2><h3 id=setget示例>set/get示例</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>redisExample</span>() {
+</span></span><span style=display:flex><span>	ctx <span style=color:#666>:=</span> context.<span style=color:#00a000>Background</span>()
+</span></span><span style=display:flex><span>	err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>Set</span>(ctx, <span style=color:#b44>&#34;score&#34;</span>, <span style=color:#666>100</span>, <span style=color:#666>0</span>).<span style=color:#00a000>Err</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;set score failed, err:%v\n&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	val, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>Get</span>(ctx, <span style=color:#b44>&#34;score&#34;</span>).<span style=color:#00a000>Result</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;get score failed, err:%v\n&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;score&#34;</span>, val)
+</span></span><span style=display:flex><span>	val2, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>Get</span>(ctx, <span style=color:#b44>&#34;name&#34;</span>).<span style=color:#00a000>Result</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>==</span> redis.Nil {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;name does not exist&#34;</span>)
+</span></span><span style=display:flex><span>	} <span style=color:#a2f;font-weight:700>else</span> <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;get name failed, err:%v\n&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	} <span style=color:#a2f;font-weight:700>else</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;name&#34;</span>, val2)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=zset示例>zset示例</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>redisExample2</span>() {
+</span></span><span style=display:flex><span>	ctx <span style=color:#666>:=</span> context.<span style=color:#00a000>Background</span>()
+</span></span><span style=display:flex><span>	zsetKey <span style=color:#666>:=</span> <span style=color:#b44>&#34;language_rank&#34;</span>
+</span></span><span style=display:flex><span>	languages <span style=color:#666>:=</span> []<span style=color:#666>*</span>redis.Z{
+</span></span><span style=display:flex><span>		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>90.0</span>, Member: <span style=color:#b44>&#34;Golang&#34;</span>},
+</span></span><span style=display:flex><span>		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>98.0</span>, Member: <span style=color:#b44>&#34;Java&#34;</span>},
+</span></span><span style=display:flex><span>		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>95.0</span>, Member: <span style=color:#b44>&#34;Python&#34;</span>},
+</span></span><span style=display:flex><span>		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>97.0</span>, Member: <span style=color:#b44>&#34;JavaScript&#34;</span>},
+</span></span><span style=display:flex><span>		<span style=color:#666>&amp;</span>redis.Z{Score: <span style=color:#666>99.0</span>, Member: <span style=color:#b44>&#34;C/C++&#34;</span>},
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// ZADD
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	num, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>ZAdd</span>(ctx, zsetKey, languages<span style=color:#666>...</span>).<span style=color:#00a000>Result</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zadd failed, err:%v\n&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zadd %d succ.\n&#34;</span>, num)
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 把Golang的分数加10
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	newScore, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>ZIncrBy</span>(ctx, zsetKey, <span style=color:#666>10.0</span>, <span style=color:#b44>&#34;Golang&#34;</span>).<span style=color:#00a000>Result</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zincrby failed, err:%v\n&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;Golang&#39;s score is %f now.\n&#34;</span>, newScore)
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 取分数最高的3个
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	ret, err <span style=color:#666>:=</span> redisdb.<span style=color:#00a000>ZRevRangeWithScores</span>(ctx, zsetKey, <span style=color:#666>0</span>, <span style=color:#666>2</span>).<span style=color:#00a000>Result</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zrevrange failed, err:%v\n&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>for</span> _, z <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> ret {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(z.Member, z.Score)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 取95~100分的
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	op <span style=color:#666>:=</span> <span style=color:#666>&amp;</span>redis.ZRangeBy{
+</span></span><span style=display:flex><span>		Min: <span style=color:#b44>&#34;95&#34;</span>,
+</span></span><span style=display:flex><span>		Max: <span style=color:#b44>&#34;100&#34;</span>,
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	ret, err = redisdb.<span style=color:#00a000>ZRangeByScoreWithScores</span>(ctx, zsetKey, op).<span style=color:#00a000>Result</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;zrangebyscore failed, err:%v\n&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>for</span> _, z <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> ret {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(z.Member, z.Score)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>输出结果如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ ./06redis_demo 
+</span></span><span style=display:flex><span>zadd <span style=color:#666>0</span> succ.
+</span></span><span style=display:flex><span>Golang<span>&#39;</span>s score is 100.000000 now.
+</span></span><span style=display:flex><span>Golang <span style=color:#666>100</span>
+</span></span><span style=display:flex><span>C/C++ <span style=color:#666>99</span>
+</span></span><span style=display:flex><span>Java <span style=color:#666>98</span>
+</span></span><span style=display:flex><span>JavaScript <span style=color:#666>97</span>
+</span></span><span style=display:flex><span>Java <span style=color:#666>98</span>
+</span></span><span style=display:flex><span>C/C++ <span style=color:#666>99</span>
+</span></span><span style=display:flex><span>Golang <span style=color:#666>100</span>
+</span></span></code></pre></div></div><footer class=post-footer><div class=post-tags><a href=/tags/golang rel=tag title=golang>#golang#</a>
+<a href=/tags/redis rel=tag title=redis>#redis#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>Go操作redis</p><p><span>链接：</span>https://www.zhaohaiyu.com/post/go/go-redis/</p><p><span>作者：</span>haiyux</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-viper/ rel=next title="Go viper配置管理"><i class="fa fa-chevron-left"></i> Go viper配置管理</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zhaohaiyu.com/post/operations/docker/ rel=prev title=Docker>Docker
+<i class="fa fa-chevron-right"></i></a></div></div><div id=ucomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
-<p class=site-author-name itemprop=name>haiyux</p>
-<p class="site-description motion-element" itemprop=description>
-路漫漫其修远兮,吾将上下而求索
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>62</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>8</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>20</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/haiyux/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
-<i class="fa fa-fw fa-envelope"></i>
-Email
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://farer.org/ title=farer target=_blank>farer</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/golang>Golang
-<sup>30</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
-<sup>8</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql
-<sup>7</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/http>HTTP
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/protobuf>Protobuf
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%BF%90%E7%BB%B4>运维
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/grpc>Grpc
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis
-<sup>2</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/ddd>Ddd
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/docker>Docker
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/kratos>Kratos
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/makefile>Makefile
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mq>Mq
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/nginx>Nginx
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/raft>Raft
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/thrift>Thrift
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/traceing>Traceing
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/wire>Wire
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
-<sup>1</sup>
-</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#安装>安装</a></li>
-<li><a href=#连接>连接</a></li>
-<li><a href=#使用>使用</a>
-<ul>
-<li><a href=#setget示例>set/get示例</a></li>
-<li><a href=#zset示例>zset示例</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux><p class=site-author-name itemprop=name>haiyux</p><p class="site-description motion-element" itemprop=description>路漫漫其修远兮,吾将上下而求索</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/haiyux/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=mailto:haiyux@foxmail.com target=_blank title=Email><i class="fa fa-fw fa-envelope"></i>
+Email</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a></li><li class=links-of-blogroll-item><a href=https://farer.org/ title=farer target=_blank>farer</a></li><li class=links-of-blogroll-item><a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a></li><li class=links-of-blogroll-item><a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a></li><li class=links-of-blogroll-item><a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/golang>Golang
+<sup>30</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/http>HTTP
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/protobuf>Protobuf
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/grpc>Grpc
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ddd>Ddd
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/kratos>Kratos
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/makefile>Makefile
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mq>Mq
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/raft>Raft
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/thrift>Thrift
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/traceing>Traceing
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/wire>Wire
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup></a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#安装>安装</a></li><li><a href=#连接>连接</a></li><li><a href=#使用>使用</a><ul><li><a href=#setget示例>set/get示例</a></li><li><a href=#zset示例>zset示例</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>haiyux's blog</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
-</span>
+<span class=copyright-author>haiyux's blog</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.100.1</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.footer').outerHeight(!0),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
-<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
-<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf('MSIE '),n=e.indexOf('Trident/'),s=e.indexOf('Edge/');return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$('#content').height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$('<div />').addClass('scrollbar-measure').prependTo('body'),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$('.back-to-top');$(window).on('scroll',function(){e.toggleClass('back-to-top-on',window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$('#scrollpercent>span').html(a)}),e.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e='.post-toc',s=$(e),t='.active-current';s.on('activate.bs.scrollspy',function(){var t=$(e+' .active').last();n(),t.addClass('active-current')}).on('clear.bs.scrollspy',n),$('body').scrollspy({target:e});function n(){$(e+' '+t).removeClass(t.substring(1))}}function initAffix(){var e=$('.header-inner').height(),t=parseInt($('.footer').outerHeight(!0),10),n=e+10;$('.sidebar-inner').affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on('resize',function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$('.post-toc').css('width','calc(100% + '+t+'px)')}function updateTOCHeight(e){e=e||'auto',$('.post-toc').css('max-height',e)}$(function(){var e,t,n,s,o=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':o}).show(),t=parseInt($('#sidebar').css('margin-top')),n=parseInt($('.sidebar-inner').css('height')),e=t+n,s=$('.content-wrap').height(),s<e&&$('.content-wrap').css('min-height',e),$('.site-nav-toggle').on('click',function(){var e=$('.site-nav'),o=$('.toggle'),t='site-nav-on',i='toggle-close',n=e.hasClass(t),a=n?'slideUp':'slideDown',s=n?'removeClass':'addClass';e.stop()[a]('normal',function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script><script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(s){var t=new AV.Query(s),e=[],n=$(".leancloud_visitors");n.each(function(){e.push($(this).attr("id").trim())}),t.containedIn('url',e),t.find().then(r=>{var t,s,o,a,c,l,i='.leancloud-visitors-count';if(r.length==0){n.find(i).text(0);return}for(t=0;t<r.length;t++)a=r[t],o=a.get('url'),l=a.get('time'),s=document.getElementById(o),$(s).find(i).text(l);for(t=0;t<e.length;t++)o=e[t],s=document.getElementById(o),c=$(s).find(i),c.text()==''&&c.text(0)},e=>{console.log('Query vistors failed: '+e)})}function addCount(s){var t=$(".leancloud_visitors"),e=t.attr('id').trim(),o=t.attr('data-flag-title').trim(),n=new AV.Query('Counter');n.equalTo("url",e),n.find().then(i=>{if(i.length>0){var t,n,a=i[0];a.increment('time',1),a.save(null,{query:new AV.Query('Counter').equalTo('url',e),fetchWhenSave:!0}).then(t=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log('Update vistor failed: '+e)})}else n=new AV.ACL,n.setPublicReadAccess(!0),n.setPublicWriteAccess(!0),t=new s,t.set("title",o),t.set("url",e),t.set("time",1),t.setACL(n),t.save().then(s=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log("Save new vistor failed: "+e)})})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const e=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(e):$('.post-title-link').length>1&&showTime(e)})</script><script type=text/javascript>(function(){var e=document.createElement('script');e.type='text/javascript',e.async=!0,e.setAttribute('issue-term',"pathname"),e.setAttribute('theme',"github-light"),e.setAttribute('repo',"haiyux/haiyux.github.io"),e.crossorigin='anonymous',e.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(e)})()</script><script>(function(){var t,e=document.createElement('script'),n=window.location.protocol.split(':')[0];n==='https'?e.src='https://zz.bdstatic.com/linksubmit/push.js':e.src='http://push.zhanzhang.baidu.com/push.js',t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

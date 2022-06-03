@@ -1,816 +1,245 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Go Template - haiyux's blog </title>
-<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
-<meta name=author content="haiyux">
-<meta property="og:title" content="Go Template">
-<meta property="og:site_name" content="haiyux's blog">
-<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
-<meta name=title content="Go Template - haiyux's blog">
-<meta name=description content="欢迎来到haiyux的博客">
-<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet>
-<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Go Template - haiyux's blog</title><meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="haiyux"><meta property="og:title" content="Go Template"><meta property="og:site_name" content="haiyux's blog"><meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg"><meta name=title content="Go Template - haiyux's blog"><meta name=description content="欢迎来到haiyux的博客"><link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico><link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css><link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>haiyux's blog</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class="menu-item menu-item-active">
-<a href=/post/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav> </div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-template/ itemprop=url>
-Go Template
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-pushdate>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post/ rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-template/ itemprop=url>Go Template</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2020-10-21">
-2020-10-21
-</time>
-</span>
-<span class=post-category>
-<i class="fa fa-folder-o fa-fw"></i>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2020-10-21">2020-10-21</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/go itemprop=url rel=index>
-<span itemprop=name>go</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span class=post-wordcount>
-<i class="fa fa-file-word-o fa-fw"></i>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/go itemprop=url rel=index><span itemprop=name>go</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3665 字</span>
-</span>
-<span class=post-readtime>
-<i class="fa fa-eye fa-fw"></i>
+<span class=leancloud-world-count>3667 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>8分钟</span>
-</span>
-<span id=/post/go/go-template/ class="leancloud_visitors post-visitor" data-flag-title="Go Template">
-<i class="fa fa-binoculars fa-fw"></i>
+<span class=leancloud-view-count>8分钟</span></span>
+<span id=/post/go/go-template/ class="leancloud_visitors post-visitor" data-flag-title="Go Template"><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=html模板生成>html模板生成:</h2>
-<ul>
-<li>html/template包实现了数据驱动的模板，用于生成可对抗代码注入的安全HTML输出。它提供了和text/template包相同的接口，Go语言中输出HTML的场景都应使用text/template包。</li>
-</ul>
-<h2 id=模板语法>模板语法</h2>
-<h3 id=heading>{{.}}</h3>
-<ul>
-<li>
-<p>模板语法都包含在{{和}}中间，其中{{.}}中的点表示当前对象。</p>
-</li>
-<li>
-<p>当我们传入一个结构体对象时，我们可以根据.来访问结构体的对应字段。例如：</p>
-</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>// main.go
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>sayHello</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request) {
-    <span style=color:#080;font-style:italic>// 解析指定文件生成模板对象
-</span><span style=color:#080;font-style:italic></span>    tmpl, err <span style=color:#666>:=</span> template.<span style=color:#00a000>ParseFiles</span>(<span style=color:#b44>&#34;./hello.html&#34;</span>)
-    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-        fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
-        <span style=color:#a2f;font-weight:700>return</span>
-    }
-    <span style=color:#a2f;font-weight:700>var</span> user = <span style=color:#a2f;font-weight:700>struct</span> {
-        name <span style=color:#0b0;font-weight:700>string</span>
-        age <span style=color:#0b0;font-weight:700>int</span>
-    }{
-        name:<span style=color:#b44>&#34;zhaohaiyu&#34;</span>,
-        age:<span style=color:#666>18</span>,
-    }
-    <span style=color:#080;font-style:italic>// 利用给定数据渲染模板，并将结果写入w
-</span><span style=color:#080;font-style:italic></span>    tmpl.<span style=color:#00a000>Execute</span>(w, user)
-}
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-    http.<span style=color:#00a000>HandleFunc</span>(<span style=color:#b44>&#34;/&#34;</span>, sayHello)
-    err <span style=color:#666>:=</span> http.<span style=color:#00a000>ListenAndServe</span>(<span style=color:#b44>&#34;:9090&#34;</span>, <span style=color:#a2f;font-weight:700>nil</span>)
-    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-        fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;HTTP server failed,err:&#34;</span>, err)
-        <span style=color:#a2f;font-weight:700>return</span>
-    }
-}
-</code></pre></div><pre><code>Hello
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=html模板生成>html模板生成:</h2><ul><li>html/template包实现了数据驱动的模板，用于生成可对抗代码注入的安全HTML输出。它提供了和text/template包相同的接口，Go语言中输出HTML的场景都应使用text/template包。</li></ul><h2 id=模板语法>模板语法</h2><h3 id=heading>{{.}}</h3><ul><li><p>模板语法都包含在{{和}}中间，其中{{.}}中的点表示当前对象。</p></li><li><p>当我们传入一个结构体对象时，我们可以根据.来访问结构体的对应字段。例如：</p></li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>// main.go
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>sayHello</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request) {
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 解析指定文件生成模板对象
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    tmpl, err <span style=color:#666>:=</span> template.<span style=color:#00a000>ParseFiles</span>(<span style=color:#b44>&#34;./hello.html&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>        fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>var</span> user = <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>        name <span style=color:#0b0;font-weight:700>string</span>
+</span></span><span style=display:flex><span>        age <span style=color:#0b0;font-weight:700>int</span>
+</span></span><span style=display:flex><span>    }{
+</span></span><span style=display:flex><span>        name:<span style=color:#b44>&#34;zhaohaiyu&#34;</span>,
+</span></span><span style=display:flex><span>        age:<span style=color:#666>18</span>,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 利用给定数据渲染模板，并将结果写入w
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    tmpl.<span style=color:#00a000>Execute</span>(w, user)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>    http.<span style=color:#00a000>HandleFunc</span>(<span style=color:#b44>&#34;/&#34;</span>, sayHello)
+</span></span><span style=display:flex><span>    err <span style=color:#666>:=</span> http.<span style=color:#00a000>ListenAndServe</span>(<span style=color:#b44>&#34;:9090&#34;</span>, <span style=color:#a2f;font-weight:700>nil</span>)
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>        fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;HTTP server failed,err:&#34;</span>, err)
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><pre><code>Hello
 姓名 {{.Name}}
 年龄：{{.Age}}
 同理，当我们传入的变量是map时，也可以在模板文件中通过.根据key来取值。
-</code></pre>
-<h3 id=注释>注释</h3>
-<p>{{/* a comment */}}</p>
-<h3 id=pipeline>pipeline</h3>
-<ul>
-<li>pipeline是指产生数据的操作。比如{{.}}、{{.Name}}等。Go的模板语法中支持使用管道符号|链接多个命令，用法和unix下的管道类似：|前面的命令会将运算结果(或返回值)传递给后一个命令的最后一个位置。</li>
-</ul>
-<p>**注意：**并不是只有使用了|才是pipeline。Go的模板语法中，pipeline的概念是传递数据，只要能产生数据的，都是pipeline。</p>
-<h3 id=变量>变量</h3>
-<ul>
-<li>我们还可以在模板中声明变量，用来保存传入模板的数据或其他语句生成的结果。具体语法如下：</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span>$</span>obj <span style=color:#666>:=</span> {{.}}
-
-其中<span>$</span>obj是变量的名字<span>，</span>在后续的代码中就可以使用该变量了<span>。</span>
-</code></pre></div><h3 id=移除空格>移除空格</h3>
-<ul>
-<li>有时候我们在使用模板语法的时候会不可避免的引入一下空格或者换行符，这样模板最终渲染出来的内容可能就和我们想的不一样，这个时候可以使用{{-语法去除模板内容左侧的所有空白符号， 使用-}}去除模板内容右侧的所有空白符号。</li>
-</ul>
-<p>例如：{{- .Name -}}</p>
-<p><strong>注意：</strong>-要紧挨{{和}}，同时与模板值之间需要使用空格分隔。</p>
-<h3 id=条件判断>条件判断</h3>
-<ul>
-<li>Go模板语法中的条件判断有以下几种:</li>
-</ul>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{{<span style=color:#a2f;font-weight:700>if</span> pipeline}} T1 {{end}}
-{{<span style=color:#a2f;font-weight:700>if</span> pipeline}} T1 {{<span style=color:#a2f;font-weight:700>else</span>}} T0 {{end}}
-{{<span style=color:#a2f;font-weight:700>if</span> pipeline}} T1 {{<span style=color:#a2f;font-weight:700>else</span> <span style=color:#a2f;font-weight:700>if</span> pipeline}} T0 {{end}}
-</code></pre></div><h3 id=range>range</h3>
-<p>Go的模板语法中使用range关键字进行遍历，有以下两种写法，其中pipeline的值必须是数组、切片、字典或者通道。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{{<span style=color:#a2f;font-weight:700>range</span> pipeline}} T1 {{end}}
-
-{{<span style=color:#a2f;font-weight:700>range</span> pipeline}} T1 {{<span style=color:#a2f;font-weight:700>else</span>}} T0 {{end}}
-</code></pre></div><h3 id=with>with</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{{with pipeline}} T1 {{end}}
-
-{{with pipeline}} T1 {{<span style=color:#a2f;font-weight:700>else</span>}} T0 {{end}}
-</code></pre></div><h3 id=预定义函数>预定义函数</h3>
-<p>执行模板时，函数从两个函数字典中查找：首先是模板函数字典，然后是全局函数字典。一般不在模板内定义函数，而是使用Funcs方法添加函数到模板里。</p>
-<p>预定义的全局函数如下：</p>
-<ol>
-<li>and
-<ul>
-<li>函数返回它的第一个empty参数或者最后一个参数；</li>
-<li>就是说"and x y"等价于"if x then y else x"；所有参数都会执行；</li>
-</ul>
-</li>
-<li>or
-<ul>
-<li>返回第一个非empty参数或者最后一个参数；</li>
-<li>亦即"or x y"等价于"if x then x else y"；所有参数都会执行；</li>
-</ul>
-</li>
-<li>not
-<ul>
-<li>返回它的单个参数的布尔值的否定</li>
-</ul>
-</li>
-<li>len
-<ul>
-<li>返回它的参数的整数类型长度</li>
-</ul>
-</li>
-<li>index
-<ul>
-<li>执行结果为第一个参数以剩下的参数为索引/键指向的值；</li>
-<li>如"index x 1 2 3"返回x[1][2][3]的值；每个被索引的主体必须是数组、切片或者字典。</li>
-</ul>
-</li>
-<li>print
-<ul>
-<li>即fmt.Sprint</li>
-</ul>
-</li>
-<li>printf
-<ul>
-<li>即fmt.Sprintf</li>
-</ul>
-</li>
-<li>println
-<ul>
-<li>即fmt.Sprintln</li>
-</ul>
-</li>
-<li>html
-<ul>
-<li>返回与其参数的文本表示形式等效的转义HTML。</li>
-<li>这个函数在html/template中不可用。</li>
-</ul>
-</li>
-<li>urlquery</li>
-</ol>
-<ul>
-<li>以适合嵌入到网址查询中的形式返回其参数的文本表示的转义值。</li>
-<li>这个函数在html/template中不可用。</li>
-</ul>
-<ol>
-<li>js</li>
-</ol>
-<ul>
-<li>返回与其参数的文本表示形式等效的转义JavaScript。</li>
-</ul>
-<ol>
-<li>call</li>
-</ol>
-<ul>
-<li>
-<p>执行结果是调用第一个参数的返回值，该参数必须是函数类型，其余参数作为调用该函数的参数；</p>
-<p>如"call .X.Y 1 2"等价于go语言里的dot.X.Y(1, 2)；
+</code></pre><h3 id=注释>注释</h3><p>{{/* a comment */}}</p><h3 id=pipeline>pipeline</h3><ul><li>pipeline是指产生数据的操作。比如{{.}}、{{.Name}}等。Go的模板语法中支持使用管道符号|链接多个命令，用法和unix下的管道类似：|前面的命令会将运算结果(或返回值)传递给后一个命令的最后一个位置。</li></ul><p>**注意：**并不是只有使用了|才是pipeline。Go的模板语法中，pipeline的概念是传递数据，只要能产生数据的，都是pipeline。</p><h3 id=变量>变量</h3><ul><li>我们还可以在模板中声明变量，用来保存传入模板的数据或其他语句生成的结果。具体语法如下：</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span>$</span>obj <span style=color:#666>:=</span> {{.}}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>其中<span>$</span>obj是变量的名字<span>，</span>在后续的代码中就可以使用该变量了<span>。</span>
+</span></span></code></pre></div><h3 id=移除空格>移除空格</h3><ul><li>有时候我们在使用模板语法的时候会不可避免的引入一下空格或者换行符，这样模板最终渲染出来的内容可能就和我们想的不一样，这个时候可以使用{{-语法去除模板内容左侧的所有空白符号， 使用-}}去除模板内容右侧的所有空白符号。</li></ul><p>例如：{{- .Name -}}</p><p><strong>注意：</strong>-要紧挨{{和}}，同时与模板值之间需要使用空格分隔。</p><h3 id=条件判断>条件判断</h3><ul><li>Go模板语法中的条件判断有以下几种:</li></ul><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{{<span style=color:#a2f;font-weight:700>if</span> pipeline}} T1 {{end}}
+</span></span><span style=display:flex><span>{{<span style=color:#a2f;font-weight:700>if</span> pipeline}} T1 {{<span style=color:#a2f;font-weight:700>else</span>}} T0 {{end}}
+</span></span><span style=display:flex><span>{{<span style=color:#a2f;font-weight:700>if</span> pipeline}} T1 {{<span style=color:#a2f;font-weight:700>else</span> <span style=color:#a2f;font-weight:700>if</span> pipeline}} T0 {{end}}
+</span></span></code></pre></div><h3 id=range>range</h3><p>Go的模板语法中使用range关键字进行遍历，有以下两种写法，其中pipeline的值必须是数组、切片、字典或者通道。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{{<span style=color:#a2f;font-weight:700>range</span> pipeline}} T1 {{end}}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{{<span style=color:#a2f;font-weight:700>range</span> pipeline}} T1 {{<span style=color:#a2f;font-weight:700>else</span>}} T0 {{end}}
+</span></span></code></pre></div><h3 id=with>with</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{{with pipeline}} T1 {{end}}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>{{with pipeline}} T1 {{<span style=color:#a2f;font-weight:700>else</span>}} T0 {{end}}
+</span></span></code></pre></div><h3 id=预定义函数>预定义函数</h3><p>执行模板时，函数从两个函数字典中查找：首先是模板函数字典，然后是全局函数字典。一般不在模板内定义函数，而是使用Funcs方法添加函数到模板里。</p><p>预定义的全局函数如下：</p><ol><li>and<ul><li>函数返回它的第一个empty参数或者最后一个参数；</li><li>就是说"and x y"等价于"if x then y else x"；所有参数都会执行；</li></ul></li><li>or<ul><li>返回第一个非empty参数或者最后一个参数；</li><li>亦即"or x y"等价于"if x then x else y"；所有参数都会执行；</li></ul></li><li>not<ul><li>返回它的单个参数的布尔值的否定</li></ul></li><li>len<ul><li>返回它的参数的整数类型长度</li></ul></li><li>index<ul><li>执行结果为第一个参数以剩下的参数为索引/键指向的值；</li><li>如"index x 1 2 3"返回x[1][2][3]的值；每个被索引的主体必须是数组、切片或者字典。</li></ul></li><li>print<ul><li>即fmt.Sprint</li></ul></li><li>printf<ul><li>即fmt.Sprintf</li></ul></li><li>println<ul><li>即fmt.Sprintln</li></ul></li><li>html<ul><li>返回与其参数的文本表示形式等效的转义HTML。</li><li>这个函数在html/template中不可用。</li></ul></li><li>urlquery</li></ol><ul><li>以适合嵌入到网址查询中的形式返回其参数的文本表示的转义值。</li><li>这个函数在html/template中不可用。</li></ul><ol><li>js</li></ol><ul><li>返回与其参数的文本表示形式等效的转义JavaScript。</li></ul><ol><li>call</li></ol><ul><li><p>执行结果是调用第一个参数的返回值，该参数必须是函数类型，其余参数作为调用该函数的参数；</p><p>如"call .X.Y 1 2"等价于go语言里的dot.X.Y(1, 2)；
 其中Y是函数类型的字段或者字典的值，或者其他类似情况；
 call的第一个参数的执行结果必须是函数类型的值（和预定义函数如print明显不同）；
 该函数类型值必须有1到2个返回值，如果有2个则后一个必须是error接口类型；
-如果有2个返回值的方法返回的error非nil，模板执行会中断并返回给调用模板执行者该错误；</p>
-</li>
-</ul>
-<h3 id=比较函数>比较函数</h3>
-<ul>
-<li>布尔函数会将任何类型的零值视为假，其余视为真。</li>
-</ul>
-<p>下面是定义为函数的二元比较运算的集合：</p>
-<p>eq 如果arg1 == arg2则返回真
+如果有2个返回值的方法返回的error非nil，模板执行会中断并返回给调用模板执行者该错误；</p></li></ul><h3 id=比较函数>比较函数</h3><ul><li>布尔函数会将任何类型的零值视为假，其余视为真。</li></ul><p>下面是定义为函数的二元比较运算的集合：</p><p>eq 如果arg1 == arg2则返回真
 ne 如果arg1 != arg2则返回真
 lt 如果arg1 &lt; arg2则返回真
 le 如果arg1 &lt;= arg2则返回真
 gt 如果arg1 > arg2则返回真
-ge 如果arg1 >= arg2则返回真</p>
-<p>为了简化多参数相等检测，eq（只有eq）可以接受2个或更多个参数，它会将第一个参数和其余参数依次比较，返回下式的结果：</p>
-<p>{{eq arg1 arg2 arg3}}</p>
-<p>比较函数只适用于基本类型（或重定义的基本类型，如”type Celsius float32”）。但是，整数和浮点数不能互相比较。</p>
-<h3 id=自定义函数>自定义函数</h3>
-<p>Go的模板支持自定义函数。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>sayHello</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request) {
-	htmlByte, err <span style=color:#666>:=</span> ioutil.<span style=color:#00a000>ReadFile</span>(<span style=color:#b44>&#34;./hello.tmpl&#34;</span>)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;read html failed, err:&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	<span style=color:#080;font-style:italic>// 自定义一个夸人的模板函数
-</span><span style=color:#080;font-style:italic></span>	kua <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>func</span>(arg <span style=color:#0b0;font-weight:700>string</span>) (<span style=color:#0b0;font-weight:700>string</span>, <span style=color:#0b0;font-weight:700>error</span>) {
-		<span style=color:#a2f;font-weight:700>return</span> arg <span style=color:#666>+</span> <span style=color:#b44>&#34;真帅&#34;</span>, <span style=color:#a2f;font-weight:700>nil</span>
-	}
-	<span style=color:#080;font-style:italic>// 采用链式操作在Parse之前调用Funcs添加自定义的kua函数
-</span><span style=color:#080;font-style:italic></span>	tmpl, err <span style=color:#666>:=</span> template.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;hello&#34;</span>).<span style=color:#00a000>Funcs</span>(template.FuncMap{<span style=color:#b44>&#34;kua&#34;</span>: kua}).<span style=color:#00a000>Parse</span>(<span style=color:#a2f>string</span>(htmlByte))
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	user <span style=color:#666>:=</span> UserInfo{
-		Name:   <span style=color:#b44>&#34;小王子&#34;</span>,
-		Gender: <span style=color:#b44>&#34;男&#34;</span>,
-		Age:    <span style=color:#666>18</span>,
-	}
-	<span style=color:#080;font-style:italic>// 使用user渲染模板，并将结果写入w
-</span><span style=color:#080;font-style:italic></span>	tmpl.<span style=color:#00a000>Execute</span>(w, user)
-}
-</code></pre></div><p>我们可以在模板文件hello.tmpl中按照如下方式使用我们自定义的kua函数了。</p>
-<p>{{kua .Name}}</p>
-<h3 id=嵌套template>嵌套template</h3>
-<p>我们可以在template中嵌套其他的template。这个template可以是单独的文件，也可以是通过define定义的template。</p>
-<p>举个例子：t.tmpl文件内容如下：tmpl test</p>
-<p>测试嵌套template语法 {{template &ldquo;ul.tmpl&rdquo;}}</p>
-<pre><code>{{template &quot;ol.tmpl&quot;}}
+ge 如果arg1 >= arg2则返回真</p><p>为了简化多参数相等检测，eq（只有eq）可以接受2个或更多个参数，它会将第一个参数和其余参数依次比较，返回下式的结果：</p><p>{{eq arg1 arg2 arg3}}</p><p>比较函数只适用于基本类型（或重定义的基本类型，如”type Celsius float32”）。但是，整数和浮点数不能互相比较。</p><h3 id=自定义函数>自定义函数</h3><p>Go的模板支持自定义函数。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>sayHello</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request) {
+</span></span><span style=display:flex><span>	htmlByte, err <span style=color:#666>:=</span> ioutil.<span style=color:#00a000>ReadFile</span>(<span style=color:#b44>&#34;./hello.tmpl&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;read html failed, err:&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 自定义一个夸人的模板函数
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	kua <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>func</span>(arg <span style=color:#0b0;font-weight:700>string</span>) (<span style=color:#0b0;font-weight:700>string</span>, <span style=color:#0b0;font-weight:700>error</span>) {
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span> arg <span style=color:#666>+</span> <span style=color:#b44>&#34;真帅&#34;</span>, <span style=color:#a2f;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 采用链式操作在Parse之前调用Funcs添加自定义的kua函数
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	tmpl, err <span style=color:#666>:=</span> template.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;hello&#34;</span>).<span style=color:#00a000>Funcs</span>(template.FuncMap{<span style=color:#b44>&#34;kua&#34;</span>: kua}).<span style=color:#00a000>Parse</span>(<span style=color:#a2f>string</span>(htmlByte))
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	user <span style=color:#666>:=</span> UserInfo{
+</span></span><span style=display:flex><span>		Name:   <span style=color:#b44>&#34;小王子&#34;</span>,
+</span></span><span style=display:flex><span>		Gender: <span style=color:#b44>&#34;男&#34;</span>,
+</span></span><span style=display:flex><span>		Age:    <span style=color:#666>18</span>,
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#080;font-style:italic>// 使用user渲染模板，并将结果写入w
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	tmpl.<span style=color:#00a000>Execute</span>(w, user)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>我们可以在模板文件hello.tmpl中按照如下方式使用我们自定义的kua函数了。</p><p>{{kua .Name}}</p><h3 id=嵌套template>嵌套template</h3><p>我们可以在template中嵌套其他的template。这个template可以是单独的文件，也可以是通过define定义的template。</p><p>举个例子：t.tmpl文件内容如下：tmpl test</p><p>测试嵌套template语法 {{template &ldquo;ul.tmpl&rdquo;}}</p><pre><code>{{template &quot;ol.tmpl&quot;}}
 
 {{ define &quot;ol.tmpl&quot;}}
 吃饭
 睡觉
 打豆豆
 {{end}}
-</code></pre>
-<p>ul.tmpl文件内容如下：
+</code></pre><p>ul.tmpl文件内容如下：
 注释
 日志
 测试
 我们注册一个templDemo路由处理函数.
 http.HandleFunc("/tmpl", tmplDemo)
-tmplDemo函数的具体内容如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>tmplDemo</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request) {
-	tmpl, err <span style=color:#666>:=</span> template.<span style=color:#00a000>ParseFiles</span>(<span style=color:#b44>&#34;./t.tmpl&#34;</span>, <span style=color:#b44>&#34;./ul.tmpl&#34;</span>)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	user <span style=color:#666>:=</span> UserInfo{
-		Name:   <span style=color:#b44>&#34;小王子&#34;</span>,
-		Gender: <span style=color:#b44>&#34;男&#34;</span>,
-		Age:    <span style=color:#666>18</span>,
-	}
-	tmpl.<span style=color:#00a000>Execute</span>(w, user)
-}
-</code></pre></div><p><strong>注意</strong>：在解析模板时，被嵌套的模板一定要在后面解析，例如上面的示例中t.tmpl模板中嵌套了ul.tmpl，所以ul.tmpl要在t.tmpl后进行解析。</p>
-<h3 id=block>block</h3>
-<p>{{block &ldquo;name&rdquo; pipeline}} T1 {{end}}</p>
-<p>block是定义模板{{define &ldquo;name&rdquo;}} T1 {{end}}和执行{{template &ldquo;name&rdquo; pipeline}}缩写，典型的用法是定义一组根模板，然后通过在其中重新定义块模板进行自定义。</p>
-<p>定义一个根模板templates/base.tmpl，内容如下：Go Templates</p>
-<p>{{block &ldquo;content&rdquo; . }}{{end}}</p>
-<p>然后定义一个templates/index.tmpl，”继承”base.tmpl：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{{template <span style=color:#b44>&#34;base.tmpl&#34;</span>}}
-{{define <span style=color:#b44>&#34;content&#34;</span>}}
-    Hello world!
-{{end}}
-</code></pre></div><p>然后使用template.ParseGlob按照正则匹配规则解析模板文件，然后通过ExecuteTemplate渲染指定的模板：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>index</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request){
-	tmpl, err <span style=color:#666>:=</span> template.<span style=color:#00a000>ParseGlob</span>(<span style=color:#b44>&#34;templates/*.tmpl&#34;</span>)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	err = tmpl.<span style=color:#00a000>ExecuteTemplate</span>(w, <span style=color:#b44>&#34;index.tmpl&#34;</span>, <span style=color:#a2f;font-weight:700>nil</span>)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;render template failed, err:&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-}
-</code></pre></div><p>如果我们的模板名称冲突了，例如不同业务线下都定义了一个index.tmpl模板，我们可以通过下面两种方法来解决。</p>
-<ol>
-<li>在模板文件开头使用{{define 模板名}}语句显式的为模板命名。</li>
-<li>可以把模板文件存放在templates文件夹下面的不同目录中，然后使用template.ParseGlob(&ldquo;templates/**/*.tmpl&rdquo;)解析模板。</li>
-</ol>
-<h3 id=修改默认的标识符>修改默认的标识符</h3>
-<p>Go标准库的模板引擎使用的花括号{{和}}作为标识，而许多前端框架（如Vue和AngularJS）也使用{{和}}作为标识符，所以当我们同时使用Go语言模板引擎和以上前端框架时就会出现冲突，这个时候我们需要修改标识符，修改前端的或者修改Go语言的。这里演示如何修改Go语言模板引擎默认的标识符：</p>
-<p>template.New(&ldquo;test&rdquo;).Delims("{[", &ldquo;]}").ParseFiles(&rdquo;./t.tmpl")</p>
-<h2 id=texttemplate与htmltempalte的区别>text/template与html/tempalte的区别</h2>
-<p>html/template针对的是需要返回HTML内容的场景，在模板渲染过程中会对一些有风险的内容进行转义，以此来防范跨站脚本攻击。</p>
-<p>例如，我定义下面的模板文件：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>Hello
-{{.}}
-</code></pre></div><p>这个时候传入一段JS代码并使用html/template去渲染该文件，会在页面上显示出转义后的JS内容。alert(&lsquo;嘿嘿嘿&rsquo;)这就是html/template为我们做的事。</p>
-<p>但是在某些场景下，我们如果相信用户输入的内容，不想转义的话，可以自行编写一个safe函数，手动返回一个template.HTML类型的内容。示例如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>xss</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request){
-	tmpl,err <span style=color:#666>:=</span> template.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;xss.tmpl&#34;</span>).<span style=color:#00a000>Funcs</span>(template.FuncMap{
-		<span style=color:#b44>&#34;safe&#34;</span>: <span style=color:#a2f;font-weight:700>func</span>(s <span style=color:#0b0;font-weight:700>string</span>)template.HTML {
-			<span style=color:#a2f;font-weight:700>return</span> template.<span style=color:#00a000>HTML</span>(s)
-		},
-	}).<span style=color:#00a000>ParseFiles</span>(<span style=color:#b44>&#34;./xss.tmpl&#34;</span>)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	jsStr <span style=color:#666>:=</span> <span style=color:#b44>`alert(&#39;嘿嘿嘿&#39;)`</span>
-	err = tmpl.<span style=color:#00a000>Execute</span>(w, jsStr)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(err)
-	}
-}
-</code></pre></div><p>这样我们只需要在模板文件不需要转义的内容后面使用我们定义好的safe函数就可以了。{{ . | safe }}</p>
-<h2 id=代码生成>代码生成</h2>
-<p><strong>生成代码用text/template包,模板语法和html/template一样</strong></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> (
-	<span style=color:#b44>&#34;fmt&#34;</span>
-	<span style=color:#b44>&#34;html/template&#34;</span>
-	<span style=color:#b44>&#34;os&#34;</span>
-)
-<span style=color:#a2f;font-weight:700>var</span> data = <span style=color:#b44>`
-</span><span style=color:#b44>package main
-</span><span style=color:#b44>import &#34;fmt&#34;
-</span><span style=color:#b44>func main() {
-</span><span style=color:#b44>	str := &#34;</span><span style=color:#080>{{</span><span style=color:#bbb> </span><span style=color:#b44>.</span><span style=color:#bbb> </span><span style=color:#080>}}</span><span style=color:#b44>&#34;
-</span><span style=color:#b44>	for _, v := range str {
-</span><span style=color:#b44>		fmt.Println(v)
-</span><span style=color:#b44>	}
-</span><span style=color:#b44>}
-</span><span style=color:#b44>`</span>
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-	t <span style=color:#666>:=</span> template.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;main&#34;</span>)
-	t, err <span style=color:#666>:=</span> t.<span style=color:#00a000>Parse</span>(data)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;解析失败&#34;</span>)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	<span style=color:#a2f;font-weight:700>var</span> str = <span style=color:#b44>&#34;zhaohaiyu&#34;</span>
-	file, err <span style=color:#666>:=</span> os.<span style=color:#00a000>OpenFile</span>(<span style=color:#b44>&#34;./print/main.go&#34;</span>, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, <span style=color:#666>0755</span>)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;open file:%s failed, err:%v\n&#34;</span>, <span style=color:#b44>&#34;./print/main.go&#34;</span>, err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	err = t.<span style=color:#00a000>Execute</span>(file, str)
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;execute failed err:&#34;</span>,err)
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	<span style=color:#a2f;font-weight:700>return</span>
-}
-</code></pre></div><p>生成的代码:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;fmt&#34;</span>
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-	str <span style=color:#666>:=</span> <span style=color:#b44>&#34;zhaohaiyu&#34;</span>
-	<span style=color:#a2f;font-weight:700>for</span> _, v <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> str {
-		fmt.<span style=color:#00a000>Println</span>(v)
-	}
-}
-</code></pre></div><p>参考文章:</p>
-<ul>
-<li><a href=https://www.liwenzhou.com/posts/Go/go_template/#autoid-1-3-0 target=_blank rel=noopener>https://www.liwenzhou.com/posts/Go/go_template/#autoid-1-3-0</a>
-</li>
-</ul>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=/tags/golang rel=tag title=golang>#golang#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-img>
-<img src=/img/qq_qrcode.png width=129px height=129px>
-<div style=text-align:center>QQ扫一扫交流</div>
-</div>
-<div class=article-copyright-info>
-<p>
-<span>标题：</span>Go Template
-</p>
-<p>
-<span>链接：</span>https://www.zhaohaiyu.com/post/go/go-template/
-</p>
-<p>
-<span>作者：</span>haiyux
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-context/ rel=next title="Go context包">
-<i class="fa fa-chevron-left"></i> Go context包
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-mod/ rel=prev title="Go Mod">
-Go Mod
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=ucomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+tmplDemo函数的具体内容如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>tmplDemo</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request) {
+</span></span><span style=display:flex><span>	tmpl, err <span style=color:#666>:=</span> template.<span style=color:#00a000>ParseFiles</span>(<span style=color:#b44>&#34;./t.tmpl&#34;</span>, <span style=color:#b44>&#34;./ul.tmpl&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	user <span style=color:#666>:=</span> UserInfo{
+</span></span><span style=display:flex><span>		Name:   <span style=color:#b44>&#34;小王子&#34;</span>,
+</span></span><span style=display:flex><span>		Gender: <span style=color:#b44>&#34;男&#34;</span>,
+</span></span><span style=display:flex><span>		Age:    <span style=color:#666>18</span>,
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	tmpl.<span style=color:#00a000>Execute</span>(w, user)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><strong>注意</strong>：在解析模板时，被嵌套的模板一定要在后面解析，例如上面的示例中t.tmpl模板中嵌套了ul.tmpl，所以ul.tmpl要在t.tmpl后进行解析。</p><h3 id=block>block</h3><p>{{block &ldquo;name&rdquo; pipeline}} T1 {{end}}</p><p>block是定义模板{{define &ldquo;name&rdquo;}} T1 {{end}}和执行{{template &ldquo;name&rdquo; pipeline}}缩写，典型的用法是定义一组根模板，然后通过在其中重新定义块模板进行自定义。</p><p>定义一个根模板templates/base.tmpl，内容如下：Go Templates</p><p>{{block &ldquo;content&rdquo; . }}{{end}}</p><p>然后定义一个templates/index.tmpl，”继承”base.tmpl：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{{template <span style=color:#b44>&#34;base.tmpl&#34;</span>}}
+</span></span><span style=display:flex><span>{{define <span style=color:#b44>&#34;content&#34;</span>}}
+</span></span><span style=display:flex><span>    Hello world!
+</span></span><span style=display:flex><span>{{end}}
+</span></span></code></pre></div><p>然后使用template.ParseGlob按照正则匹配规则解析模板文件，然后通过ExecuteTemplate渲染指定的模板：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>index</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request){
+</span></span><span style=display:flex><span>	tmpl, err <span style=color:#666>:=</span> template.<span style=color:#00a000>ParseGlob</span>(<span style=color:#b44>&#34;templates/*.tmpl&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	err = tmpl.<span style=color:#00a000>ExecuteTemplate</span>(w, <span style=color:#b44>&#34;index.tmpl&#34;</span>, <span style=color:#a2f;font-weight:700>nil</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;render template failed, err:&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>如果我们的模板名称冲突了，例如不同业务线下都定义了一个index.tmpl模板，我们可以通过下面两种方法来解决。</p><ol><li>在模板文件开头使用{{define 模板名}}语句显式的为模板命名。</li><li>可以把模板文件存放在templates文件夹下面的不同目录中，然后使用template.ParseGlob(&ldquo;templates/**/*.tmpl&rdquo;)解析模板。</li></ol><h3 id=修改默认的标识符>修改默认的标识符</h3><p>Go标准库的模板引擎使用的花括号{{和}}作为标识，而许多前端框架（如Vue和AngularJS）也使用{{和}}作为标识符，所以当我们同时使用Go语言模板引擎和以上前端框架时就会出现冲突，这个时候我们需要修改标识符，修改前端的或者修改Go语言的。这里演示如何修改Go语言模板引擎默认的标识符：</p><p>template.New(&ldquo;test&rdquo;).Delims("{[", &ldquo;]}&rdquo;).ParseFiles("./t.tmpl")</p><h2 id=texttemplate与htmltempalte的区别>text/template与html/tempalte的区别</h2><p>html/template针对的是需要返回HTML内容的场景，在模板渲染过程中会对一些有风险的内容进行转义，以此来防范跨站脚本攻击。</p><p>例如，我定义下面的模板文件：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>Hello
+</span></span><span style=display:flex><span>{{.}}
+</span></span></code></pre></div><p>这个时候传入一段JS代码并使用html/template去渲染该文件，会在页面上显示出转义后的JS内容。alert(&lsquo;嘿嘿嘿&rsquo;)这就是html/template为我们做的事。</p><p>但是在某些场景下，我们如果相信用户输入的内容，不想转义的话，可以自行编写一个safe函数，手动返回一个template.HTML类型的内容。示例如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>xss</span>(w http.ResponseWriter, r <span style=color:#666>*</span>http.Request){
+</span></span><span style=display:flex><span>	tmpl,err <span style=color:#666>:=</span> template.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;xss.tmpl&#34;</span>).<span style=color:#00a000>Funcs</span>(template.FuncMap{
+</span></span><span style=display:flex><span>		<span style=color:#b44>&#34;safe&#34;</span>: <span style=color:#a2f;font-weight:700>func</span>(s <span style=color:#0b0;font-weight:700>string</span>)template.HTML {
+</span></span><span style=display:flex><span>			<span style=color:#a2f;font-weight:700>return</span> template.<span style=color:#00a000>HTML</span>(s)
+</span></span><span style=display:flex><span>		},
+</span></span><span style=display:flex><span>	}).<span style=color:#00a000>ParseFiles</span>(<span style=color:#b44>&#34;./xss.tmpl&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;create template failed, err:&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	jsStr <span style=color:#666>:=</span> <span style=color:#b44>`alert(&#39;嘿嘿嘿&#39;)`</span>
+</span></span><span style=display:flex><span>	err = tmpl.<span style=color:#00a000>Execute</span>(w, jsStr)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(err)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这样我们只需要在模板文件不需要转义的内容后面使用我们定义好的safe函数就可以了。{{ . | safe }}</p><h2 id=代码生成>代码生成</h2><p><strong>生成代码用text/template包,模板语法和html/template一样</strong></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;html/template&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#b44>&#34;os&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>var</span> data = <span style=color:#b44>`
+</span></span></span><span style=display:flex><span><span style=color:#b44>package main
+</span></span></span><span style=display:flex><span><span style=color:#b44>import &#34;fmt&#34;
+</span></span></span><span style=display:flex><span><span style=color:#b44>func main() {
+</span></span></span><span style=display:flex><span><span style=color:#b44>	str := &#34;</span><span style=color:#080>{{</span><span style=color:#bbb> </span><span style=color:#b44>.</span><span style=color:#bbb> </span><span style=color:#080>}}</span><span style=color:#b44>&#34;
+</span></span></span><span style=display:flex><span><span style=color:#b44>	for _, v := range str {
+</span></span></span><span style=display:flex><span><span style=color:#b44>		fmt.Println(v)
+</span></span></span><span style=display:flex><span><span style=color:#b44>	}
+</span></span></span><span style=display:flex><span><span style=color:#b44>}
+</span></span></span><span style=display:flex><span><span style=color:#b44>`</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>	t <span style=color:#666>:=</span> template.<span style=color:#00a000>New</span>(<span style=color:#b44>&#34;main&#34;</span>)
+</span></span><span style=display:flex><span>	t, err <span style=color:#666>:=</span> t.<span style=color:#00a000>Parse</span>(data)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;解析失败&#34;</span>)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>var</span> str = <span style=color:#b44>&#34;zhaohaiyu&#34;</span>
+</span></span><span style=display:flex><span>	file, err <span style=color:#666>:=</span> os.<span style=color:#00a000>OpenFile</span>(<span style=color:#b44>&#34;./print/main.go&#34;</span>, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, <span style=color:#666>0755</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Printf</span>(<span style=color:#b44>&#34;open file:%s failed, err:%v\n&#34;</span>, <span style=color:#b44>&#34;./print/main.go&#34;</span>, err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	err = t.<span style=color:#00a000>Execute</span>(file, str)
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(<span style=color:#b44>&#34;execute failed err:&#34;</span>,err)
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>生成的代码:</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> <span style=color:#b44>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>	str <span style=color:#666>:=</span> <span style=color:#b44>&#34;zhaohaiyu&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>for</span> _, v <span style=color:#666>:=</span> <span style=color:#a2f;font-weight:700>range</span> str {
+</span></span><span style=display:flex><span>		fmt.<span style=color:#00a000>Println</span>(v)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>参考文章:</p><ul><li><a href=https://www.liwenzhou.com/posts/Go/go_template/#autoid-1-3-0 target=_blank rel=noopener>https://www.liwenzhou.com/posts/Go/go_template/#autoid-1-3-0</a></li></ul></div><footer class=post-footer><div class=post-tags><a href=/tags/golang rel=tag title=golang>#golang#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>Go Template</p><p><span>链接：</span>https://www.zhaohaiyu.com/post/go/go-template/</p><p><span>作者：</span>haiyux</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-context/ rel=next title="Go context包"><i class="fa fa-chevron-left"></i> Go context包</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-mod/ rel=prev title="Go Mod">Go Mod
+<i class="fa fa-chevron-right"></i></a></div></div><div id=ucomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
-<p class=site-author-name itemprop=name>haiyux</p>
-<p class="site-description motion-element" itemprop=description>
-路漫漫其修远兮,吾将上下而求索
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>62</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>8</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>20</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/haiyux/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
-<i class="fa fa-fw fa-envelope"></i>
-Email
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://farer.org/ title=farer target=_blank>farer</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/golang>Golang
-<sup>30</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
-<sup>8</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql
-<sup>7</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/http>HTTP
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/protobuf>Protobuf
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%BF%90%E7%BB%B4>运维
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/grpc>Grpc
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis
-<sup>2</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/ddd>Ddd
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/docker>Docker
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/kratos>Kratos
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/makefile>Makefile
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mq>Mq
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/nginx>Nginx
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/raft>Raft
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/thrift>Thrift
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/traceing>Traceing
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/wire>Wire
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
-<sup>1</sup>
-</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#html模板生成>html模板生成:</a></li>
-<li><a href=#模板语法>模板语法</a>
-<ul>
-<li><a href=#heading>{{.}}</a></li>
-<li><a href=#注释>注释</a></li>
-<li><a href=#pipeline>pipeline</a></li>
-<li><a href=#变量>变量</a></li>
-<li><a href=#移除空格>移除空格</a></li>
-<li><a href=#条件判断>条件判断</a></li>
-<li><a href=#range>range</a></li>
-<li><a href=#with>with</a></li>
-<li><a href=#预定义函数>预定义函数</a></li>
-<li><a href=#比较函数>比较函数</a></li>
-<li><a href=#自定义函数>自定义函数</a></li>
-<li><a href=#嵌套template>嵌套template</a></li>
-<li><a href=#block>block</a></li>
-<li><a href=#修改默认的标识符>修改默认的标识符</a></li>
-</ul>
-</li>
-<li><a href=#texttemplate与htmltempalte的区别>text/template与html/tempalte的区别</a></li>
-<li><a href=#代码生成>代码生成</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux><p class=site-author-name itemprop=name>haiyux</p><p class="site-description motion-element" itemprop=description>路漫漫其修远兮,吾将上下而求索</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/haiyux/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=mailto:haiyux@foxmail.com target=_blank title=Email><i class="fa fa-fw fa-envelope"></i>
+Email</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a></li><li class=links-of-blogroll-item><a href=https://farer.org/ title=farer target=_blank>farer</a></li><li class=links-of-blogroll-item><a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a></li><li class=links-of-blogroll-item><a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a></li><li class=links-of-blogroll-item><a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/golang>Golang
+<sup>30</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/http>HTTP
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/protobuf>Protobuf
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/grpc>Grpc
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ddd>Ddd
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/kratos>Kratos
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/makefile>Makefile
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mq>Mq
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/raft>Raft
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/thrift>Thrift
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/traceing>Traceing
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/wire>Wire
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup></a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#html模板生成>html模板生成:</a></li><li><a href=#模板语法>模板语法</a><ul><li><a href=#heading>{{.}}</a></li><li><a href=#注释>注释</a></li><li><a href=#pipeline>pipeline</a></li><li><a href=#变量>变量</a></li><li><a href=#移除空格>移除空格</a></li><li><a href=#条件判断>条件判断</a></li><li><a href=#range>range</a></li><li><a href=#with>with</a></li><li><a href=#预定义函数>预定义函数</a></li><li><a href=#比较函数>比较函数</a></li><li><a href=#自定义函数>自定义函数</a></li><li><a href=#嵌套template>嵌套template</a></li><li><a href=#block>block</a></li><li><a href=#修改默认的标识符>修改默认的标识符</a></li></ul></li><li><a href=#texttemplate与htmltempalte的区别>text/template与html/tempalte的区别</a></li><li><a href=#代码生成>代码生成</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>haiyux's blog</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
-</span>
+<span class=copyright-author>haiyux's blog</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.100.1</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.footer').outerHeight(!0),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
-<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
-<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf('MSIE '),n=e.indexOf('Trident/'),s=e.indexOf('Edge/');return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$('#content').height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$('<div />').addClass('scrollbar-measure').prependTo('body'),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$('.back-to-top');$(window).on('scroll',function(){e.toggleClass('back-to-top-on',window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$('#scrollpercent>span').html(a)}),e.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e='.post-toc',s=$(e),t='.active-current';s.on('activate.bs.scrollspy',function(){var t=$(e+' .active').last();n(),t.addClass('active-current')}).on('clear.bs.scrollspy',n),$('body').scrollspy({target:e});function n(){$(e+' '+t).removeClass(t.substring(1))}}function initAffix(){var e=$('.header-inner').height(),t=parseInt($('.footer').outerHeight(!0),10),n=e+10;$('.sidebar-inner').affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on('resize',function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$('.post-toc').css('width','calc(100% + '+t+'px)')}function updateTOCHeight(e){e=e||'auto',$('.post-toc').css('max-height',e)}$(function(){var e,t,n,s,o=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':o}).show(),t=parseInt($('#sidebar').css('margin-top')),n=parseInt($('.sidebar-inner').css('height')),e=t+n,s=$('.content-wrap').height(),s<e&&$('.content-wrap').css('min-height',e),$('.site-nav-toggle').on('click',function(){var e=$('.site-nav'),o=$('.toggle'),t='site-nav-on',i='toggle-close',n=e.hasClass(t),a=n?'slideUp':'slideDown',s=n?'removeClass':'addClass';e.stop()[a]('normal',function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script><script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(s){var t=new AV.Query(s),e=[],n=$(".leancloud_visitors");n.each(function(){e.push($(this).attr("id").trim())}),t.containedIn('url',e),t.find().then(r=>{var t,s,o,a,c,l,i='.leancloud-visitors-count';if(r.length==0){n.find(i).text(0);return}for(t=0;t<r.length;t++)a=r[t],o=a.get('url'),l=a.get('time'),s=document.getElementById(o),$(s).find(i).text(l);for(t=0;t<e.length;t++)o=e[t],s=document.getElementById(o),c=$(s).find(i),c.text()==''&&c.text(0)},e=>{console.log('Query vistors failed: '+e)})}function addCount(s){var t=$(".leancloud_visitors"),e=t.attr('id').trim(),o=t.attr('data-flag-title').trim(),n=new AV.Query('Counter');n.equalTo("url",e),n.find().then(i=>{if(i.length>0){var t,n,a=i[0];a.increment('time',1),a.save(null,{query:new AV.Query('Counter').equalTo('url',e),fetchWhenSave:!0}).then(t=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log('Update vistor failed: '+e)})}else n=new AV.ACL,n.setPublicReadAccess(!0),n.setPublicWriteAccess(!0),t=new s,t.set("title",o),t.set("url",e),t.set("time",1),t.setACL(n),t.save().then(s=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log("Save new vistor failed: "+e)})})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const e=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(e):$('.post-title-link').length>1&&showTime(e)})</script><script type=text/javascript>(function(){var e=document.createElement('script');e.type='text/javascript',e.async=!0,e.setAttribute('issue-term',"pathname"),e.setAttribute('theme',"github-light"),e.setAttribute('repo',"haiyux/haiyux.github.io"),e.crossorigin='anonymous',e.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(e)})()</script><script>(function(){var t,e=document.createElement('script'),n=window.location.protocol.split(':')[0];n==='https'?e.src='https://zz.bdstatic.com/linksubmit/push.js':e.src='http://push.zhanzhang.baidu.com/push.js',t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

@@ -1,670 +1,134 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> 从kratos分析BBR限流源码实现 - haiyux's blog </title>
-<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
-<meta name=author content="haiyux">
-<meta property="og:title" content="从kratos分析BBR限流源码实现">
-<meta property="og:site_name" content="haiyux's blog">
-<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
-<meta name=title content="从kratos分析BBR限流源码实现 - haiyux's blog">
-<meta name=description content="欢迎来到haiyux的博客">
-<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet>
-<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>从kratos分析BBR限流源码实现 - haiyux's blog</title><meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="haiyux"><meta property="og:title" content="从kratos分析BBR限流源码实现"><meta property="og:site_name" content="haiyux's blog"><meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg"><meta name=title content="从kratos分析BBR限流源码实现 - haiyux's blog"><meta name=description content="欢迎来到haiyux的博客"><link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico><link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css><link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>haiyux's blog</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class="menu-item menu-item-active">
-<a href=/post/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav> </div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.zhaohaiyu.com/post/microservice/overload/ itemprop=url>
-从kratos分析BBR限流源码实现
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-pushdate>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post/ rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.zhaohaiyu.com/post/microservice/overload/ itemprop=url>从kratos分析BBR限流源码实现</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-09-04">
-2021-09-04
-</time>
-</span>
-<span class=post-category>
-<i class="fa fa-folder-o fa-fw"></i>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-09-04">2021-09-04</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/microservice itemprop=url rel=index>
-<span itemprop=name>microservice</span>
-</a>
-&nbsp;
-</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/go itemprop=url rel=index>
-<span itemprop=name>go</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span class=post-wordcount>
-<i class="fa fa-file-word-o fa-fw"></i>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/microservice itemprop=url rel=index><span itemprop=name>microservice</span></a>
+&nbsp;</span>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/go itemprop=url rel=index><span itemprop=name>go</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>1769 字</span>
-</span>
-<span class=post-readtime>
-<i class="fa fa-eye fa-fw"></i>
+<span class=leancloud-world-count>1769 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>4分钟</span>
-</span>
-<span id=/post/microservice/overload/ class="leancloud_visitors post-visitor" data-flag-title=从kratos分析BBR限流源码实现>
-<i class="fa fa-binoculars fa-fw"></i>
+<span class=leancloud-view-count>4分钟</span></span>
+<span id=/post/microservice/overload/ class="leancloud_visitors post-visitor" data-flag-title=从kratos分析BBR限流源码实现><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=什么是自适应限流>什么是自适应限流</h2>
-<p>自适应限流从整体维度对应用入口流量进行控制，结合应用的 Load、CPU 使用率、总体平均 RT、入口 QPS 和并发线程数等几个维度的监控指标，通过自适应的流控策略，让系统的入口流量和系统的负载达到一个平衡，让系统尽可能跑在最大吞吐量的同时保证系统整体的稳定性。</p>
-<p><strong>核心目标：</strong></p>
-<ul>
-<li>自动嗅探负载和 qps，减少人工配置</li>
-<li>削顶，保证超载时系统不被拖垮，并能以高水位 qps 继续运行</li>
-</ul>
-<h2 id=限流规则>限流规则</h2>
-<p><img src=/images/2344773-20210904211230446-1339482393.png alt></p>
-<p><strong>计算吞吐量：利特尔法则 <code>L = λ * W</code></strong></p>
-<p>如上图所示，如果我们开一个小店，平均每分钟进店 2 个客人(λ)，每位客人从等待到完成交易需要 4 分钟(W)，那我们店里能承载的客人数量就是 2 * 4 = 8 个人</p>
-<p>同理，我们可以将 <code>λ</code> 当做 QPS， <code>W</code> 呢是每个请求需要花费的时间，那我们的系统的吞吐就是 <code>L = λ * W</code> ，所以我们可以使用利特尔法则来计算系统的吞吐量。</p>
-<h3 id=指标介绍>指标介绍</h3>
-<table>
-<thead>
-<tr>
-<th>指标名称</th>
-<th>指标含义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>cpu</td>
-<td>最近 1s 的 CPU 使用率均值，使用滑动平均计算，采样周期是 250ms</td>
-</tr>
-<tr>
-<td>inflight</td>
-<td>当前处理中正在处理的请求数量</td>
-</tr>
-<tr>
-<td>pass</td>
-<td>请求处理成功的量</td>
-</tr>
-<tr>
-<td>rt</td>
-<td>请求成功的响应耗时</td>
-</tr>
-</tbody>
-</table>
-<h3 id=滑动窗口>滑动窗口</h3>
-<p>在自适应限流保护中，采集到的指标的时效性非常强，系统只需要采集最近一小段时间内的 qps、rt 即可，对于较老的数据，会自动丢弃。为了实现这个效果，kratos 使用了滑动窗口来保存采样数据。</p>
-<p><img src=/images/2344773-20210904211301040-969014004.png alt></p>
-<p>如上图，展示了一个具有两个桶（bucket）的滑动窗口（rolling window）。整个滑动窗口用来保存最近 1s 的采样数据，每个小的桶用来保存 500ms 的采样数据。 当时间流动之后，过期的桶会自动被新桶的数据覆盖掉，在图中，在 1000-1500ms 时，bucket 1 的数据因为过期而被丢弃，之后 bucket 3 的数据填到了窗口的头部。</p>
-<h3 id=限流公式>限流公式</h3>
-<p>判断是否丢弃当前请求的算法如下：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>cpu &gt; <span style=color:#666>800</span> <span style=color:#00a000>AND</span> (Now <span style=color:#666>-</span> PrevDrop) &lt; <span style=color:#666>1</span>s <span style=color:#00a000>AND</span> (MaxPass <span style=color:#666>*</span> MinRt <span style=color:#666>*</span> windows <span style=color:#666>/</span> <span style=color:#666>1000</span>) &lt; InFlight
-</code></pre></div><p>MaxPass 表示最近 5s 内，单个采样窗口中最大的请求数。 MinRt 表示最近 5s 内，单个采样窗口中最小的响应时间。 windows 表示一秒内采样窗口的数量，默认配置中是 5s 50 个采样，那么 windows 的值为 10。</p>
-<h2 id=源码分析>源码分析</h2>
-<h2 id=代码地址>代码地址：</h2>
-<ul>
-<li><a href=https://github.com/go-kratos/aegis/tree/main/ratelimit/bbr target=_blank rel=noopener>https://github.com/go-kratos/aegis/tree/main/ratelimit/bbr</a>
-</li>
-</ul>
-<h3 id=bbr-struct>BBR struct</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>type</span> BBR <span style=color:#a2f;font-weight:700>struct</span> {
-    cpu             cpuGetter
-    passStat        window.RollingCounter
-    rtStat          window.RollingCounter
-    inFlight        <span style=color:#0b0;font-weight:700>int64</span>
-    bucketPerSecond <span style=color:#0b0;font-weight:700>int64</span>
-    bucketSize      time.Duration
-
-    <span style=color:#080;font-style:italic>// prevDropTime defines previous start drop since initTime
-</span><span style=color:#080;font-style:italic></span>    prevDropTime atomic.Value
-    maxPASSCache atomic.Value
-    minRtCache   atomic.Value
-
-    opts <span style=color:#666>*</span>options
-}
-</code></pre></div><ol>
-<li><code>cpu</code>
-<ul>
-<li>cpu的指标函数，CPU的使用率， 这里为了减小误差，把数字扩大化，乘以1000，比赛使用率60%，也就是0.6 cpu的值就为600</li>
-</ul>
-</li>
-<li><code>passStat</code>
-<ul>
-<li>请求数的采样数据，使用滑动窗口进行统计</li>
-</ul>
-</li>
-<li><code>rtStat</code>
-<ul>
-<li>响应时间的采样数据，同样使用滑动窗口进行统计</li>
-</ul>
-</li>
-<li><code>inFlight</code>
-<ul>
-<li>当前系统中的请求数，数据得来方法是：中间件原理在处理前+1，处理handle之后不管成功失败都减去1</li>
-</ul>
-</li>
-<li><code>bucketPerSecond</code>
-<ul>
-<li>一个 bucket 的时间</li>
-</ul>
-</li>
-<li><code>bucketSize</code>
-<ul>
-<li>桶的数量</li>
-</ul>
-</li>
-<li><code>prevDropTime</code>
-<ul>
-<li>上次触发限流时间</li>
-</ul>
-</li>
-<li><code>maxPASSCache</code>
-<ul>
-<li>单个采样窗口中最大的请求数的缓存数据</li>
-</ul>
-</li>
-<li><code>minRtCache</code>
-<ul>
-<li>单个采样窗口中最小的响应时间的缓存数据</li>
-</ul>
-</li>
-</ol>
-<h2 id=allow接口>Allow接口</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>// Allow checks all inbound traffic.
-</span><span style=color:#080;font-style:italic>// Once overload is detected, it raises limit.ErrLimitExceed error.
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> (l <span style=color:#666>*</span>BBR) <span style=color:#00a000>Allow</span>(ctx context.Context) (<span style=color:#a2f;font-weight:700>func</span>(), <span style=color:#0b0;font-weight:700>error</span>) {
-    <span style=color:#a2f;font-weight:700>if</span> l.<span style=color:#00a000>shouldDrop</span>() { <span style=color:#080;font-style:italic>// shouldDrop 判断是否需要限流，如果true表示拒绝 之后重点讲
-</span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>, ErrLimitExceed
-    }
-    atomic.<span style=color:#00a000>AddInt64</span>(<span style=color:#666>&amp;</span>l.inFlight, <span style=color:#666>1</span>) <span style=color:#080;font-style:italic>// 之前说的，正在处理数+1
-</span><span style=color:#080;font-style:italic></span>    stime <span style=color:#666>:=</span> time.<span style=color:#00a000>Since</span>(initTime) <span style=color:#080;font-style:italic>// 现在时间减去程序初始化时间 表示程序开始执行时刻
-</span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>func</span>() { <span style=color:#080;font-style:italic>// allow返回函数 在中间件（拦截器）中handle执行完成后调用
-</span><span style=color:#080;font-style:italic></span>        rt <span style=color:#666>:=</span> <span style=color:#a2f>int64</span>((time.<span style=color:#00a000>Since</span>(initTime) <span style=color:#666>-</span> stime) <span style=color:#666>/</span> time.Millisecond)  <span style=color:#080;font-style:italic>// 执行完handle的时间减去stime 表示 程序执行的总时间 单位ms
-</span><span style=color:#080;font-style:italic></span>        l.rtStat.<span style=color:#00a000>Add</span>(rt) <span style=color:#080;font-style:italic>// 把处理时间放进采样数据window
-</span><span style=color:#080;font-style:italic></span>        atomic.<span style=color:#00a000>AddInt64</span>(<span style=color:#666>&amp;</span>l.inFlight, <span style=color:#666>-</span><span style=color:#666>1</span>) <span style=color:#080;font-style:italic>// 正在处理数-1 便是处理完成
-</span><span style=color:#080;font-style:italic></span>        l.passStat.<span style=color:#00a000>Add</span>(<span style=color:#666>1</span>) <span style=color:#080;font-style:italic>// 成功了，把通过数的采样数据window加1
-</span><span style=color:#080;font-style:italic></span>    }, <span style=color:#a2f;font-weight:700>nil</span>
-}
-</code></pre></div><h3 id=shoulddrop方法>shouldDrop方法</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>func</span> (l <span style=color:#666>*</span>BBR) <span style=color:#00a000>shouldDrop</span>() <span style=color:#0b0;font-weight:700>bool</span> {
-    curTime <span style=color:#666>:=</span> time.<span style=color:#00a000>Since</span>(initTime)
-    <span style=color:#a2f;font-weight:700>if</span> l.<span style=color:#00a000>cpu</span>() &lt; l.opts.CPUThreshold {
-        <span style=color:#080;font-style:italic>// current cpu payload below the threshold
-</span><span style=color:#080;font-style:italic></span>        prevDropTime, _ <span style=color:#666>:=</span> l.prevDropTime.<span style=color:#00a000>Load</span>().(time.Duration)
-        <span style=color:#a2f;font-weight:700>if</span> prevDropTime <span style=color:#666>==</span> <span style=color:#666>0</span> {
-            <span style=color:#080;font-style:italic>// haven&#39;t start drop,
-</span><span style=color:#080;font-style:italic></span>            <span style=color:#080;font-style:italic>// accept current request
-</span><span style=color:#080;font-style:italic></span>            <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>
-        }
-        <span style=color:#a2f;font-weight:700>if</span> curTime<span style=color:#666>-</span>prevDropTime <span style=color:#666>&lt;=</span> time.Second {
-            <span style=color:#080;font-style:italic>// just start drop one second ago,
-</span><span style=color:#080;font-style:italic></span>            <span style=color:#080;font-style:italic>// check current inflight count
-</span><span style=color:#080;font-style:italic></span>            inFlight <span style=color:#666>:=</span> atomic.<span style=color:#00a000>LoadInt64</span>(<span style=color:#666>&amp;</span>l.inFlight)
-            <span style=color:#a2f;font-weight:700>return</span> inFlight &gt; <span style=color:#666>1</span> <span style=color:#666>&amp;&amp;</span> inFlight &gt; l.<span style=color:#00a000>maxInFlight</span>()
-        }
-        l.prevDropTime.<span style=color:#00a000>Store</span>(time.<span style=color:#00a000>Duration</span>(<span style=color:#666>0</span>))
-        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>
-    }
-
-    <span style=color:#080;font-style:italic>// current cpu payload exceeds the threshold
-</span><span style=color:#080;font-style:italic></span>    inFlight <span style=color:#666>:=</span> atomic.<span style=color:#00a000>LoadInt64</span>(<span style=color:#666>&amp;</span>l.inFlight)
-    drop <span style=color:#666>:=</span> inFlight &gt; <span style=color:#666>1</span> <span style=color:#666>&amp;&amp;</span> inFlight &gt; l.<span style=color:#00a000>maxInFlight</span>()
-    <span style=color:#a2f;font-weight:700>if</span> drop {
-        prevDrop, _ <span style=color:#666>:=</span> l.prevDropTime.<span style=color:#00a000>Load</span>().(time.Duration)
-        <span style=color:#a2f;font-weight:700>if</span> prevDrop <span style=color:#666>!=</span> <span style=color:#666>0</span> {
-            <span style=color:#080;font-style:italic>// already started drop, return directly
-</span><span style=color:#080;font-style:italic></span>            <span style=color:#a2f;font-weight:700>return</span> drop
-        }
-        <span style=color:#080;font-style:italic>// store start drop time
-</span><span style=color:#080;font-style:italic></span>        l.prevDropTime.<span style=color:#00a000>Store</span>(curTime)
-    }
-    <span style=color:#a2f;font-weight:700>return</span> drop
-}
-</code></pre></div><p><strong>maxInFlight()方法代表过去的负载</strong></p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f>int64</span>(math.<span style=color:#00a000>Floor</span>(<span style=color:#a2f>float64</span>(l.<span style=color:#00a000>maxPASS</span>()<span style=color:#666>*</span>l.<span style=color:#00a000>minRT</span>()<span style=color:#666>*</span>l.bucketPerSecond)<span style=color:#666>/</span><span style=color:#666>1000.0</span>) <span style=color:#666>+</span> <span style=color:#666>0.5</span>)
-</code></pre></div><p>参考算法：https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81</p>
-<ul>
-<li>maxPass * bucketPerSecond / 1000 为每毫秒处理的请求数</li>
-<li>l.minRT() 为 单个采样窗口中最小的响应时间</li>
-<li>T ≈ QPS * Avg(RT)</li>
-<li><code> + 0.5</code>为向上取整</li>
-</ul>
-<h3 id=流程图>流程图</h3>
-<p><img src=/images/2344773-20210904211812635-532505183.png alt></p>
-<h2 id=压测报告>压测报告</h2>
-<p>场景1，请求以每秒增加1个的速度不停上升，压测效果如下：</p>
-<p><img src=/images/2344773-20210904211333316-1994244965.png alt></p>
-<p>左测是没有限流的压测效果，右侧是带限流的压测效果。 可以看到，没有限流的场景里，系统在 700qps 时开始抖动，在 1k qps 时被拖垮，几乎没有新的请求能被放行，然而在使用限流之后，系统请求能够稳定在 600 qps 左右，rt 没有暴增，服务也没有被打垮，可见，限流有效的保护了服务。</p>
-<p>参考文章：</p>
-<ul>
-<li><a href=https://v1.go-kratos.dev/#/ratelimit target=_blank rel=noopener>https://v1.go-kratos.dev/#/ratelimit</a>
-</li>
-<li><a href=https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81 target=_blank rel=noopener>https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81</a>
-</li>
-</ul>
-<hr>
-<p><img src=/images/2344773-20210902225224456-315933124.png alt></p>
-<p><img src=/images/2344773-20210902225203602-1750987546.gif alt></p>
-</div>
-<footer class=post-footer>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-img>
-<img src=/img/qq_qrcode.png width=129px height=129px>
-<div style=text-align:center>QQ扫一扫交流</div>
-</div>
-<div class=article-copyright-info>
-<p>
-<span>标题：</span>从kratos分析BBR限流源码实现
-</p>
-<p>
-<span>链接：</span>https://www.zhaohaiyu.com/post/microservice/overload/
-</p>
-<p>
-<span>作者：</span>haiyux
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/microservice/breaker/ rel=next title=从kratos分析breaker熔断器源码实现>
-<i class="fa fa-chevron-left"></i> 从kratos分析breaker熔断器源码实现
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/database/mysql-redolog-binlog/ rel=prev title="mysql redo log和binlog">
-mysql redo log和binlog
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=ucomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=什么是自适应限流>什么是自适应限流</h2><p>自适应限流从整体维度对应用入口流量进行控制，结合应用的 Load、CPU 使用率、总体平均 RT、入口 QPS 和并发线程数等几个维度的监控指标，通过自适应的流控策略，让系统的入口流量和系统的负载达到一个平衡，让系统尽可能跑在最大吞吐量的同时保证系统整体的稳定性。</p><p><strong>核心目标：</strong></p><ul><li>自动嗅探负载和 qps，减少人工配置</li><li>削顶，保证超载时系统不被拖垮，并能以高水位 qps 继续运行</li></ul><h2 id=限流规则>限流规则</h2><p><img src=/images/2344773-20210904211230446-1339482393.png alt></p><p><strong>计算吞吐量：利特尔法则 <code>L = λ * W</code></strong></p><p>如上图所示，如果我们开一个小店，平均每分钟进店 2 个客人(λ)，每位客人从等待到完成交易需要 4 分钟(W)，那我们店里能承载的客人数量就是 2 * 4 = 8 个人</p><p>同理，我们可以将 <code>λ</code> 当做 QPS， <code>W</code> 呢是每个请求需要花费的时间，那我们的系统的吞吐就是 <code>L = λ * W</code> ，所以我们可以使用利特尔法则来计算系统的吞吐量。</p><h3 id=指标介绍>指标介绍</h3><table><thead><tr><th>指标名称</th><th>指标含义</th></tr></thead><tbody><tr><td>cpu</td><td>最近 1s 的 CPU 使用率均值，使用滑动平均计算，采样周期是 250ms</td></tr><tr><td>inflight</td><td>当前处理中正在处理的请求数量</td></tr><tr><td>pass</td><td>请求处理成功的量</td></tr><tr><td>rt</td><td>请求成功的响应耗时</td></tr></tbody></table><h3 id=滑动窗口>滑动窗口</h3><p>在自适应限流保护中，采集到的指标的时效性非常强，系统只需要采集最近一小段时间内的 qps、rt 即可，对于较老的数据，会自动丢弃。为了实现这个效果，kratos 使用了滑动窗口来保存采样数据。</p><p><img src=/images/2344773-20210904211301040-969014004.png alt></p><p>如上图，展示了一个具有两个桶（bucket）的滑动窗口（rolling window）。整个滑动窗口用来保存最近 1s 的采样数据，每个小的桶用来保存 500ms 的采样数据。 当时间流动之后，过期的桶会自动被新桶的数据覆盖掉，在图中，在 1000-1500ms 时，bucket 1 的数据因为过期而被丢弃，之后 bucket 3 的数据填到了窗口的头部。</p><h3 id=限流公式>限流公式</h3><p>判断是否丢弃当前请求的算法如下：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>cpu &gt; <span style=color:#666>800</span> <span style=color:#00a000>AND</span> (Now <span style=color:#666>-</span> PrevDrop) &lt; <span style=color:#666>1</span>s <span style=color:#00a000>AND</span> (MaxPass <span style=color:#666>*</span> MinRt <span style=color:#666>*</span> windows <span style=color:#666>/</span> <span style=color:#666>1000</span>) &lt; InFlight
+</span></span></code></pre></div><p>MaxPass 表示最近 5s 内，单个采样窗口中最大的请求数。 MinRt 表示最近 5s 内，单个采样窗口中最小的响应时间。 windows 表示一秒内采样窗口的数量，默认配置中是 5s 50 个采样，那么 windows 的值为 10。</p><h2 id=源码分析>源码分析</h2><h2 id=代码地址>代码地址：</h2><ul><li><a href=https://github.com/go-kratos/aegis/tree/main/ratelimit/bbr target=_blank rel=noopener>https://github.com/go-kratos/aegis/tree/main/ratelimit/bbr</a></li></ul><h3 id=bbr-struct>BBR struct</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>type</span> BBR <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>    cpu             cpuGetter
+</span></span><span style=display:flex><span>    passStat        window.RollingCounter
+</span></span><span style=display:flex><span>    rtStat          window.RollingCounter
+</span></span><span style=display:flex><span>    inFlight        <span style=color:#0b0;font-weight:700>int64</span>
+</span></span><span style=display:flex><span>    bucketPerSecond <span style=color:#0b0;font-weight:700>int64</span>
+</span></span><span style=display:flex><span>    bucketSize      time.Duration
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// prevDropTime defines previous start drop since initTime
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    prevDropTime atomic.Value
+</span></span><span style=display:flex><span>    maxPASSCache atomic.Value
+</span></span><span style=display:flex><span>    minRtCache   atomic.Value
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    opts <span style=color:#666>*</span>options
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ol><li><code>cpu</code><ul><li>cpu的指标函数，CPU的使用率， 这里为了减小误差，把数字扩大化，乘以1000，比赛使用率60%，也就是0.6 cpu的值就为600</li></ul></li><li><code>passStat</code><ul><li>请求数的采样数据，使用滑动窗口进行统计</li></ul></li><li><code>rtStat</code><ul><li>响应时间的采样数据，同样使用滑动窗口进行统计</li></ul></li><li><code>inFlight</code><ul><li>当前系统中的请求数，数据得来方法是：中间件原理在处理前+1，处理handle之后不管成功失败都减去1</li></ul></li><li><code>bucketPerSecond</code><ul><li>一个 bucket 的时间</li></ul></li><li><code>bucketSize</code><ul><li>桶的数量</li></ul></li><li><code>prevDropTime</code><ul><li>上次触发限流时间</li></ul></li><li><code>maxPASSCache</code><ul><li>单个采样窗口中最大的请求数的缓存数据</li></ul></li><li><code>minRtCache</code><ul><li>单个采样窗口中最小的响应时间的缓存数据</li></ul></li></ol><h2 id=allow接口>Allow接口</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>// Allow checks all inbound traffic.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// Once overload is detected, it raises limit.ErrLimitExceed error.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> (l <span style=color:#666>*</span>BBR) <span style=color:#00a000>Allow</span>(ctx context.Context) (<span style=color:#a2f;font-weight:700>func</span>(), <span style=color:#0b0;font-weight:700>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> l.<span style=color:#00a000>shouldDrop</span>() { <span style=color:#080;font-style:italic>// shouldDrop 判断是否需要限流，如果true表示拒绝 之后重点讲
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>nil</span>, ErrLimitExceed
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    atomic.<span style=color:#00a000>AddInt64</span>(<span style=color:#666>&amp;</span>l.inFlight, <span style=color:#666>1</span>) <span style=color:#080;font-style:italic>// 之前说的，正在处理数+1
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    stime <span style=color:#666>:=</span> time.<span style=color:#00a000>Since</span>(initTime) <span style=color:#080;font-style:italic>// 现在时间减去程序初始化时间 表示程序开始执行时刻
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>func</span>() { <span style=color:#080;font-style:italic>// allow返回函数 在中间件（拦截器）中handle执行完成后调用
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        rt <span style=color:#666>:=</span> <span style=color:#a2f>int64</span>((time.<span style=color:#00a000>Since</span>(initTime) <span style=color:#666>-</span> stime) <span style=color:#666>/</span> time.Millisecond)  <span style=color:#080;font-style:italic>// 执行完handle的时间减去stime 表示 程序执行的总时间 单位ms
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        l.rtStat.<span style=color:#00a000>Add</span>(rt) <span style=color:#080;font-style:italic>// 把处理时间放进采样数据window
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        atomic.<span style=color:#00a000>AddInt64</span>(<span style=color:#666>&amp;</span>l.inFlight, <span style=color:#666>-</span><span style=color:#666>1</span>) <span style=color:#080;font-style:italic>// 正在处理数-1 便是处理完成
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        l.passStat.<span style=color:#00a000>Add</span>(<span style=color:#666>1</span>) <span style=color:#080;font-style:italic>// 成功了，把通过数的采样数据window加1
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    }, <span style=color:#a2f;font-weight:700>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=shoulddrop方法>shouldDrop方法</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> (l <span style=color:#666>*</span>BBR) <span style=color:#00a000>shouldDrop</span>() <span style=color:#0b0;font-weight:700>bool</span> {
+</span></span><span style=display:flex><span>    curTime <span style=color:#666>:=</span> time.<span style=color:#00a000>Since</span>(initTime)
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> l.<span style=color:#00a000>cpu</span>() &lt; l.opts.CPUThreshold {
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>// current cpu payload below the threshold
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        prevDropTime, _ <span style=color:#666>:=</span> l.prevDropTime.<span style=color:#00a000>Load</span>().(time.Duration)
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>if</span> prevDropTime <span style=color:#666>==</span> <span style=color:#666>0</span> {
+</span></span><span style=display:flex><span>            <span style=color:#080;font-style:italic>// haven&#39;t start drop,
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>            <span style=color:#080;font-style:italic>// accept current request
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>            <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>if</span> curTime<span style=color:#666>-</span>prevDropTime <span style=color:#666>&lt;=</span> time.Second {
+</span></span><span style=display:flex><span>            <span style=color:#080;font-style:italic>// just start drop one second ago,
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>            <span style=color:#080;font-style:italic>// check current inflight count
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>            inFlight <span style=color:#666>:=</span> atomic.<span style=color:#00a000>LoadInt64</span>(<span style=color:#666>&amp;</span>l.inFlight)
+</span></span><span style=display:flex><span>            <span style=color:#a2f;font-weight:700>return</span> inFlight &gt; <span style=color:#666>1</span> <span style=color:#666>&amp;&amp;</span> inFlight &gt; l.<span style=color:#00a000>maxInFlight</span>()
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        l.prevDropTime.<span style=color:#00a000>Store</span>(time.<span style=color:#00a000>Duration</span>(<span style=color:#666>0</span>))
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>false</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// current cpu payload exceeds the threshold
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    inFlight <span style=color:#666>:=</span> atomic.<span style=color:#00a000>LoadInt64</span>(<span style=color:#666>&amp;</span>l.inFlight)
+</span></span><span style=display:flex><span>    drop <span style=color:#666>:=</span> inFlight &gt; <span style=color:#666>1</span> <span style=color:#666>&amp;&amp;</span> inFlight &gt; l.<span style=color:#00a000>maxInFlight</span>()
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> drop {
+</span></span><span style=display:flex><span>        prevDrop, _ <span style=color:#666>:=</span> l.prevDropTime.<span style=color:#00a000>Load</span>().(time.Duration)
+</span></span><span style=display:flex><span>        <span style=color:#a2f;font-weight:700>if</span> prevDrop <span style=color:#666>!=</span> <span style=color:#666>0</span> {
+</span></span><span style=display:flex><span>            <span style=color:#080;font-style:italic>// already started drop, return directly
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>            <span style=color:#a2f;font-weight:700>return</span> drop
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#080;font-style:italic>// store start drop time
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        l.prevDropTime.<span style=color:#00a000>Store</span>(curTime)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>return</span> drop
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><strong>maxInFlight()方法代表过去的负载</strong></p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f>int64</span>(math.<span style=color:#00a000>Floor</span>(<span style=color:#a2f>float64</span>(l.<span style=color:#00a000>maxPASS</span>()<span style=color:#666>*</span>l.<span style=color:#00a000>minRT</span>()<span style=color:#666>*</span>l.bucketPerSecond)<span style=color:#666>/</span><span style=color:#666>1000.0</span>) <span style=color:#666>+</span> <span style=color:#666>0.5</span>)
+</span></span></code></pre></div><p>参考算法：https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81</p><ul><li>maxPass * bucketPerSecond / 1000 为每毫秒处理的请求数</li><li>l.minRT() 为 单个采样窗口中最小的响应时间</li><li>T ≈ QPS * Avg(RT)</li><li><code>+ 0.5</code>为向上取整</li></ul><h3 id=流程图>流程图</h3><p><img src=/images/2344773-20210904211812635-532505183.png alt></p><h2 id=压测报告>压测报告</h2><p>场景1，请求以每秒增加1个的速度不停上升，压测效果如下：</p><p><img src=/images/2344773-20210904211333316-1994244965.png alt></p><p>左测是没有限流的压测效果，右侧是带限流的压测效果。 可以看到，没有限流的场景里，系统在 700qps 时开始抖动，在 1k qps 时被拖垮，几乎没有新的请求能被放行，然而在使用限流之后，系统请求能够稳定在 600 qps 左右，rt 没有暴增，服务也没有被打垮，可见，限流有效的保护了服务。</p><p>参考文章：</p><ul><li><a href=https://v1.go-kratos.dev/#/ratelimit target=_blank rel=noopener>https://v1.go-kratos.dev/#/ratelimit</a></li><li><a href=https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81 target=_blank rel=noopener>https://github.com/alibaba/Sentinel/wiki/%E7%B3%BB%E7%BB%9F%E8%87%AA%E9%80%82%E5%BA%94%E9%99%90%E6%B5%81</a></li></ul><hr><p><img src=/images/2344773-20210902225224456-315933124.png alt></p><p><img src=/images/2344773-20210902225203602-1750987546.gif alt></p></div><footer class=post-footer><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>从kratos分析BBR限流源码实现</p><p><span>链接：</span>https://www.zhaohaiyu.com/post/microservice/overload/</p><p><span>作者：</span>haiyux</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zhaohaiyu.com/post/microservice/breaker/ rel=next title=从kratos分析breaker熔断器源码实现><i class="fa fa-chevron-left"></i> 从kratos分析breaker熔断器源码实现</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zhaohaiyu.com/post/database/mysql-redolog-binlog/ rel=prev title="mysql redo log和binlog">mysql redo log和binlog
+<i class="fa fa-chevron-right"></i></a></div></div><div id=ucomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
-<p class=site-author-name itemprop=name>haiyux</p>
-<p class="site-description motion-element" itemprop=description>
-路漫漫其修远兮,吾将上下而求索
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>62</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>8</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>20</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/haiyux/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
-<i class="fa fa-fw fa-envelope"></i>
-Email
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://farer.org/ title=farer target=_blank>farer</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/golang>Golang
-<sup>30</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
-<sup>8</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql
-<sup>7</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/http>HTTP
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/protobuf>Protobuf
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%BF%90%E7%BB%B4>运维
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/grpc>Grpc
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis
-<sup>2</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/ddd>Ddd
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/docker>Docker
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/kratos>Kratos
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/makefile>Makefile
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mq>Mq
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/nginx>Nginx
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/raft>Raft
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/thrift>Thrift
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/traceing>Traceing
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/wire>Wire
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
-<sup>1</sup>
-</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#什么是自适应限流>什么是自适应限流</a></li>
-<li><a href=#限流规则>限流规则</a>
-<ul>
-<li><a href=#指标介绍>指标介绍</a></li>
-<li><a href=#滑动窗口>滑动窗口</a></li>
-<li><a href=#限流公式>限流公式</a></li>
-</ul>
-</li>
-<li><a href=#源码分析>源码分析</a></li>
-<li><a href=#代码地址>代码地址：</a>
-<ul>
-<li><a href=#bbr-struct>BBR struct</a></li>
-</ul>
-</li>
-<li><a href=#allow接口>Allow接口</a>
-<ul>
-<li><a href=#shoulddrop方法>shouldDrop方法</a></li>
-<li><a href=#流程图>流程图</a></li>
-</ul>
-</li>
-<li><a href=#压测报告>压测报告</a></li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux><p class=site-author-name itemprop=name>haiyux</p><p class="site-description motion-element" itemprop=description>路漫漫其修远兮,吾将上下而求索</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/haiyux/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=mailto:haiyux@foxmail.com target=_blank title=Email><i class="fa fa-fw fa-envelope"></i>
+Email</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a></li><li class=links-of-blogroll-item><a href=https://farer.org/ title=farer target=_blank>farer</a></li><li class=links-of-blogroll-item><a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a></li><li class=links-of-blogroll-item><a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a></li><li class=links-of-blogroll-item><a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/golang>Golang
+<sup>30</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/http>HTTP
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/protobuf>Protobuf
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/grpc>Grpc
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ddd>Ddd
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/kratos>Kratos
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/makefile>Makefile
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mq>Mq
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/raft>Raft
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/thrift>Thrift
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/traceing>Traceing
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/wire>Wire
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup></a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#什么是自适应限流>什么是自适应限流</a></li><li><a href=#限流规则>限流规则</a><ul><li><a href=#指标介绍>指标介绍</a></li><li><a href=#滑动窗口>滑动窗口</a></li><li><a href=#限流公式>限流公式</a></li></ul></li><li><a href=#源码分析>源码分析</a></li><li><a href=#代码地址>代码地址：</a><ul><li><a href=#bbr-struct>BBR struct</a></li></ul></li><li><a href=#allow接口>Allow接口</a><ul><li><a href=#shoulddrop方法>shouldDrop方法</a></li><li><a href=#流程图>流程图</a></li></ul></li><li><a href=#压测报告>压测报告</a></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>haiyux's blog</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
-</span>
+<span class=copyright-author>haiyux's blog</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.100.1</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.footer').outerHeight(!0),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
-<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
-<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf('MSIE '),n=e.indexOf('Trident/'),s=e.indexOf('Edge/');return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$('#content').height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$('<div />').addClass('scrollbar-measure').prependTo('body'),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$('.back-to-top');$(window).on('scroll',function(){e.toggleClass('back-to-top-on',window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$('#scrollpercent>span').html(a)}),e.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e='.post-toc',s=$(e),t='.active-current';s.on('activate.bs.scrollspy',function(){var t=$(e+' .active').last();n(),t.addClass('active-current')}).on('clear.bs.scrollspy',n),$('body').scrollspy({target:e});function n(){$(e+' '+t).removeClass(t.substring(1))}}function initAffix(){var e=$('.header-inner').height(),t=parseInt($('.footer').outerHeight(!0),10),n=e+10;$('.sidebar-inner').affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on('resize',function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$('.post-toc').css('width','calc(100% + '+t+'px)')}function updateTOCHeight(e){e=e||'auto',$('.post-toc').css('max-height',e)}$(function(){var e,t,n,s,o=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':o}).show(),t=parseInt($('#sidebar').css('margin-top')),n=parseInt($('.sidebar-inner').css('height')),e=t+n,s=$('.content-wrap').height(),s<e&&$('.content-wrap').css('min-height',e),$('.site-nav-toggle').on('click',function(){var e=$('.site-nav'),o=$('.toggle'),t='site-nav-on',i='toggle-close',n=e.hasClass(t),a=n?'slideUp':'slideDown',s=n?'removeClass':'addClass';e.stop()[a]('normal',function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script><script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(s){var t=new AV.Query(s),e=[],n=$(".leancloud_visitors");n.each(function(){e.push($(this).attr("id").trim())}),t.containedIn('url',e),t.find().then(r=>{var t,s,o,a,c,l,i='.leancloud-visitors-count';if(r.length==0){n.find(i).text(0);return}for(t=0;t<r.length;t++)a=r[t],o=a.get('url'),l=a.get('time'),s=document.getElementById(o),$(s).find(i).text(l);for(t=0;t<e.length;t++)o=e[t],s=document.getElementById(o),c=$(s).find(i),c.text()==''&&c.text(0)},e=>{console.log('Query vistors failed: '+e)})}function addCount(s){var t=$(".leancloud_visitors"),e=t.attr('id').trim(),o=t.attr('data-flag-title').trim(),n=new AV.Query('Counter');n.equalTo("url",e),n.find().then(i=>{if(i.length>0){var t,n,a=i[0];a.increment('time',1),a.save(null,{query:new AV.Query('Counter').equalTo('url',e),fetchWhenSave:!0}).then(t=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log('Update vistor failed: '+e)})}else n=new AV.ACL,n.setPublicReadAccess(!0),n.setPublicWriteAccess(!0),t=new s,t.set("title",o),t.set("url",e),t.set("time",1),t.setACL(n),t.save().then(s=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log("Save new vistor failed: "+e)})})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const e=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(e):$('.post-title-link').length>1&&showTime(e)})</script><script type=text/javascript>(function(){var e=document.createElement('script');e.type='text/javascript',e.async=!0,e.setAttribute('issue-term',"pathname"),e.setAttribute('theme',"github-light"),e.setAttribute('repo',"haiyux/haiyux.github.io"),e.crossorigin='anonymous',e.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(e)})()</script><script>(function(){var t,e=document.createElement('script'),n=window.location.protocol.split(':')[0];n==='https'?e.src='https://zz.bdstatic.com/linksubmit/push.js':e.src='http://push.zhanzhang.baidu.com/push.js',t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>

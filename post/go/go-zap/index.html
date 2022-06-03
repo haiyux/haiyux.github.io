@@ -1,885 +1,315 @@
-<!doctype html><html lang=zh-cn dir=content/zh-cn>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge,chrome=1">
-<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta http-equiv=content-security-policy content="upgrade-insecure-requests">
-<title> Go zap高性能日志 - haiyux's blog </title>
-<meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品">
-<meta name=author content="haiyux">
-<meta property="og:title" content="Go zap高性能日志">
-<meta property="og:site_name" content="haiyux's blog">
-<meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg">
-<meta name=title content="Go zap高性能日志 - haiyux's blog">
-<meta name=description content="欢迎来到haiyux的博客">
-<link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico>
-<link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png>
-<link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css>
-<link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet>
-<link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css>
-<link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css>
-</head>
-<body itemscope itemtype=http://schema.org/WebPage lang=zh-hans>
-<div class="container one-collumn sidebar-position-left page-home">
-<div class=headband></div>
-<header id=header class=header itemscope itemtype=http://schema.org/WPHeader>
-<div class=header-inner> <div class=site-brand-container>
-<div class=site-nav-toggle>
-<div class=toggle role=button style=opacity:1;top:0>
+<!doctype html><html lang=zh-cn dir=content/zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=content-security-policy content="upgrade-insecure-requests"><title>Go zap高性能日志 - haiyux's blog</title><meta name=keywords content="博客,程序员,架构师,Go,微服务,思考,读书,笔记,技术,分享,大数据,产品"><meta name=author content="haiyux"><meta property="og:title" content="Go zap高性能日志"><meta property="og:site_name" content="haiyux's blog"><meta property="og:image" content="https://www.zhaohaiyu.com/img/author.jpg"><meta name=title content="Go zap高性能日志 - haiyux's blog"><meta name=description content="欢迎来到haiyux的博客"><link rel="shortcut icon" href=https://www.zhaohaiyu.com/img/favicon.ico><link rel=apple-touch-icon href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link rel=apple-touch-icon-precomposed href=https://www.zhaohaiyu.com/img/apple-touch-icon.png><link href=//unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css rel=stylesheet type=text/css><link href=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.css rel=stylesheet><link href=https://www.zhaohaiyu.com/css/main.css rel=stylesheet type=text/css><link href=https://www.zhaohaiyu.com/css/syntax.css rel=stylesheet type=text/css></head><body itemscope itemtype=http://schema.org/WebPage lang=zh-hans><div class="container one-collumn sidebar-position-left page-home"><div class=headband></div><header id=header class=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-container><div class=site-nav-toggle><div class=toggle role=button style=opacity:1;top:0><span class=toggle-line></span>
 <span class=toggle-line></span>
-<span class=toggle-line></span>
-<span class=toggle-line></span>
-</div>
-</div>
-<div class=site-meta>
-<div class=custom-logo-site-title>
-<a href=/ class=brand rel=start>
-<span class=logo-line-before><i></i></span>
+<span class=toggle-line></span></div></div><div class=site-meta><div class=custom-logo-site-title><a href=/ class=brand rel=start><span class=logo-line-before><i></i></span>
 <span class=site-title>haiyux's blog</span>
-<span class=logo-line-after><i></i></span>
-</a>
-</div>
-<p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p>
-</div>
-<div class=site-nav-right>
-<div class="toggle popup-trigger" style=opacity:1;top:0>
-<i class="fa fa-search fa-fw fa-lg"></i>
-</div>
-</div>
-</div>
-<nav class=site-nav>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a href=/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页
-</a>
-</li>
-<li class="menu-item menu-item-active">
-<a href=/post/ rel=section>
-<i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档
-</a>
-</li>
-<li class=menu-item>
-<a href=/about.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于我
-</a>
-</li>
-<li class=menu-item>
-<a href=/404.html rel=section>
-<i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益404
-</a>
-</li>
-<li class="menu-item menu-item-search">
-<a href=javascript:; class=popup-trigger> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> 搜索</a>
-</li>
-</ul>
-<div class=site-search>
-<div class="popup search-popup local-search-popup">
-<div class="local-search-header clearfix">
-<span class=search-icon><i class="fa fa-search"></i> </span>
-<span class=popup-btn-close><i class="fa fa-times-circle"></i></span>
-<div class=local-search-input-wrapper>
-<input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off>
-</div>
-</div>
-<div id=local-search-result></div>
-</div>
-</div>
-</nav> </div>
-</header>
-<main id=main class=main>
-<div class=main-inner>
-<div class=content-wrap>
-<div id=content class=content>
-<section id=posts class=posts-expand>
-<article class="post post-type-normal" itemscope itemtype=http://schema.org/Article>
-<header class=post-header>
-<h1 class=post-title itemprop="name headline">
-<a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-zap/ itemprop=url>
-Go zap高性能日志
-</a>
-</h1>
-<div class=post-meta>
-<span class=post-pushdate>
-<i class="fa fa-calendar-o fa-fw"></i>
+<span class=logo-line-after><i></i></span></a></div><p class=site-subtitle>路漫漫其修远兮,吾将上下而求索</p></div><div class=site-nav-right><div class="toggle popup-trigger" style=opacity:1;top:0><i class="fa fa-search fa-fw fa-lg"></i></div></div></div><nav class=site-nav><ul id=menu class=menu><li class=menu-item><a href=/ rel=section><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-active"><a href=/post/ rel=section><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class=menu-item><a href=/about.html rel=section><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于我</a></li><li class=menu-item><a href=/404.html rel=section><i class="menu-item-icon fa fa-fw fa-heartbeat"></i><br>公益404</a></li><li class="menu-item menu-item-search"><a href=javascript:; class=popup-trigger><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon><i class="fa fa-search"></i></span>
+<span class=popup-btn-close><i class="fa fa-times-circle"></i></span><div class=local-search-input-wrapper><input autocomplete=off placeholder=搜索关键字... spellcheck=false type=text id=local-search-input autocapitalize=none autocorrect=off></div></div><div id=local-search-result></div></div></div></nav></div></header><main id=main class=main><div class=main-inner><div class=content-wrap><div id=content class=content><section id=posts class=posts-expand><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><header class=post-header><h1 class=post-title itemprop="name headline"><a class=post-title-link href=https://www.zhaohaiyu.com/post/go/go-zap/ itemprop=url>Go zap高性能日志</a></h1><div class=post-meta><span class=post-pushdate><i class="fa fa-calendar-o fa-fw"></i>
 <span class=post-meta-item-text>时间：</span>
-<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-01-12">
-2021-01-12
-</time>
-</span>
-<span class=post-category>
-<i class="fa fa-folder-o fa-fw"></i>
+<time itemprop=dateCreated datetime=2016-03-22T13:04:35+08:00 content="2021-01-12">2021-01-12</time></span>
+<span class=post-category><i class="fa fa-folder-o fa-fw"></i>
 <span class=post-meta-item-text>分类：</span>
-<span itemprop=about itemscope itemtype=https://schema.org/Thing>
-<a class=post-category-a href=/categories/go itemprop=url rel=index>
-<span itemprop=name>go</span>
-</a>
-&nbsp;
-</span>
-</span>
-<span class=post-wordcount>
-<i class="fa fa-file-word-o fa-fw"></i>
+<span itemprop=about itemscope itemtype=https://schema.org/Thing><a class=post-category-a href=/categories/go itemprop=url rel=index><span itemprop=name>go</span></a>
+&nbsp;</span></span>
+<span class=post-wordcount><i class="fa fa-file-word-o fa-fw"></i>
 <span class=post-meta-item-text>字数：</span>
-<span class=leancloud-world-count>3488 字</span>
-</span>
-<span class=post-readtime>
-<i class="fa fa-eye fa-fw"></i>
+<span class=leancloud-world-count>3488 字</span></span>
+<span class=post-readtime><i class="fa fa-eye fa-fw"></i>
 <span class=post-meta-item-text>阅读：</span>
-<span class=leancloud-view-count>7分钟</span>
-</span>
-<span id=/post/go/go-zap/ class="leancloud_visitors post-visitor" data-flag-title="Go zap高性能日志">
-<i class="fa fa-binoculars fa-fw"></i>
+<span class=leancloud-view-count>7分钟</span></span>
+<span id=/post/go/go-zap/ class="leancloud_visitors post-visitor" data-flag-title="Go zap高性能日志"><i class="fa fa-binoculars fa-fw"></i>
 <span class=post-meta-item-text>阅读次数：</span>
-<span class=leancloud-visitors-count></span>
-</span>
-</div>
-</header>
-<div class=post-body itemprop=articleBody>
-<h2 id=摘要>摘要</h2>
-<p>日志在整个工程实践中的重要性不言而喻，在选择日志组件的时候也有多方面的考量。详细、正确和及时的反馈是必不可少的，但是整个性能表现是否也是必要考虑的点呢？在长期的实践中发现有的日志组件对于计算资源的消耗十分巨大，这将导致整个服务成本的居高不下。此文从设计原理深度分析了 zap 的设计与实现上的权衡，也希望整个的选择、考量的过程能给其他的技术团队在开发高性能的 Go 组件时带来一定的借鉴意义。</p>
-<h2 id=前言>前言</h2>
-<p>日志作为整个代码行为的记录，是程序执行逻辑和异常最直接的反馈。对于整个系统来说，日志是至关重要的组成部分。通过分析日志我们不仅可以发现系统的问题，同时日志中也蕴含了大量有价值可以被挖掘的信息，因此合理地记录日志是十分必要的。</p>
-<p>我们的业务通常会记录大量的 Debug 日志，但在实际测试过程中，发现我们使用的日志库 seelog 性能存在严重的瓶颈，在我们的对比结果中发现：zap 表现非常突出，单线程 Qps 也是 logrus、seelog 的数倍。</p>
-<p>在分析源码后 zap 设计与实现上的考量让我感到受益颇多，在这里我们主要分享一下以下几个方面：</p>
-<ol>
-<li>zap 为何有这么高的性能</li>
-<li>对于我们自己的开发有什么值得借鉴的地方</li>
-<li>如何正确的使用 Go 开发高性能的组件</li>
-</ol>
-<h2 id=为什么选择使用zap>为什么选择使用ZAP</h2>
-<ul>
-<li>它同时提供了结构化日志记录和printf风格的日志记录</li>
-<li>它非常的快</li>
-</ul>
-<p>根据Uber-go Zap的文档，它的性能比类似的结构化日志包更好——也比标准库更快。 以下是Zap发布的基准测试信息</p>
-<p>记录一条消息和10个字段:</p>
-<table>
-<thead>
-<tr>
-<th style=text-align:center>Package</th>
-<th style=text-align:center>Time</th>
-<th style=text-align:center>Time % to zap</th>
-<th style=text-align:center>Objects Allocated</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style=text-align:center>⚡️ zap</td>
-<td style=text-align:center>862 ns/op</td>
-<td style=text-align:center>+0%</td>
-<td style=text-align:center>5 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>⚡️ zap (sugared)</td>
-<td style=text-align:center>1250 ns/op</td>
-<td style=text-align:center>+45%</td>
-<td style=text-align:center>11 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>zerolog</td>
-<td style=text-align:center>4021 ns/op</td>
-<td style=text-align:center>+366%</td>
-<td style=text-align:center>76 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>go-kit</td>
-<td style=text-align:center>4542 ns/op</td>
-<td style=text-align:center>+427%</td>
-<td style=text-align:center>105 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>apex/log</td>
-<td style=text-align:center>26785 ns/op</td>
-<td style=text-align:center>+3007%</td>
-<td style=text-align:center>115 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>logrus</td>
-<td style=text-align:center>29501 ns/op</td>
-<td style=text-align:center>+3322%</td>
-<td style=text-align:center>125 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>log15</td>
-<td style=text-align:center>29906 ns/op</td>
-<td style=text-align:center>+3369%</td>
-<td style=text-align:center>122 allocs/op</td>
-</tr>
-</tbody>
-</table>
-<p>记录一个静态字符串，没有任何上下文或printf风格的模板：</p>
-<table>
-<thead>
-<tr>
-<th style=text-align:center>Package</th>
-<th style=text-align:center>Time</th>
-<th style=text-align:center>Time % to zap</th>
-<th style=text-align:center>Objects Allocated</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style=text-align:center>⚡️ zap</td>
-<td style=text-align:center>118 ns/op</td>
-<td style=text-align:center>+0%</td>
-<td style=text-align:center>0 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>⚡️ zap (sugared)</td>
-<td style=text-align:center>191 ns/op</td>
-<td style=text-align:center>+62%</td>
-<td style=text-align:center>2 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>zerolog</td>
-<td style=text-align:center>93 ns/op</td>
-<td style=text-align:center>-21%</td>
-<td style=text-align:center>0 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>go-kit</td>
-<td style=text-align:center>280 ns/op</td>
-<td style=text-align:center>+137%</td>
-<td style=text-align:center>11 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>standard library</td>
-<td style=text-align:center>499 ns/op</td>
-<td style=text-align:center>+323%</td>
-<td style=text-align:center>2 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>apex/log</td>
-<td style=text-align:center>1990 ns/op</td>
-<td style=text-align:center>+1586%</td>
-<td style=text-align:center>10 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>logrus</td>
-<td style=text-align:center>3129 ns/op</td>
-<td style=text-align:center>+2552%</td>
-<td style=text-align:center>24 allocs/op</td>
-</tr>
-<tr>
-<td style=text-align:center>log15</td>
-<td style=text-align:center>3887 ns/op</td>
-<td style=text-align:center>+3194%</td>
-<td style=text-align:center>23 allocs/op</td>
-</tr>
-</tbody>
-</table>
-<h2 id=安装>安装</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>go get -u go.uber.org/zap
-</code></pre></div><h2 id=示例>示例</h2>
-<h3 id=简单示例>简单示例</h3>
-<h4 id=格式化输出>格式化输出</h4>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> (
-    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
-    <span style=color:#b44>&#34;time&#34;</span>
-)
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-    <span style=color:#080;font-style:italic>// zap.NewDevelopment 格式化输出
-</span><span style=color:#080;font-style:italic></span>    logger, _ <span style=color:#666>:=</span> zap.<span style=color:#00a000>ewDevelopment</span>()
-    <span style=color:#a2f;font-weight:700>defer</span> logger.<span style=color:#00a000>Sync</span>()
-    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;无法获取网址&#34;</span>,
-        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;url&#34;</span>, <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>),
-        zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;attempt&#34;</span>, <span style=color:#666>3</span>),
-        zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;backoff&#34;</span>, time.Second),
-    )
-}
-</code></pre></div><p>格式化输出打印结果：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#666>2019</span><span style=color:#666>-</span><span style=color:#666>01</span><span style=color:#666>-</span><span style=color:#666>02</span>T15:<span style=color:#666>01</span>:<span style=color:#666>13.923</span><span style=color:#666>+</span><span style=color:#666>0800</span>    INFO    spikeProxy<span style=color:#666>/</span>main.<span style=color:#a2f;font-weight:700>go</span>:<span style=color:#666>17</span>   failed to fetch URL {<span style=color:#b44>&#34;url&#34;</span>: <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>, <span style=color:#b44>&#34;attempt&#34;</span>: <span style=color:#666>3</span>, <span style=color:#b44>&#34;backoff&#34;</span>: <span style=color:#b44>&#34;1s&#34;</span>}
-</code></pre></div><h4 id=json-序列化输出>json 序列化输出</h4>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> (
-    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
-    <span style=color:#b44>&#34;time&#34;</span>
-)
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-   <span style=color:#080;font-style:italic>// zap.NewProduction json序列化输出
-</span><span style=color:#080;font-style:italic></span>    logger, _ <span style=color:#666>:=</span> zap.<span style=color:#00a000>NewProduction</span>()
-    <span style=color:#a2f;font-weight:700>defer</span> logger.<span style=color:#00a000>Sync</span>()
-    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;无法获取网址&#34;</span>,
-        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;url&#34;</span>, <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>),
-        zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;attempt&#34;</span>, <span style=color:#666>3</span>),
-        zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;backoff&#34;</span>, time.Second),
-    )
-}
-</code></pre></div><p>json序列化输出打印结果：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;ts&#34;</span>:<span style=color:#666>1546413239.1466308</span>,<span style=color:#b44>&#34;caller&#34;</span>:<span style=color:#b44>&#34;spikeProxy/main.go:16&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;无法获取网址&#34;</span>,<span style=color:#b44>&#34;url&#34;</span>:<span style=color:#b44>&#34;http://www.baidu.com&#34;</span>,<span style=color:#b44>&#34;attempt&#34;</span>:<span style=color:#666>3</span>,<span style=color:#b44>&#34;backoff&#34;</span>:<span style=color:#666>1</span>}
-</code></pre></div><h3 id=自定义示例>自定义示例</h3>
-<p>选择一个日志库除了高性能是考量的一个标准，高扩展也非常重要，例如：json key 自定义、时间格式化、日志级别等。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> (
-    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
-    <span style=color:#b44>&#34;go.uber.org/zap/zapcore&#34;</span>
-    <span style=color:#b44>&#34;fmt&#34;</span>
-    <span style=color:#b44>&#34;time&#34;</span>
-)
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-    encoderConfig <span style=color:#666>:=</span> zapcore.EncoderConfig{
-        TimeKey:        <span style=color:#b44>&#34;time&#34;</span>,
-        LevelKey:       <span style=color:#b44>&#34;level&#34;</span>,
-        NameKey:        <span style=color:#b44>&#34;logger&#34;</span>,
-        CallerKey:      <span style=color:#b44>&#34;caller&#34;</span>,
-        MessageKey:     <span style=color:#b44>&#34;msg&#34;</span>,
-        StacktraceKey:  <span style=color:#b44>&#34;stacktrace&#34;</span>,
-        LineEnding:     zapcore.DefaultLineEnding,
-        EncodeLevel:    zapcore.LowercaseLevelEncoder,  <span style=color:#080;font-style:italic>// 小写编码器
-</span><span style=color:#080;font-style:italic></span>        EncodeTime:     zapcore.ISO8601TimeEncoder,     <span style=color:#080;font-style:italic>// ISO8601 UTC 时间格式
-</span><span style=color:#080;font-style:italic></span>        EncodeDuration: zapcore.SecondsDurationEncoder,
-        EncodeCaller:   zapcore.FullCallerEncoder,      <span style=color:#080;font-style:italic>// 全路径编码器
-</span><span style=color:#080;font-style:italic></span>    }
-    <span style=color:#080;font-style:italic>// 设置日志级别
-</span><span style=color:#080;font-style:italic></span>    atom <span style=color:#666>:=</span> zap.<span style=color:#00a000>NewAtomicLevelAt</span>(zap.DebugLevel)
-    config <span style=color:#666>:=</span> zap.Config{
-        Level:            atom,                                                <span style=color:#080;font-style:italic>// 日志级别
-</span><span style=color:#080;font-style:italic></span>        Development:      <span style=color:#a2f;font-weight:700>true</span>,                                                <span style=color:#080;font-style:italic>// 开发模式，堆栈跟踪
-</span><span style=color:#080;font-style:italic></span>        Encoding:         <span style=color:#b44>&#34;json&#34;</span>,                                              <span style=color:#080;font-style:italic>// 输出格式 console 或 json
-</span><span style=color:#080;font-style:italic></span>        EncoderConfig:    encoderConfig,                                       <span style=color:#080;font-style:italic>// 编码器配置
-</span><span style=color:#080;font-style:italic></span>        InitialFields:    <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}{<span style=color:#b44>&#34;serviceName&#34;</span>: <span style=color:#b44>&#34;spikeProxy&#34;</span>}, <span style=color:#080;font-style:italic>// 初始化字段，如：添加一个服务器名称
-</span><span style=color:#080;font-style:italic></span>        OutputPaths:      []<span style=color:#0b0;font-weight:700>string</span>{<span style=color:#b44>&#34;stdout&#34;</span>, <span style=color:#b44>&#34;./logs/spikeProxy.log&#34;</span>},         <span style=color:#080;font-style:italic>// 输出到指定文件 stdout（标准输出，正常颜色） stderr（错误输出，红色）
-</span><span style=color:#080;font-style:italic></span>        ErrorOutputPaths: []<span style=color:#0b0;font-weight:700>string</span>{<span style=color:#b44>&#34;stderr&#34;</span>},
-    }
-    <span style=color:#080;font-style:italic>// 构建日志
-</span><span style=color:#080;font-style:italic></span>    logger, err <span style=color:#666>:=</span> config.<span style=color:#00a000>Build</span>()
-    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-        <span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Sprintf</span>(<span style=color:#b44>&#34;log 初始化失败: %v&#34;</span>, err))
-    }
-    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;log 初始化成功&#34;</span>)
-    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;无法获取网址&#34;</span>,
-        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;url&#34;</span>, <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>),
-        zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;attempt&#34;</span>, <span style=color:#666>3</span>),
-        zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;backoff&#34;</span>, time.Second),
-    )
-}
-</code></pre></div><p>打印结果：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T15:38:33.778+0800&#34;</span>,<span style=color:#b44>&#34;caller&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:54&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;log 初始化成功&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;spikeProxy&#34;</span>}
-{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T15:38:33.778+0800&#34;</span>,<span style=color:#b44>&#34;caller&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:56&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;无法获取网址&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;spikeProxy&#34;</span>,<span style=color:#b44>&#34;url&#34;</span>:<span style=color:#b44>&#34;http://www.baidu.com&#34;</span>,<span style=color:#b44>&#34;attempt&#34;</span>:<span style=color:#666>3</span>,<span style=color:#b44>&#34;backoff&#34;</span>:<span style=color:#666>1</span>}
-</code></pre></div><h2 id=写入归档文件示例>写入归档文件示例</h2>
-<h2 id=安装-lumberjack>安装 lumberjack</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>go</span> get gopkg.in<span style=color:#666>/</span>natefinch<span style=color:#666>/</span>lumberjack.v2
-</code></pre></div><h2 id=lumberjack介绍>lumberjack介绍</h2>
-<p>Lumberjack是一个Go包，用于将日志写入滚动文件。
+<span class=leancloud-visitors-count></span></span></div></header><div class=post-body itemprop=articleBody><h2 id=摘要>摘要</h2><p>日志在整个工程实践中的重要性不言而喻，在选择日志组件的时候也有多方面的考量。详细、正确和及时的反馈是必不可少的，但是整个性能表现是否也是必要考虑的点呢？在长期的实践中发现有的日志组件对于计算资源的消耗十分巨大，这将导致整个服务成本的居高不下。此文从设计原理深度分析了 zap 的设计与实现上的权衡，也希望整个的选择、考量的过程能给其他的技术团队在开发高性能的 Go 组件时带来一定的借鉴意义。</p><h2 id=前言>前言</h2><p>日志作为整个代码行为的记录，是程序执行逻辑和异常最直接的反馈。对于整个系统来说，日志是至关重要的组成部分。通过分析日志我们不仅可以发现系统的问题，同时日志中也蕴含了大量有价值可以被挖掘的信息，因此合理地记录日志是十分必要的。</p><p>我们的业务通常会记录大量的 Debug 日志，但在实际测试过程中，发现我们使用的日志库 seelog 性能存在严重的瓶颈，在我们的对比结果中发现：zap 表现非常突出，单线程 Qps 也是 logrus、seelog 的数倍。</p><p>在分析源码后 zap 设计与实现上的考量让我感到受益颇多，在这里我们主要分享一下以下几个方面：</p><ol><li>zap 为何有这么高的性能</li><li>对于我们自己的开发有什么值得借鉴的地方</li><li>如何正确的使用 Go 开发高性能的组件</li></ol><h2 id=为什么选择使用zap>为什么选择使用ZAP</h2><ul><li>它同时提供了结构化日志记录和printf风格的日志记录</li><li>它非常的快</li></ul><p>根据Uber-go Zap的文档，它的性能比类似的结构化日志包更好——也比标准库更快。 以下是Zap发布的基准测试信息</p><p>记录一条消息和10个字段:</p><table><thead><tr><th style=text-align:center>Package</th><th style=text-align:center>Time</th><th style=text-align:center>Time % to zap</th><th style=text-align:center>Objects Allocated</th></tr></thead><tbody><tr><td style=text-align:center>⚡️ zap</td><td style=text-align:center>862 ns/op</td><td style=text-align:center>+0%</td><td style=text-align:center>5 allocs/op</td></tr><tr><td style=text-align:center>⚡️ zap (sugared)</td><td style=text-align:center>1250 ns/op</td><td style=text-align:center>+45%</td><td style=text-align:center>11 allocs/op</td></tr><tr><td style=text-align:center>zerolog</td><td style=text-align:center>4021 ns/op</td><td style=text-align:center>+366%</td><td style=text-align:center>76 allocs/op</td></tr><tr><td style=text-align:center>go-kit</td><td style=text-align:center>4542 ns/op</td><td style=text-align:center>+427%</td><td style=text-align:center>105 allocs/op</td></tr><tr><td style=text-align:center>apex/log</td><td style=text-align:center>26785 ns/op</td><td style=text-align:center>+3007%</td><td style=text-align:center>115 allocs/op</td></tr><tr><td style=text-align:center>logrus</td><td style=text-align:center>29501 ns/op</td><td style=text-align:center>+3322%</td><td style=text-align:center>125 allocs/op</td></tr><tr><td style=text-align:center>log15</td><td style=text-align:center>29906 ns/op</td><td style=text-align:center>+3369%</td><td style=text-align:center>122 allocs/op</td></tr></tbody></table><p>记录一个静态字符串，没有任何上下文或printf风格的模板：</p><table><thead><tr><th style=text-align:center>Package</th><th style=text-align:center>Time</th><th style=text-align:center>Time % to zap</th><th style=text-align:center>Objects Allocated</th></tr></thead><tbody><tr><td style=text-align:center>⚡️ zap</td><td style=text-align:center>118 ns/op</td><td style=text-align:center>+0%</td><td style=text-align:center>0 allocs/op</td></tr><tr><td style=text-align:center>⚡️ zap (sugared)</td><td style=text-align:center>191 ns/op</td><td style=text-align:center>+62%</td><td style=text-align:center>2 allocs/op</td></tr><tr><td style=text-align:center>zerolog</td><td style=text-align:center>93 ns/op</td><td style=text-align:center>-21%</td><td style=text-align:center>0 allocs/op</td></tr><tr><td style=text-align:center>go-kit</td><td style=text-align:center>280 ns/op</td><td style=text-align:center>+137%</td><td style=text-align:center>11 allocs/op</td></tr><tr><td style=text-align:center>standard library</td><td style=text-align:center>499 ns/op</td><td style=text-align:center>+323%</td><td style=text-align:center>2 allocs/op</td></tr><tr><td style=text-align:center>apex/log</td><td style=text-align:center>1990 ns/op</td><td style=text-align:center>+1586%</td><td style=text-align:center>10 allocs/op</td></tr><tr><td style=text-align:center>logrus</td><td style=text-align:center>3129 ns/op</td><td style=text-align:center>+2552%</td><td style=text-align:center>24 allocs/op</td></tr><tr><td style=text-align:center>log15</td><td style=text-align:center>3887 ns/op</td><td style=text-align:center>+3194%</td><td style=text-align:center>23 allocs/op</td></tr></tbody></table><h2 id=安装>安装</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>go get -u go.uber.org/zap
+</span></span></code></pre></div><h2 id=示例>示例</h2><h3 id=简单示例>简单示例</h3><h4 id=格式化输出>格式化输出</h4><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// zap.NewDevelopment 格式化输出
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    logger, _ <span style=color:#666>:=</span> zap.<span style=color:#00a000>ewDevelopment</span>()
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>defer</span> logger.<span style=color:#00a000>Sync</span>()
+</span></span><span style=display:flex><span>    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;无法获取网址&#34;</span>,
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;url&#34;</span>, <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>),
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;attempt&#34;</span>, <span style=color:#666>3</span>),
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;backoff&#34;</span>, time.Second),
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>格式化输出打印结果：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#666>2019</span><span style=color:#666>-</span><span style=color:#666>01</span><span style=color:#666>-</span><span style=color:#666>02</span>T15:<span style=color:#666>01</span>:<span style=color:#666>13.923</span><span style=color:#666>+</span><span style=color:#666>0800</span>    INFO    spikeProxy<span style=color:#666>/</span>main.<span style=color:#a2f;font-weight:700>go</span>:<span style=color:#666>17</span>   failed to fetch URL {<span style=color:#b44>&#34;url&#34;</span>: <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>, <span style=color:#b44>&#34;attempt&#34;</span>: <span style=color:#666>3</span>, <span style=color:#b44>&#34;backoff&#34;</span>: <span style=color:#b44>&#34;1s&#34;</span>}
+</span></span></code></pre></div><h4 id=json-序列化输出>json 序列化输出</h4><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>   <span style=color:#080;font-style:italic>// zap.NewProduction json序列化输出
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    logger, _ <span style=color:#666>:=</span> zap.<span style=color:#00a000>NewProduction</span>()
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>defer</span> logger.<span style=color:#00a000>Sync</span>()
+</span></span><span style=display:flex><span>    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;无法获取网址&#34;</span>,
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;url&#34;</span>, <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>),
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;attempt&#34;</span>, <span style=color:#666>3</span>),
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;backoff&#34;</span>, time.Second),
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>json序列化输出打印结果：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;ts&#34;</span>:<span style=color:#666>1546413239.1466308</span>,<span style=color:#b44>&#34;caller&#34;</span>:<span style=color:#b44>&#34;spikeProxy/main.go:16&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;无法获取网址&#34;</span>,<span style=color:#b44>&#34;url&#34;</span>:<span style=color:#b44>&#34;http://www.baidu.com&#34;</span>,<span style=color:#b44>&#34;attempt&#34;</span>:<span style=color:#666>3</span>,<span style=color:#b44>&#34;backoff&#34;</span>:<span style=color:#666>1</span>}
+</span></span></code></pre></div><h3 id=自定义示例>自定义示例</h3><p>选择一个日志库除了高性能是考量的一个标准，高扩展也非常重要，例如：json key 自定义、时间格式化、日志级别等。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;go.uber.org/zap/zapcore&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>    encoderConfig <span style=color:#666>:=</span> zapcore.EncoderConfig{
+</span></span><span style=display:flex><span>        TimeKey:        <span style=color:#b44>&#34;time&#34;</span>,
+</span></span><span style=display:flex><span>        LevelKey:       <span style=color:#b44>&#34;level&#34;</span>,
+</span></span><span style=display:flex><span>        NameKey:        <span style=color:#b44>&#34;logger&#34;</span>,
+</span></span><span style=display:flex><span>        CallerKey:      <span style=color:#b44>&#34;caller&#34;</span>,
+</span></span><span style=display:flex><span>        MessageKey:     <span style=color:#b44>&#34;msg&#34;</span>,
+</span></span><span style=display:flex><span>        StacktraceKey:  <span style=color:#b44>&#34;stacktrace&#34;</span>,
+</span></span><span style=display:flex><span>        LineEnding:     zapcore.DefaultLineEnding,
+</span></span><span style=display:flex><span>        EncodeLevel:    zapcore.LowercaseLevelEncoder,  <span style=color:#080;font-style:italic>// 小写编码器
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        EncodeTime:     zapcore.ISO8601TimeEncoder,     <span style=color:#080;font-style:italic>// ISO8601 UTC 时间格式
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        EncodeDuration: zapcore.SecondsDurationEncoder,
+</span></span><span style=display:flex><span>        EncodeCaller:   zapcore.FullCallerEncoder,      <span style=color:#080;font-style:italic>// 全路径编码器
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    }
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 设置日志级别
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    atom <span style=color:#666>:=</span> zap.<span style=color:#00a000>NewAtomicLevelAt</span>(zap.DebugLevel)
+</span></span><span style=display:flex><span>    config <span style=color:#666>:=</span> zap.Config{
+</span></span><span style=display:flex><span>        Level:            atom,                                                <span style=color:#080;font-style:italic>// 日志级别
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        Development:      <span style=color:#a2f;font-weight:700>true</span>,                                                <span style=color:#080;font-style:italic>// 开发模式，堆栈跟踪
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        Encoding:         <span style=color:#b44>&#34;json&#34;</span>,                                              <span style=color:#080;font-style:italic>// 输出格式 console 或 json
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        EncoderConfig:    encoderConfig,                                       <span style=color:#080;font-style:italic>// 编码器配置
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        InitialFields:    <span style=color:#a2f;font-weight:700>map</span>[<span style=color:#0b0;font-weight:700>string</span>]<span style=color:#a2f;font-weight:700>interface</span>{}{<span style=color:#b44>&#34;serviceName&#34;</span>: <span style=color:#b44>&#34;spikeProxy&#34;</span>}, <span style=color:#080;font-style:italic>// 初始化字段，如：添加一个服务器名称
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        OutputPaths:      []<span style=color:#0b0;font-weight:700>string</span>{<span style=color:#b44>&#34;stdout&#34;</span>, <span style=color:#b44>&#34;./logs/spikeProxy.log&#34;</span>},         <span style=color:#080;font-style:italic>// 输出到指定文件 stdout（标准输出，正常颜色） stderr（错误输出，红色）
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        ErrorOutputPaths: []<span style=color:#0b0;font-weight:700>string</span>{<span style=color:#b44>&#34;stderr&#34;</span>},
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 构建日志
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    logger, err <span style=color:#666>:=</span> config.<span style=color:#00a000>Build</span>()
+</span></span><span style=display:flex><span>    <span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a2f>panic</span>(fmt.<span style=color:#00a000>Sprintf</span>(<span style=color:#b44>&#34;log 初始化失败: %v&#34;</span>, err))
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;log 初始化成功&#34;</span>)
+</span></span><span style=display:flex><span>    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;无法获取网址&#34;</span>,
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;url&#34;</span>, <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>),
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;attempt&#34;</span>, <span style=color:#666>3</span>),
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;backoff&#34;</span>, time.Second),
+</span></span><span style=display:flex><span>    )
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>打印结果：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T15:38:33.778+0800&#34;</span>,<span style=color:#b44>&#34;caller&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:54&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;log 初始化成功&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;spikeProxy&#34;</span>}
+</span></span><span style=display:flex><span>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T15:38:33.778+0800&#34;</span>,<span style=color:#b44>&#34;caller&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:56&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;无法获取网址&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;spikeProxy&#34;</span>,<span style=color:#b44>&#34;url&#34;</span>:<span style=color:#b44>&#34;http://www.baidu.com&#34;</span>,<span style=color:#b44>&#34;attempt&#34;</span>:<span style=color:#666>3</span>,<span style=color:#b44>&#34;backoff&#34;</span>:<span style=color:#666>1</span>}
+</span></span></code></pre></div><h2 id=写入归档文件示例>写入归档文件示例</h2><h2 id=安装-lumberjack>安装 lumberjack</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>go</span> get gopkg.in<span style=color:#666>/</span>natefinch<span style=color:#666>/</span>lumberjack.v2
+</span></span></code></pre></div><h2 id=lumberjack介绍>lumberjack介绍</h2><p>Lumberjack是一个Go包，用于将日志写入滚动文件。
 zap 不支持文件归档，如果要支持文件按大小或者时间归档，需要使用lumberjack，lumberjack也是<a href=https://github.com/uber-go/zap/blob/master/FAQ.md target=_blank rel=noopener>zap官方推荐</a>
-的。</p>
-<h2 id=示例-1>示例</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#a2f;font-weight:700>package</span> main
-<span style=color:#a2f;font-weight:700>import</span> (
-    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
-    <span style=color:#b44>&#34;go.uber.org/zap/zapcore&#34;</span>
-    <span style=color:#b44>&#34;time&#34;</span>
-    <span style=color:#b44>&#34;gopkg.in/natefinch/lumberjack.v2&#34;</span>
-    <span style=color:#b44>&#34;os&#34;</span>
-)
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
-    hook <span style=color:#666>:=</span> lumberjack.Logger{
-        Filename:   <span style=color:#b44>&#34;./logs/spikeProxy1.log&#34;</span>, <span style=color:#080;font-style:italic>// 日志文件路径
-</span><span style=color:#080;font-style:italic></span>        MaxSize:    <span style=color:#666>128</span>,                      <span style=color:#080;font-style:italic>// 每个日志文件保存的最大尺寸 单位：M
-</span><span style=color:#080;font-style:italic></span>        MaxBackups: <span style=color:#666>30</span>,                       <span style=color:#080;font-style:italic>// 日志文件最多保存多少个备份
-</span><span style=color:#080;font-style:italic></span>        MaxAge:     <span style=color:#666>7</span>,                        <span style=color:#080;font-style:italic>// 文件最多保存多少天
-</span><span style=color:#080;font-style:italic></span>        Compress:   <span style=color:#a2f;font-weight:700>true</span>,                     <span style=color:#080;font-style:italic>// 是否压缩
-</span><span style=color:#080;font-style:italic></span>    }
-    encoderConfig <span style=color:#666>:=</span> zapcore.EncoderConfig{
-        TimeKey:        <span style=color:#b44>&#34;time&#34;</span>,
-        LevelKey:       <span style=color:#b44>&#34;level&#34;</span>,
-        NameKey:        <span style=color:#b44>&#34;logger&#34;</span>,
-        CallerKey:      <span style=color:#b44>&#34;linenum&#34;</span>,
-        MessageKey:     <span style=color:#b44>&#34;msg&#34;</span>,
-        StacktraceKey:  <span style=color:#b44>&#34;stacktrace&#34;</span>,
-        LineEnding:     zapcore.DefaultLineEnding,
-        EncodeLevel:    zapcore.LowercaseLevelEncoder,  <span style=color:#080;font-style:italic>// 小写编码器
-</span><span style=color:#080;font-style:italic></span>        EncodeTime:     zapcore.ISO8601TimeEncoder,     <span style=color:#080;font-style:italic>// ISO8601 UTC 时间格式
-</span><span style=color:#080;font-style:italic></span>        EncodeDuration: zapcore.SecondsDurationEncoder, <span style=color:#080;font-style:italic>//
-</span><span style=color:#080;font-style:italic></span>        EncodeCaller:   zapcore.FullCallerEncoder,      <span style=color:#080;font-style:italic>// 全路径编码器
-</span><span style=color:#080;font-style:italic></span>        EncodeName:     zapcore.FullNameEncoder,
-    }
-    <span style=color:#080;font-style:italic>// 设置日志级别
-</span><span style=color:#080;font-style:italic></span>    atomicLevel <span style=color:#666>:=</span> zap.<span style=color:#00a000>NewAtomicLevel</span>()
-    atomicLevel.<span style=color:#00a000>SetLevel</span>(zap.InfoLevel)
-    core <span style=color:#666>:=</span> zapcore.<span style=color:#00a000>NewCore</span>(
-        zapcore.<span style=color:#00a000>NewJSONEncoder</span>(encoderConfig),                                           <span style=color:#080;font-style:italic>// 编码器配置
-</span><span style=color:#080;font-style:italic></span>        zapcore.<span style=color:#00a000>NewMultiWriteSyncer</span>(zapcore.<span style=color:#00a000>AddSync</span>(os.Stdout), zapcore.<span style=color:#00a000>AddSync</span>(<span style=color:#666>&amp;</span>hook)), <span style=color:#080;font-style:italic>// 打印到控制台和文件
-</span><span style=color:#080;font-style:italic></span>        atomicLevel,                                                                     <span style=color:#080;font-style:italic>// 日志级别
-</span><span style=color:#080;font-style:italic></span>    )
-    <span style=color:#080;font-style:italic>// 开启开发模式，堆栈跟踪
-</span><span style=color:#080;font-style:italic></span>    caller <span style=color:#666>:=</span> zap.<span style=color:#00a000>AddCaller</span>()
-    <span style=color:#080;font-style:italic>// 开启文件及行号
-</span><span style=color:#080;font-style:italic></span>    development <span style=color:#666>:=</span> zap.<span style=color:#00a000>Development</span>()
-    <span style=color:#080;font-style:italic>// 设置初始化字段
-</span><span style=color:#080;font-style:italic></span>    filed <span style=color:#666>:=</span> zap.<span style=color:#00a000>Fields</span>(zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;serviceName&#34;</span>, <span style=color:#b44>&#34;serviceName&#34;</span>))
-    <span style=color:#080;font-style:italic>// 构造日志
-</span><span style=color:#080;font-style:italic></span>    logger <span style=color:#666>:=</span> zap.<span style=color:#00a000>New</span>(core, caller, development, filed)
-    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;log 初始化成功&#34;</span>)
-    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;无法获取网址&#34;</span>,
-        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;url&#34;</span>, <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>),
-        zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;attempt&#34;</span>, <span style=color:#666>3</span>),
-        zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;backoff&#34;</span>, time.Second))
-}
-</code></pre></div><p>控制台打印结果：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T16:14:43.608+0800&#34;</span>,<span style=color:#b44>&#34;linenum&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:56&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;log 初始化成功&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;serviceName&#34;</span>}
-{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T16:14:43.608+0800&#34;</span>,<span style=color:#b44>&#34;linenum&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:57&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;无法获取网址&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;serviceName&#34;</span>,<span style=color:#b44>&#34;url&#34;</span>:<span style=color:#b44>&#34;http://www.baidu.com&#34;</span>,<span style=color:#b44>&#34;attempt&#34;</span>:<span style=color:#666>3</span>,<span style=color:#b44>&#34;backoff&#34;</span>:<span style=color:#666>1</span>}
-</code></pre></div><p>文件打印结果：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T16:14:43.608+0800&#34;</span>,<span style=color:#b44>&#34;linenum&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:56&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;log 初始化成功&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;serviceName&#34;</span>}
-{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T16:14:43.608+0800&#34;</span>,<span style=color:#b44>&#34;linenum&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:57&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;无法获取网址&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;serviceName&#34;</span>,<span style=color:#b44>&#34;url&#34;</span>:<span style=color:#b44>&#34;http://www.baidu.com&#34;</span>,<span style=color:#b44>&#34;attempt&#34;</span>:<span style=color:#666>3</span>,<span style=color:#b44>&#34;backoff&#34;</span>:<span style=color:#666>1</span>}
-</code></pre></div><h2 id=gin框架使用zaplumberjack>gin框架使用zap+lumberjack</h2>
-<h3 id=初始化zaplumberjack>初始化zap,lumberjack</h3>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>// viperconfig
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>type</span> Log <span style=color:#a2f;font-weight:700>struct</span> {
-	FileName   <span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`yaml:&#34;filename&#34;`</span>
-	MaxSize    <span style=color:#0b0;font-weight:700>int</span>    <span style=color:#b44>`yaml:&#34;maxsize&#34;`</span>
-	MaxBackups <span style=color:#0b0;font-weight:700>int</span>    <span style=color:#b44>`yaml:&#34;maxbackups&#34;`</span>
-	MaxAges    <span style=color:#0b0;font-weight:700>int</span>    <span style=color:#b44>`yaml:&#34;maxages&#34;`</span>
-	Compress   <span style=color:#0b0;font-weight:700>bool</span>   <span style=color:#b44>`yaml:&#34;compress&#34;`</span>
-	Level      <span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`yaml:&#34;-&#34;`</span>
-}
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>// init
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> ZapLog <span style=color:#666>*</span>zap.Logger
-<span style=color:#080;font-style:italic>// InitLogger 初始化Logger
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>InitLogger</span>(cfg <span style=color:#666>*</span>viperConfig.Log) (err <span style=color:#0b0;font-weight:700>error</span>) {
-	writeSyncer <span style=color:#666>:=</span> <span style=color:#00a000>getLogWriter</span>(cfg.FileName, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAges)
-	encoder <span style=color:#666>:=</span> <span style=color:#00a000>getEncoder</span>()
-	<span style=color:#a2f;font-weight:700>var</span> l = <span style=color:#a2f>new</span>(zapcore.Level)
-	err = l.<span style=color:#00a000>UnmarshalText</span>([]<span style=color:#a2f>byte</span>(cfg.Level))
-	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-		<span style=color:#a2f;font-weight:700>return</span>
-	}
-	core <span style=color:#666>:=</span> zapcore.<span style=color:#00a000>NewCore</span>(encoder, writeSyncer, l)
-	ZapLog = zap.<span style=color:#00a000>New</span>(core, zap.<span style=color:#00a000>AddCaller</span>())
-	zap.<span style=color:#00a000>ReplaceGlobals</span>(ZapLog) <span style=color:#080;font-style:italic>// 替换zap包中全局的logger实例，后续在其他包中只需使用zap.L()调用即可
-</span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>return</span>
-}
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>getEncoder</span>() zapcore.Encoder {
-	encoderConfig <span style=color:#666>:=</span> zap.<span style=color:#00a000>NewProductionEncoderConfig</span>()
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	encoderConfig.TimeKey = <span style=color:#b44>&#34;time&#34;</span>
-	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
-	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
-	<span style=color:#a2f;font-weight:700>return</span> zapcore.<span style=color:#00a000>NewJSONEncoder</span>(encoderConfig)
-}
-<span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>getLogWriter</span>(filename <span style=color:#0b0;font-weight:700>string</span>, maxSize, maxBackup, maxAge <span style=color:#0b0;font-weight:700>int</span>) zapcore.WriteSyncer {
-	lumberJackLogger <span style=color:#666>:=</span> <span style=color:#666>&amp;</span>lumberjack.Logger{
-		Filename:   filename,
-		MaxSize:    maxSize,
-		MaxBackups: maxBackup,
-		MaxAge:     maxAge,
-	}
-	<span style=color:#a2f;font-weight:700>return</span> zapcore.<span style=color:#00a000>AddSync</span>(lumberJackLogger)
-}
-</code></pre></div><h3 id=gin日志中间件>gin日志中间件</h3>
-<p>模仿Logger()和Recovery()的实现，使用我们的日志库来接收gin框架默认输出的日志。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>// GinLogger 接收gin框架默认的日志
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>GinLogger</span>(logger <span style=color:#666>*</span>zap.Logger) gin.HandlerFunc {
-	<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>func</span>(c <span style=color:#666>*</span>gin.Context) {
-		start <span style=color:#666>:=</span> time.<span style=color:#00a000>Now</span>()
-		path <span style=color:#666>:=</span> c.Request.URL.Path
-		query <span style=color:#666>:=</span> c.Request.URL.RawQuery
-		c.<span style=color:#00a000>Next</span>()
-		cost <span style=color:#666>:=</span> time.S<span style=color:#666>***</span>art)
-		logger.<span style=color:#00a000>Info</span>(path,
-			zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;status&#34;</span>, c.Writer.<span style=color:#00a000>Status</span>()),
-			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;method&#34;</span>, c.Request.Method),
-			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;path&#34;</span>, path),
-			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;query&#34;</span>, query),
-			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;ip&#34;</span>, c.<span style=color:#00a000>ClientIP</span>()),
-			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;user-agent&#34;</span>, c.Request.<span style=color:#00a000>UserAgent</span>()),
-			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;errors&#34;</span>, c.Errors.<span style=color:#00a000>ByType</span>(gin.ErrorTypePrivate).<span style=color:#00a000>String</span>()),
-			zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;cost&#34;</span>, cost),
-		)
-	}
-}
-<span style=color:#080;font-style:italic>// GinRecovery recover掉项目可能出现的panic
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>GinRecovery</span>(logger <span style=color:#666>*</span>zap.Logger, stack <span style=color:#0b0;font-weight:700>bool</span>) gin.HandlerFunc {
-	<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>func</span>(c <span style=color:#666>*</span>gin.Context) {
-		<span style=color:#a2f;font-weight:700>defer</span> <span style=color:#a2f;font-weight:700>func</span>() {
-			<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> <span style=color:#a2f>recover</span>(); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
-				<span style=color:#080;font-style:italic>// Check for a broken connection, as it is not really a
-</span><span style=color:#080;font-style:italic></span>				<span style=color:#080;font-style:italic>// condition that warrants a panic stack trace.
-</span><span style=color:#080;font-style:italic></span>				<span style=color:#a2f;font-weight:700>var</span> brokenPipe <span style=color:#0b0;font-weight:700>bool</span>
-				<span style=color:#a2f;font-weight:700>if</span> ne, ok <span style=color:#666>:=</span> err.(<span style=color:#666>*</span>net.OpError); ok {
-					<span style=color:#a2f;font-weight:700>if</span> se, ok <span style=color:#666>:=</span> ne.Err.(<span style=color:#666>*</span>os.SyscallError); ok {
-						<span style=color:#a2f;font-weight:700>if</span> strings.<span style=color:#00a000>Contains</span>(strings.<span style=color:#00a000>ToLower</span>(se.<span style=color:#00a000>Error</span>()), <span style=color:#b44>&#34;broken pipe&#34;</span>) <span style=color:#666>||</span> strings.<span style=color:#00a000>Contains</span>(strings.<span style=color:#00a000>ToLower</span>(se.<span style=color:#00a000>Error</span>()), <span style=color:#b44>&#34;connection reset by peer&#34;</span>) {
-							brokenPipe = <span style=color:#a2f;font-weight:700>true</span>
-						}
-					}
-				}
-				httpRequest, _ <span style=color:#666>:=</span> httputil.<span style=color:#00a000>DumpRequest</span>(c.Request, <span style=color:#a2f;font-weight:700>false</span>)
-				<span style=color:#a2f;font-weight:700>if</span> brokenPipe {
-					logger.<span style=color:#00a000>Error</span>(c.Request.URL.Path,
-						zap.<span style=color:#00a000>Any</span>(<span style=color:#b44>&#34;error&#34;</span>, err),
-						zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;request&#34;</span>, <span style=color:#a2f>string</span>(httpRequest)),
-					)
-					<span style=color:#080;font-style:italic>// If the connection is dead, we can&#39;t write a status to it.
-</span><span style=color:#080;font-style:italic></span>					c.<span style=color:#00a000>Error</span>(err.(<span style=color:#0b0;font-weight:700>error</span>)) <span style=color:#080;font-style:italic>// nolint: errcheck
-</span><span style=color:#080;font-style:italic></span>					c.<span style=color:#00a000>Abort</span>()
-					<span style=color:#a2f;font-weight:700>return</span>
-				}
-				<span style=color:#a2f;font-weight:700>if</span> stack {
-					logger.<span style=color:#00a000>Error</span>(<span style=color:#b44>&#34;[Recovery from panic]&#34;</span>,
-						zap.<span style=color:#00a000>Any</span>(<span style=color:#b44>&#34;error&#34;</span>, err),
-						zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;request&#34;</span>, <span style=color:#a2f>string</span>(httpRequest)),
-						zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;stack&#34;</span>, <span style=color:#a2f>string</span>(debug.<span style=color:#00a000>Stack</span>())),
-					)
-				} <span style=color:#a2f;font-weight:700>else</span> {
-					logger.<span style=color:#00a000>Error</span>(<span style=color:#b44>&#34;[Recovery from panic]&#34;</span>,
-						zap.<span style=color:#00a000>Any</span>(<span style=color:#b44>&#34;error&#34;</span>, err),
-						zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;request&#34;</span>, <span style=color:#a2f>string</span>(httpRequest)),
-					)
-				}
-				c.<span style=color:#00a000>AbortWithStatus</span>(http.StatusInternalServerError)
-			}
-		}()
-		c.<span style=color:#00a000>Next</span>()
-	}
-}
-</code></pre></div><p>使用</p>
-<div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#080;font-style:italic>// 全局中间件
-</span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>InitMiddleWares</span>(eng <span style=color:#666>*</span>gin.Engine) {
-	eng.<span style=color:#00a000>Use</span>(<span style=color:#00a000>GinLogger</span>(log.ZapLog), <span style=color:#00a000>GinRecovery</span>(log.ZapLog, <span style=color:#a2f;font-weight:700>true</span>))
-}
-</code></pre></div><p>参考文章:</p>
-<ul>
-<li><a href=https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw target=_blank rel=noopener>https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw</a>
-</li>
-<li><a href=https://studygolang.com/articles/17394 target=_blank rel=noopener>https://studygolang.com/articles/17394</a>
-</li>
-</ul>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=/tags/golang rel=tag title=golang>#golang#</a>
-</div>
-<div class=post-nav>
-<div class=article-copyright>
-<div class=article-copyright-img>
-<img src=/img/qq_qrcode.png width=129px height=129px>
-<div style=text-align:center>QQ扫一扫交流</div>
-</div>
-<div class=article-copyright-info>
-<p>
-<span>标题：</span>Go zap高性能日志
-</p>
-<p>
-<span>链接：</span>https://www.zhaohaiyu.com/post/go/go-zap/
-</p>
-<p>
-<span>作者：</span>haiyux
-</p>
-<p>
-<span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！
-</p>
-</div>
-</div>
-<div class=clear></div>
-</div>
-<div class=reward-qr-info>
-<div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div>
-<button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
-<span>赏</span>
-</button>
-<div id=QR style=display:none>
-<div id=wechat style=display:inline-block>
-<img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay">
-<p>微信打赏</p>
-</div>
-<div id=alipay style=display:inline-block>
-<img id=alipay_qr src=/img/ali-pay.png alt=Alipay>
-<p>支付宝打赏</p>
-</div>
-</div>
-</div>
-<div class=post-nav>
-<div class="post-nav-next post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/microservice/thrift/ rel=next title=thrift的介绍及其使用>
-<i class="fa fa-chevron-left"></i> thrift的介绍及其使用
-</a>
-</div>
-<div class="post-nav-prev post-nav-item">
-<a href=https://www.zhaohaiyu.com/post/go/go-viper/ rel=prev title="Go viper配置管理">
-Go viper配置管理
-<i class="fa fa-chevron-right"></i>
-</a>
-</div>
-</div>
-<div id=ucomments></div>
-</footer>
-</article>
-</section>
-</div>
-</div>
-<div class=sidebar-toggle>
-<div class=sidebar-toggle-line-wrap>
-<span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+的。</p><h2 id=示例-1>示例</h2><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#a2f;font-weight:700>package</span> main
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;go.uber.org/zap&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;go.uber.org/zap/zapcore&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;gopkg.in/natefinch/lumberjack.v2&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#b44>&#34;os&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>main</span>() {
+</span></span><span style=display:flex><span>    hook <span style=color:#666>:=</span> lumberjack.Logger{
+</span></span><span style=display:flex><span>        Filename:   <span style=color:#b44>&#34;./logs/spikeProxy1.log&#34;</span>, <span style=color:#080;font-style:italic>// 日志文件路径
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        MaxSize:    <span style=color:#666>128</span>,                      <span style=color:#080;font-style:italic>// 每个日志文件保存的最大尺寸 单位：M
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        MaxBackups: <span style=color:#666>30</span>,                       <span style=color:#080;font-style:italic>// 日志文件最多保存多少个备份
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        MaxAge:     <span style=color:#666>7</span>,                        <span style=color:#080;font-style:italic>// 文件最多保存多少天
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        Compress:   <span style=color:#a2f;font-weight:700>true</span>,                     <span style=color:#080;font-style:italic>// 是否压缩
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    }
+</span></span><span style=display:flex><span>    encoderConfig <span style=color:#666>:=</span> zapcore.EncoderConfig{
+</span></span><span style=display:flex><span>        TimeKey:        <span style=color:#b44>&#34;time&#34;</span>,
+</span></span><span style=display:flex><span>        LevelKey:       <span style=color:#b44>&#34;level&#34;</span>,
+</span></span><span style=display:flex><span>        NameKey:        <span style=color:#b44>&#34;logger&#34;</span>,
+</span></span><span style=display:flex><span>        CallerKey:      <span style=color:#b44>&#34;linenum&#34;</span>,
+</span></span><span style=display:flex><span>        MessageKey:     <span style=color:#b44>&#34;msg&#34;</span>,
+</span></span><span style=display:flex><span>        StacktraceKey:  <span style=color:#b44>&#34;stacktrace&#34;</span>,
+</span></span><span style=display:flex><span>        LineEnding:     zapcore.DefaultLineEnding,
+</span></span><span style=display:flex><span>        EncodeLevel:    zapcore.LowercaseLevelEncoder,  <span style=color:#080;font-style:italic>// 小写编码器
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        EncodeTime:     zapcore.ISO8601TimeEncoder,     <span style=color:#080;font-style:italic>// ISO8601 UTC 时间格式
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        EncodeDuration: zapcore.SecondsDurationEncoder, <span style=color:#080;font-style:italic>//
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        EncodeCaller:   zapcore.FullCallerEncoder,      <span style=color:#080;font-style:italic>// 全路径编码器
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        EncodeName:     zapcore.FullNameEncoder,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 设置日志级别
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    atomicLevel <span style=color:#666>:=</span> zap.<span style=color:#00a000>NewAtomicLevel</span>()
+</span></span><span style=display:flex><span>    atomicLevel.<span style=color:#00a000>SetLevel</span>(zap.InfoLevel)
+</span></span><span style=display:flex><span>    core <span style=color:#666>:=</span> zapcore.<span style=color:#00a000>NewCore</span>(
+</span></span><span style=display:flex><span>        zapcore.<span style=color:#00a000>NewJSONEncoder</span>(encoderConfig),                                           <span style=color:#080;font-style:italic>// 编码器配置
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        zapcore.<span style=color:#00a000>NewMultiWriteSyncer</span>(zapcore.<span style=color:#00a000>AddSync</span>(os.Stdout), zapcore.<span style=color:#00a000>AddSync</span>(<span style=color:#666>&amp;</span>hook)), <span style=color:#080;font-style:italic>// 打印到控制台和文件
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>        atomicLevel,                                                                     <span style=color:#080;font-style:italic>// 日志级别
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    )
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 开启开发模式，堆栈跟踪
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    caller <span style=color:#666>:=</span> zap.<span style=color:#00a000>AddCaller</span>()
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 开启文件及行号
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    development <span style=color:#666>:=</span> zap.<span style=color:#00a000>Development</span>()
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 设置初始化字段
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    filed <span style=color:#666>:=</span> zap.<span style=color:#00a000>Fields</span>(zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;serviceName&#34;</span>, <span style=color:#b44>&#34;serviceName&#34;</span>))
+</span></span><span style=display:flex><span>    <span style=color:#080;font-style:italic>// 构造日志
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>    logger <span style=color:#666>:=</span> zap.<span style=color:#00a000>New</span>(core, caller, development, filed)
+</span></span><span style=display:flex><span>    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;log 初始化成功&#34;</span>)
+</span></span><span style=display:flex><span>    logger.<span style=color:#00a000>Info</span>(<span style=color:#b44>&#34;无法获取网址&#34;</span>,
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;url&#34;</span>, <span style=color:#b44>&#34;http://www.baidu.com&#34;</span>),
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;attempt&#34;</span>, <span style=color:#666>3</span>),
+</span></span><span style=display:flex><span>        zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;backoff&#34;</span>, time.Second))
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>控制台打印结果：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T16:14:43.608+0800&#34;</span>,<span style=color:#b44>&#34;linenum&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:56&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;log 初始化成功&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;serviceName&#34;</span>}
+</span></span><span style=display:flex><span>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T16:14:43.608+0800&#34;</span>,<span style=color:#b44>&#34;linenum&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:57&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;无法获取网址&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;serviceName&#34;</span>,<span style=color:#b44>&#34;url&#34;</span>:<span style=color:#b44>&#34;http://www.baidu.com&#34;</span>,<span style=color:#b44>&#34;attempt&#34;</span>:<span style=color:#666>3</span>,<span style=color:#b44>&#34;backoff&#34;</span>:<span style=color:#666>1</span>}
+</span></span></code></pre></div><p>文件打印结果：</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T16:14:43.608+0800&#34;</span>,<span style=color:#b44>&#34;linenum&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:56&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;log 初始化成功&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;serviceName&#34;</span>}
+</span></span><span style=display:flex><span>{<span style=color:#b44>&#34;level&#34;</span>:<span style=color:#b44>&#34;info&#34;</span>,<span style=color:#b44>&#34;time&#34;</span>:<span style=color:#b44>&#34;2019-01-02T16:14:43.608+0800&#34;</span>,<span style=color:#b44>&#34;linenum&#34;</span>:<span style=color:#b44>&#34;/Users/lcl/go/src/spikeProxy/main.go:57&#34;</span>,<span style=color:#b44>&#34;msg&#34;</span>:<span style=color:#b44>&#34;无法获取网址&#34;</span>,<span style=color:#b44>&#34;serviceName&#34;</span>:<span style=color:#b44>&#34;serviceName&#34;</span>,<span style=color:#b44>&#34;url&#34;</span>:<span style=color:#b44>&#34;http://www.baidu.com&#34;</span>,<span style=color:#b44>&#34;attempt&#34;</span>:<span style=color:#666>3</span>,<span style=color:#b44>&#34;backoff&#34;</span>:<span style=color:#666>1</span>}
+</span></span></code></pre></div><h2 id=gin框架使用zaplumberjack>gin框架使用zap+lumberjack</h2><h3 id=初始化zaplumberjack>初始化zap,lumberjack</h3><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>// viperconfig
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>type</span> Log <span style=color:#a2f;font-weight:700>struct</span> {
+</span></span><span style=display:flex><span>	FileName   <span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`yaml:&#34;filename&#34;`</span>
+</span></span><span style=display:flex><span>	MaxSize    <span style=color:#0b0;font-weight:700>int</span>    <span style=color:#b44>`yaml:&#34;maxsize&#34;`</span>
+</span></span><span style=display:flex><span>	MaxBackups <span style=color:#0b0;font-weight:700>int</span>    <span style=color:#b44>`yaml:&#34;maxbackups&#34;`</span>
+</span></span><span style=display:flex><span>	MaxAges    <span style=color:#0b0;font-weight:700>int</span>    <span style=color:#b44>`yaml:&#34;maxages&#34;`</span>
+</span></span><span style=display:flex><span>	Compress   <span style=color:#0b0;font-weight:700>bool</span>   <span style=color:#b44>`yaml:&#34;compress&#34;`</span>
+</span></span><span style=display:flex><span>	Level      <span style=color:#0b0;font-weight:700>string</span> <span style=color:#b44>`yaml:&#34;-&#34;`</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>// init
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>var</span> ZapLog <span style=color:#666>*</span>zap.Logger
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// InitLogger 初始化Logger
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>InitLogger</span>(cfg <span style=color:#666>*</span>viperConfig.Log) (err <span style=color:#0b0;font-weight:700>error</span>) {
+</span></span><span style=display:flex><span>	writeSyncer <span style=color:#666>:=</span> <span style=color:#00a000>getLogWriter</span>(cfg.FileName, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAges)
+</span></span><span style=display:flex><span>	encoder <span style=color:#666>:=</span> <span style=color:#00a000>getEncoder</span>()
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>var</span> l = <span style=color:#a2f>new</span>(zapcore.Level)
+</span></span><span style=display:flex><span>	err = l.<span style=color:#00a000>UnmarshalText</span>([]<span style=color:#a2f>byte</span>(cfg.Level))
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	core <span style=color:#666>:=</span> zapcore.<span style=color:#00a000>NewCore</span>(encoder, writeSyncer, l)
+</span></span><span style=display:flex><span>	ZapLog = zap.<span style=color:#00a000>New</span>(core, zap.<span style=color:#00a000>AddCaller</span>())
+</span></span><span style=display:flex><span>	zap.<span style=color:#00a000>ReplaceGlobals</span>(ZapLog) <span style=color:#080;font-style:italic>// 替换zap包中全局的logger实例，后续在其他包中只需使用zap.L()调用即可
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>	<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>getEncoder</span>() zapcore.Encoder {
+</span></span><span style=display:flex><span>	encoderConfig <span style=color:#666>:=</span> zap.<span style=color:#00a000>NewProductionEncoderConfig</span>()
+</span></span><span style=display:flex><span>	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+</span></span><span style=display:flex><span>	encoderConfig.TimeKey = <span style=color:#b44>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+</span></span><span style=display:flex><span>	encoderConfig.EncodeDuration = zapcore.SecondsDurationEncoder
+</span></span><span style=display:flex><span>	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>return</span> zapcore.<span style=color:#00a000>NewJSONEncoder</span>(encoderConfig)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>getLogWriter</span>(filename <span style=color:#0b0;font-weight:700>string</span>, maxSize, maxBackup, maxAge <span style=color:#0b0;font-weight:700>int</span>) zapcore.WriteSyncer {
+</span></span><span style=display:flex><span>	lumberJackLogger <span style=color:#666>:=</span> <span style=color:#666>&amp;</span>lumberjack.Logger{
+</span></span><span style=display:flex><span>		Filename:   filename,
+</span></span><span style=display:flex><span>		MaxSize:    maxSize,
+</span></span><span style=display:flex><span>		MaxBackups: maxBackup,
+</span></span><span style=display:flex><span>		MaxAge:     maxAge,
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>return</span> zapcore.<span style=color:#00a000>AddSync</span>(lumberJackLogger)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=gin日志中间件>gin日志中间件</h3><p>模仿Logger()和Recovery()的实现，使用我们的日志库来接收gin框架默认输出的日志。</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>// GinLogger 接收gin框架默认的日志
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>GinLogger</span>(logger <span style=color:#666>*</span>zap.Logger) gin.HandlerFunc {
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>func</span>(c <span style=color:#666>*</span>gin.Context) {
+</span></span><span style=display:flex><span>		start <span style=color:#666>:=</span> time.<span style=color:#00a000>Now</span>()
+</span></span><span style=display:flex><span>		path <span style=color:#666>:=</span> c.Request.URL.Path
+</span></span><span style=display:flex><span>		query <span style=color:#666>:=</span> c.Request.URL.RawQuery
+</span></span><span style=display:flex><span>		c.<span style=color:#00a000>Next</span>()
+</span></span><span style=display:flex><span>		cost <span style=color:#666>:=</span> time.S<span style=color:#666>***</span>art)
+</span></span><span style=display:flex><span>		logger.<span style=color:#00a000>Info</span>(path,
+</span></span><span style=display:flex><span>			zap.<span style=color:#00a000>Int</span>(<span style=color:#b44>&#34;status&#34;</span>, c.Writer.<span style=color:#00a000>Status</span>()),
+</span></span><span style=display:flex><span>			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;method&#34;</span>, c.Request.Method),
+</span></span><span style=display:flex><span>			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;path&#34;</span>, path),
+</span></span><span style=display:flex><span>			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;query&#34;</span>, query),
+</span></span><span style=display:flex><span>			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;ip&#34;</span>, c.<span style=color:#00a000>ClientIP</span>()),
+</span></span><span style=display:flex><span>			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;user-agent&#34;</span>, c.Request.<span style=color:#00a000>UserAgent</span>()),
+</span></span><span style=display:flex><span>			zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;errors&#34;</span>, c.Errors.<span style=color:#00a000>ByType</span>(gin.ErrorTypePrivate).<span style=color:#00a000>String</span>()),
+</span></span><span style=display:flex><span>			zap.<span style=color:#00a000>Duration</span>(<span style=color:#b44>&#34;cost&#34;</span>, cost),
+</span></span><span style=display:flex><span>		)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#080;font-style:italic>// GinRecovery recover掉项目可能出现的panic
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>GinRecovery</span>(logger <span style=color:#666>*</span>zap.Logger, stack <span style=color:#0b0;font-weight:700>bool</span>) gin.HandlerFunc {
+</span></span><span style=display:flex><span>	<span style=color:#a2f;font-weight:700>return</span> <span style=color:#a2f;font-weight:700>func</span>(c <span style=color:#666>*</span>gin.Context) {
+</span></span><span style=display:flex><span>		<span style=color:#a2f;font-weight:700>defer</span> <span style=color:#a2f;font-weight:700>func</span>() {
+</span></span><span style=display:flex><span>			<span style=color:#a2f;font-weight:700>if</span> err <span style=color:#666>:=</span> <span style=color:#a2f>recover</span>(); err <span style=color:#666>!=</span> <span style=color:#a2f;font-weight:700>nil</span> {
+</span></span><span style=display:flex><span>				<span style=color:#080;font-style:italic>// Check for a broken connection, as it is not really a
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>				<span style=color:#080;font-style:italic>// condition that warrants a panic stack trace.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>				<span style=color:#a2f;font-weight:700>var</span> brokenPipe <span style=color:#0b0;font-weight:700>bool</span>
+</span></span><span style=display:flex><span>				<span style=color:#a2f;font-weight:700>if</span> ne, ok <span style=color:#666>:=</span> err.(<span style=color:#666>*</span>net.OpError); ok {
+</span></span><span style=display:flex><span>					<span style=color:#a2f;font-weight:700>if</span> se, ok <span style=color:#666>:=</span> ne.Err.(<span style=color:#666>*</span>os.SyscallError); ok {
+</span></span><span style=display:flex><span>						<span style=color:#a2f;font-weight:700>if</span> strings.<span style=color:#00a000>Contains</span>(strings.<span style=color:#00a000>ToLower</span>(se.<span style=color:#00a000>Error</span>()), <span style=color:#b44>&#34;broken pipe&#34;</span>) <span style=color:#666>||</span> strings.<span style=color:#00a000>Contains</span>(strings.<span style=color:#00a000>ToLower</span>(se.<span style=color:#00a000>Error</span>()), <span style=color:#b44>&#34;connection reset by peer&#34;</span>) {
+</span></span><span style=display:flex><span>							brokenPipe = <span style=color:#a2f;font-weight:700>true</span>
+</span></span><span style=display:flex><span>						}
+</span></span><span style=display:flex><span>					}
+</span></span><span style=display:flex><span>				}
+</span></span><span style=display:flex><span>				httpRequest, _ <span style=color:#666>:=</span> httputil.<span style=color:#00a000>DumpRequest</span>(c.Request, <span style=color:#a2f;font-weight:700>false</span>)
+</span></span><span style=display:flex><span>				<span style=color:#a2f;font-weight:700>if</span> brokenPipe {
+</span></span><span style=display:flex><span>					logger.<span style=color:#00a000>Error</span>(c.Request.URL.Path,
+</span></span><span style=display:flex><span>						zap.<span style=color:#00a000>Any</span>(<span style=color:#b44>&#34;error&#34;</span>, err),
+</span></span><span style=display:flex><span>						zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;request&#34;</span>, <span style=color:#a2f>string</span>(httpRequest)),
+</span></span><span style=display:flex><span>					)
+</span></span><span style=display:flex><span>					<span style=color:#080;font-style:italic>// If the connection is dead, we can&#39;t write a status to it.
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>					c.<span style=color:#00a000>Error</span>(err.(<span style=color:#0b0;font-weight:700>error</span>)) <span style=color:#080;font-style:italic>// nolint: errcheck
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span>					c.<span style=color:#00a000>Abort</span>()
+</span></span><span style=display:flex><span>					<span style=color:#a2f;font-weight:700>return</span>
+</span></span><span style=display:flex><span>				}
+</span></span><span style=display:flex><span>				<span style=color:#a2f;font-weight:700>if</span> stack {
+</span></span><span style=display:flex><span>					logger.<span style=color:#00a000>Error</span>(<span style=color:#b44>&#34;[Recovery from panic]&#34;</span>,
+</span></span><span style=display:flex><span>						zap.<span style=color:#00a000>Any</span>(<span style=color:#b44>&#34;error&#34;</span>, err),
+</span></span><span style=display:flex><span>						zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;request&#34;</span>, <span style=color:#a2f>string</span>(httpRequest)),
+</span></span><span style=display:flex><span>						zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;stack&#34;</span>, <span style=color:#a2f>string</span>(debug.<span style=color:#00a000>Stack</span>())),
+</span></span><span style=display:flex><span>					)
+</span></span><span style=display:flex><span>				} <span style=color:#a2f;font-weight:700>else</span> {
+</span></span><span style=display:flex><span>					logger.<span style=color:#00a000>Error</span>(<span style=color:#b44>&#34;[Recovery from panic]&#34;</span>,
+</span></span><span style=display:flex><span>						zap.<span style=color:#00a000>Any</span>(<span style=color:#b44>&#34;error&#34;</span>, err),
+</span></span><span style=display:flex><span>						zap.<span style=color:#00a000>String</span>(<span style=color:#b44>&#34;request&#34;</span>, <span style=color:#a2f>string</span>(httpRequest)),
+</span></span><span style=display:flex><span>					)
+</span></span><span style=display:flex><span>				}
+</span></span><span style=display:flex><span>				c.<span style=color:#00a000>AbortWithStatus</span>(http.StatusInternalServerError)
+</span></span><span style=display:flex><span>			}
+</span></span><span style=display:flex><span>		}()
+</span></span><span style=display:flex><span>		c.<span style=color:#00a000>Next</span>()
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>使用</p><div class=highlight><pre tabindex=0 style=background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#080;font-style:italic>// 全局中间件
+</span></span></span><span style=display:flex><span><span style=color:#080;font-style:italic></span><span style=color:#a2f;font-weight:700>func</span> <span style=color:#00a000>InitMiddleWares</span>(eng <span style=color:#666>*</span>gin.Engine) {
+</span></span><span style=display:flex><span>	eng.<span style=color:#00a000>Use</span>(<span style=color:#00a000>GinLogger</span>(log.ZapLog), <span style=color:#00a000>GinRecovery</span>(log.ZapLog, <span style=color:#a2f;font-weight:700>true</span>))
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>参考文章:</p><ul><li><a href=https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw target=_blank rel=noopener>https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw</a></li><li><a href=https://studygolang.com/articles/17394 target=_blank rel=noopener>https://studygolang.com/articles/17394</a></li></ul></div><footer class=post-footer><div class=post-tags><a href=/tags/golang rel=tag title=golang>#golang#</a></div><div class=post-nav><div class=article-copyright><div class=article-copyright-img><img src=/img/qq_qrcode.png width=129px height=129px><div style=text-align:center>QQ扫一扫交流</div></div><div class=article-copyright-info><p><span>标题：</span>Go zap高性能日志</p><p><span>链接：</span>https://www.zhaohaiyu.com/post/go/go-zap/</p><p><span>作者：</span>haiyux</p><p><span>声明： </span>本博客文章除特别声明外，均采用 <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank style=text-decoration:underline>CC BY-NC-SA 3.0</a>许可协议，转载请注明出处！</p></div></div><div class=clear></div></div><div class=reward-qr-info><div>创作实属不易，如有帮助，那就打赏博主些许茶钱吧 ^_^</div><button id=rewardButton disable=enable onclick="var qr=document.getElementById('QR');qr.style.display==='none'?qr.style.display='block':qr.style.display='none'">
+<span>赏</span></button><div id=QR style=display:none><div id=wechat style=display:inline-block><img id=wechat_qr src=/img/wechat-pay.png alt="WeChat Pay"><p>微信打赏</p></div><div id=alipay style=display:inline-block><img id=alipay_qr src=/img/ali-pay.png alt=Alipay><p>支付宝打赏</p></div></div></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=https://www.zhaohaiyu.com/post/microservice/thrift/ rel=next title=thrift的介绍及其使用><i class="fa fa-chevron-left"></i> thrift的介绍及其使用</a></div><div class="post-nav-prev post-nav-item"><a href=https://www.zhaohaiyu.com/post/go/go-viper/ rel=prev title="Go viper配置管理">Go viper配置管理
+<i class="fa fa-chevron-right"></i></a></div></div><div id=ucomments></div></footer></article></section></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
 <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-<span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-</div>
-</div>
-<aside id=sidebar class=sidebar>
-<div class=sidebar-inner>
-<ul class="sidebar-nav motion-element">
-<li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>
-文章目录
-</li>
-<li class=sidebar-nav-overview data-target=site-overview>
-站点概览
-</li>
-</ul>
-<section class="site-overview sidebar-panel">
-<div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person>
-<img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux>
-<p class=site-author-name itemprop=name>haiyux</p>
-<p class="site-description motion-element" itemprop=description>
-路漫漫其修远兮,吾将上下而求索
-</p>
-</div>
-<nav class="site-state motion-element">
-<div class="site-state-item site-state-posts">
-<a href=/post/>
-<span class=site-state-item-count>62</span>
-<span class=site-state-item-name>日志</span>
-</a>
-</div>
-<div class="site-state-item site-state-categories">
-<a href=/categories/>
-<span class=site-state-item-count>8</span>
-<span class=site-state-item-name>分类</span>
-</a>
-</div>
-<div class="site-state-item site-state-tags">
-<a href=/tags/>
-<span class=site-state-item-count>20</span>
-<span class=site-state-item-name>标签</span>
-</a>
-</div>
-</nav>
-<div class="links-of-author motion-element">
-<span class=links-of-author-item>
-<a href=https://github.com/haiyux/ target=_blank title=GitHub>
-<i class="fa fa-fw fa-github"></i>
-GitHub
-</a>
-</span>
-<span class=links-of-author-item>
-<a href=mailto:haiyux@foxmail.com target=_blank title=Email>
-<i class="fa fa-fw fa-envelope"></i>
-Email
-</a>
-</span>
-</div>
-<div class="links-of-blogroll motion-element links-of-blogroll-inline">
-<div class=links-of-blogroll-title>
-<i class="fa fa-fw fa-globe"></i>
-友情链接
-</div>
-<ul class=links-of-blogroll-list>
-<li class=links-of-blogroll-item>
-<a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://farer.org/ title=farer target=_blank>farer</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a>
-</li>
-<li class=links-of-blogroll-item>
-<a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a>
-</li>
-</ul>
-</div>
-<div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline">
-<div class=tagcloud-of-blogroll-title>
-<i class="fa fa-fw fa-tags"></i>
-标签云
-</div>
-<ul class=tagcloud-of-blogroll-list>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/golang>Golang
-<sup>30</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
-<sup>8</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mysql>Mysql
-<sup>7</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/http>HTTP
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/protobuf>Protobuf
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%BF%90%E7%BB%B4>运维
-<sup>4</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/grpc>Grpc
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
-<sup>3</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/redis>Redis
-<sup>2</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/ddd>Ddd
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/docker>Docker
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/kratos>Kratos
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/makefile>Makefile
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/mq>Mq
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/nginx>Nginx
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/raft>Raft
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/thrift>Thrift
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/traceing>Traceing
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/wire>Wire
-<sup>1</sup>
-</a>
-</li>
-<li class=tagcloud-of-blogroll-item>
-<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
-<sup>1</sup>
-</a>
-</li>
-</ul>
-</div>
-</section>
-<section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-<div class=post-toc>
-<div class=post-toc-content><nav id=TableOfContents>
-<ul>
-<li><a href=#摘要>摘要</a></li>
-<li><a href=#前言>前言</a></li>
-<li><a href=#为什么选择使用zap>为什么选择使用ZAP</a></li>
-<li><a href=#安装>安装</a></li>
-<li><a href=#示例>示例</a>
-<ul>
-<li><a href=#简单示例>简单示例</a></li>
-<li><a href=#自定义示例>自定义示例</a></li>
-</ul>
-</li>
-<li><a href=#写入归档文件示例>写入归档文件示例</a></li>
-<li><a href=#安装-lumberjack>安装 lumberjack</a></li>
-<li><a href=#lumberjack介绍>lumberjack介绍</a></li>
-<li><a href=#示例-1>示例</a></li>
-<li><a href=#gin框架使用zaplumberjack>gin框架使用zap+lumberjack</a>
-<ul>
-<li><a href=#初始化zaplumberjack>初始化zap,lumberjack</a></li>
-<li><a href=#gin日志中间件>gin日志中间件</a></li>
-</ul>
-</li>
-</ul>
-</nav></div>
-</div>
-</section>
-</div>
-</aside>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=footer-inner>
-<div class=copyright>
-<span class=copyright-year>
-&copy; 2010 - 2022
-</span>
+<span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id=sidebar class=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>文章目录</li><li class=sidebar-nav-overview data-target=site-overview>站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img class=site-author-image itemprop=image src=/img/avatar.jpeg alt=haiyux><p class=site-author-name itemprop=name>haiyux</p><p class="site-description motion-element" itemprop=description>路漫漫其修远兮,吾将上下而求索</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/post/><span class=site-state-item-count>62</span>
+<span class=site-state-item-name>日志</span></a></div><div class="site-state-item site-state-categories"><a href=/categories/><span class=site-state-item-count>8</span>
+<span class=site-state-item-name>分类</span></a></div><div class="site-state-item site-state-tags"><a href=/tags/><span class=site-state-item-count>20</span>
+<span class=site-state-item-name>标签</span></a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item><a href=https://github.com/haiyux/ target=_blank title=GitHub><i class="fa fa-fw fa-github"></i>
+GitHub</a></span>
+<span class=links-of-author-item><a href=mailto:haiyux@foxmail.com target=_blank title=Email><i class="fa fa-fw fa-envelope"></i>
+Email</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-inline"><div class=links-of-blogroll-title><i class="fa fa-fw fa-globe"></i>
+友情链接</div><ul class=links-of-blogroll-list><li class=links-of-blogroll-item><a href=https://go-kratos.dev/ title=kratos target=_blank>kratos</a></li><li class=links-of-blogroll-item><a href=https://farer.org/ title=farer target=_blank>farer</a></li><li class=links-of-blogroll-item><a href=http://www.cnblogs.com/haiyux/ title=我的博客园 target=_blank>我的博客园</a></li><li class=links-of-blogroll-item><a href=https://www.liwenzhou.com/ title=李文周 target=_blank>李文周</a></li><li class=links-of-blogroll-item><a href=https://lisenhui.cn/ title=凡梦星尘 target=_blank>凡梦星尘</a></li></ul></div><div class="tagcloud-of-blogroll motion-element tagcloud-of-blogroll-inline"><div class=tagcloud-of-blogroll-title><i class="fa fa-fw fa-tags"></i>
+标签云</div><ul class=tagcloud-of-blogroll-list><li class=tagcloud-of-blogroll-item><a href=/tags/golang>Golang
+<sup>30</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务
+<sup>8</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mysql>Mysql
+<sup>7</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/http>HTTP
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/protobuf>Protobuf
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%BF%90%E7%BB%B4>运维
+<sup>4</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/grpc>Grpc
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F>设计模式
+<sup>3</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/redis>Redis
+<sup>2</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/ddd>Ddd
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/docker>Docker
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/kratos>Kratos
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/makefile>Makefile
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/mq>Mq
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/nginx>Nginx
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/raft>Raft
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/thrift>Thrift
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/traceing>Traceing
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/wire>Wire
+<sup>1</sup></a></li><li class=tagcloud-of-blogroll-item><a href=/tags/%E6%B3%9B%E5%9E%8B>泛型
+<sup>1</sup></a></li></ul></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#摘要>摘要</a></li><li><a href=#前言>前言</a></li><li><a href=#为什么选择使用zap>为什么选择使用ZAP</a></li><li><a href=#安装>安装</a></li><li><a href=#示例>示例</a><ul><li><a href=#简单示例>简单示例</a></li><li><a href=#自定义示例>自定义示例</a></li></ul></li><li><a href=#写入归档文件示例>写入归档文件示例</a></li><li><a href=#安装-lumberjack>安装 lumberjack</a></li><li><a href=#lumberjack介绍>lumberjack介绍</a></li><li><a href=#示例-1>示例</a></li><li><a href=#gin框架使用zaplumberjack>gin框架使用zap+lumberjack</a><ul><li><a href=#初始化zaplumberjack>初始化zap,lumberjack</a></li><li><a href=#gin日志中间件>gin日志中间件</a></li></ul></li></ul></nav></div></div></section></div></aside></div></main><footer id=footer class=footer><div class=footer-inner><div class=copyright><span class=copyright-year>&copy; 2010 - 2022</span>
 <span class=with-love><i class="fa fa-heart"></i></span>
-<span class=copyright-author>haiyux's blog</span>
-</div>
-<div class=powered-info>
-<span class=powered-by>
-Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.92.0</a>
-</span>
+<span class=copyright-author>haiyux's blog</span></div><div class=powered-info><span class=powered-by>Powered by - <a class=powered-link href=//gohugo.io target=_blank title=hugo>Hugo v0.100.1</a></span>
 <span class=separator-line>/</span>
-<span class=theme-info>
-Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank> NexT
-</a>
-</span>
-</div>
-<div class=vistor-info>
-</div>
-<div class=license-info>
-<span class=storage-info>
-Storage by
-<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a>
-</span>
+<span class=theme-info>Theme by - <a class=powered-link href=//github.com/elkan1788/hugo-theme-next target=_blank>NexT</a></span></div><div class=vistor-info></div><div class=license-info><span class=storage-info>Storage by
+<a href=https://github.com/haiyux/haiyux.github.io style=font-weight:700 target=_blank>GITHUB存储</a></span>
 <span class=separator-line>/</span>
-<span class=license-num>
-<a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a>
-</span>
-</div>
-</div>
-</footer>
-<div class=back-to-top>
-<i class="fa fa-arrow-up"></i>
-<span id=scrollpercent><span>0</span>%</span>
-</div>
-</div>
-<script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
+<span class=license-num><a href=http://beian.miit.gov.cn target=_blank>京ICP备19052634号-2</a></span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i>
+<span id=scrollpercent><span>0</span>%</span></div></div><script type=text/javascript src=//unpkg.com/jquery@2.1.4/dist/jquery.min.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/search.js></script>
 <script type=text/javascript src=https://www.zhaohaiyu.com/js/affix.js></script>
-<script type=text/javascript>function detectIE(){var a=window.navigator.userAgent,b=a.indexOf('MSIE '),c=a.indexOf('Trident/'),d=a.indexOf('Edge/');return b>0||c>0||d>0?-1:1}function getCntViewHeight(){var b=$('#content').height(),a=$(window).height(),c=b>a?b-a:$(document).height()-a;return c}function getScrollbarWidth(){var a=$('<div />').addClass('scrollbar-measure').prependTo('body'),b=a[0],c=b.offsetWidth-b.clientWidth;return a.remove(),c}function registerBackTop(){var b=50,a=$('.back-to-top');$(window).on('scroll',function(){var d,e,f,c,g;a.toggleClass('back-to-top-on',window.pageYOffset>b),d=$(window).scrollTop(),e=getCntViewHeight(),f=d/e,c=Math.round(f*100),g=c>100?100:c,$('#scrollpercent>span').html(g)}),a.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var a='.post-toc',d=$(a),b='.active-current';d.on('activate.bs.scrollspy',function(){var b=$(a+' .active').last();c(),b.addClass('active-current')}).on('clear.bs.scrollspy',c),$('body').scrollspy({target:a});function c(){$(a+' '+b).removeClass(b.substring(1))}}function initAffix(){var a=$('.header-inner').height(),b=parseInt($('.footer').outerHeight(!0),10),c=a+10;$('.sidebar-inner').affix({offset:{top:c,bottom:b}})}function initTOCDimension(){var a,b;$(window).on('resize',function(){a&&clearTimeout(a),a=setTimeout(function(){var a=document.body.clientHeight-100;updateTOCHeight(a)},0)}),updateTOCHeight(document.body.clientHeight-100),b=getScrollbarWidth(),$('.post-toc').css('width','calc(100% + '+b+'px)')}function updateTOCHeight(a){a=a||'auto',$('.post-toc').css('max-height',a)}$(function(){var b=$('.header-inner').height()+10,c,d,a,e;$('#sidebar').css({'margin-top':b}).show(),c=parseInt($('#sidebar').css('margin-top')),d=parseInt($('.sidebar-inner').css('height')),a=c+d,e=$('.content-wrap').height(),e<a&&$('.content-wrap').css('min-height',a),$('.site-nav-toggle').on('click',function(){var a=$('.site-nav'),e=$('.toggle'),b='site-nav-on',f='toggle-close',c=a.hasClass(b),g=c?'slideUp':'slideDown',d=c?'removeClass':'addClass';a.stop()[g]('normal',function(){a[d](b),e[d](f)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script>
-<script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
-<script type=text/javascript>$(function(){$('.post-body').viewer()})</script>
-<script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
-<script type=text/javascript>function showTime(d){var b=new AV.Query(d),a=[],c=$(".leancloud_visitors");c.each(function(){a.push($(this).attr("id").trim())}),b.containedIn('url',a),b.find().then(d=>{var e='.leancloud-visitors-count',b,h,f,j,g,i;if(d.length==0){c.find(e).text(0);return}for(b=0;b<d.length;b++)h=d[b],f=h.get('url'),j=h.get('time'),g=document.getElementById(f),$(g).find(e).text(j);for(b=0;b<a.length;b++)f=a[b],g=document.getElementById(f),i=$(g).find(e),i.text()==''&&i.text(0)},a=>{console.log('Query vistors failed: '+a)})}function addCount(d){var b=$(".leancloud_visitors"),a=b.attr('id').trim(),e=b.attr('data-flag-title').trim(),c=new AV.Query('Counter');c.equalTo("url",a),c.find().then(g=>{var f,c,b;g.length>0?(f=g[0],f.increment('time',1),f.save(null,{query:new AV.Query('Counter').equalTo('url',a),fetchWhenSave:!0}).then(b=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log('Update vistor failed: '+a)})):(c=new AV.ACL,c.setPublicReadAccess(!0),c.setPublicWriteAccess(!0),b=new d,b.set("title",e),b.set("url",a),b.set("time",1),b.setACL(c),b.save().then(d=>{var c=$(document.getElementById(a));c.find('.leancloud-visitors-count').text(b.get('time'))},a=>{console.log("Save new vistor failed: "+a)}))})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const a=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(a):$('.post-title-link').length>1&&showTime(a)})</script>
-<script type=text/javascript>(function(){var a=document.createElement('script');a.type='text/javascript',a.async=!0,a.setAttribute('issue-term',"pathname"),a.setAttribute('theme',"github-light"),a.setAttribute('repo',"haiyux/haiyux.github.io"),a.crossorigin='anonymous',a.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(a)})()</script>
-<script>(function(){var a=document.createElement('script'),c=window.location.protocol.split(':')[0],b;c==='https'?a.src='https://zz.bdstatic.com/linksubmit/push.js':a.src='http://push.zhanzhang.baidu.com/push.js',b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
-</body>
-</html>
+<script type=text/javascript>function detectIE(){var e=window.navigator.userAgent,t=e.indexOf('MSIE '),n=e.indexOf('Trident/'),s=e.indexOf('Edge/');return t>0||n>0||s>0?-1:1}function getCntViewHeight(){var t=$('#content').height(),e=$(window).height(),n=t>e?t-e:$(document).height()-e;return n}function getScrollbarWidth(){var e=$('<div />').addClass('scrollbar-measure').prependTo('body'),t=e[0],n=t.offsetWidth-t.clientWidth;return e.remove(),n}function registerBackTop(){var t=50,e=$('.back-to-top');$(window).on('scroll',function(){e.toggleClass('back-to-top-on',window.pageYOffset>t);var s=$(window).scrollTop(),o=getCntViewHeight(),i=s/o,n=Math.round(i*100),a=n>100?100:n;$('#scrollpercent>span').html(a)}),e.on('click',function(){$("html,body").animate({scrollTop:0,screenLeft:0},800)})}function initScrollSpy(){var e='.post-toc',s=$(e),t='.active-current';s.on('activate.bs.scrollspy',function(){var t=$(e+' .active').last();n(),t.addClass('active-current')}).on('clear.bs.scrollspy',n),$('body').scrollspy({target:e});function n(){$(e+' '+t).removeClass(t.substring(1))}}function initAffix(){var e=$('.header-inner').height(),t=parseInt($('.footer').outerHeight(!0),10),n=e+10;$('.sidebar-inner').affix({offset:{top:n,bottom:t}})}function initTOCDimension(){$(window).on('resize',function(){e&&clearTimeout(e),e=setTimeout(function(){var e=document.body.clientHeight-100;updateTOCHeight(e)},0)}),updateTOCHeight(document.body.clientHeight-100);var e,t=getScrollbarWidth();$('.post-toc').css('width','calc(100% + '+t+'px)')}function updateTOCHeight(e){e=e||'auto',$('.post-toc').css('max-height',e)}$(function(){var e,t,n,s,o=$('.header-inner').height()+10;$('#sidebar').css({'margin-top':o}).show(),t=parseInt($('#sidebar').css('margin-top')),n=parseInt($('.sidebar-inner').css('height')),e=t+n,s=$('.content-wrap').height(),s<e&&$('.content-wrap').css('min-height',e),$('.site-nav-toggle').on('click',function(){var e=$('.site-nav'),o=$('.toggle'),t='site-nav-on',i='toggle-close',n=e.hasClass(t),a=n?'slideUp':'slideDown',s=n?'removeClass':'addClass';e.stop()[a]('normal',function(){e[s](t),o[s](i)})}),registerBackTop(),initAffix(),initTOCDimension(),$('.sidebar-nav-toc').click(function(){$(this).addClass('sidebar-nav-active'),$(this).next().removeClass('sidebar-nav-active'),$('.'+$(this).next().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)}),$('.sidebar-nav-overview').click(function(){$(this).addClass('sidebar-nav-active'),$(this).prev().removeClass('sidebar-nav-active'),$('.'+$(this).prev().attr('data-target')).toggle(500),$('.'+$(this).attr('data-target')).toggle(500)})})</script><script src=//unpkg.com/imageviewer@1.1.0/dist/viewer.min.js></script>
+<script type=text/javascript>$(function(){$('.post-body').viewer()})</script><script src=//unpkg.com/leancloud-storage@4.6.1/dist/av-min.js></script>
+<script type=text/javascript>function showTime(s){var t=new AV.Query(s),e=[],n=$(".leancloud_visitors");n.each(function(){e.push($(this).attr("id").trim())}),t.containedIn('url',e),t.find().then(r=>{var t,s,o,a,c,l,i='.leancloud-visitors-count';if(r.length==0){n.find(i).text(0);return}for(t=0;t<r.length;t++)a=r[t],o=a.get('url'),l=a.get('time'),s=document.getElementById(o),$(s).find(i).text(l);for(t=0;t<e.length;t++)o=e[t],s=document.getElementById(o),c=$(s).find(i),c.text()==''&&c.text(0)},e=>{console.log('Query vistors failed: '+e)})}function addCount(s){var t=$(".leancloud_visitors"),e=t.attr('id').trim(),o=t.attr('data-flag-title').trim(),n=new AV.Query('Counter');n.equalTo("url",e),n.find().then(i=>{if(i.length>0){var t,n,a=i[0];a.increment('time',1),a.save(null,{query:new AV.Query('Counter').equalTo('url',e),fetchWhenSave:!0}).then(t=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log('Update vistor failed: '+e)})}else n=new AV.ACL,n.setPublicReadAccess(!0),n.setPublicWriteAccess(!0),t=new s,t.set("title",o),t.set("url",e),t.set("time",1),t.setACL(n),t.save().then(s=>{var n=$(document.getElementById(e));n.find('.leancloud-visitors-count').text(t.get('time'))},e=>{console.log("Save new vistor failed: "+e)})})}$(function(){AV.init({appId:"RseHzOJD3k0qatLsWHYRTB4v-MdYXbMMI",appKey:"sBxkkdy7Y9keMpL8NWlxpywY",serverURL:"https://rsehzojd.api.lncldglobal.com"});const e=AV.Object.extend("Counter");$('.leancloud_visitors').length==1?addCount(e):$('.post-title-link').length>1&&showTime(e)})</script><script type=text/javascript>(function(){var e=document.createElement('script');e.type='text/javascript',e.async=!0,e.setAttribute('issue-term',"pathname"),e.setAttribute('theme',"github-light"),e.setAttribute('repo',"haiyux/haiyux.github.io"),e.crossorigin='anonymous',e.src='https://utteranc.es/client.js',document.getElementById('ucomments').appendChild(e)})()</script><script>(function(){var t,e=document.createElement('script'),n=window.location.protocol.split(':')[0];n==='https'?e.src='https://zz.bdstatic.com/linksubmit/push.js':e.src='http://push.zhanzhang.baidu.com/push.js',t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(e,t)})()</script></body></html>
