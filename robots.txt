@@ -1,1 +1,3 @@
 User-agent: *
+
+Sitemap: https://www.zhaohaiyu.com/sitemap.xml

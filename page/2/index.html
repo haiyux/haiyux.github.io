@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>赵海宇的博客 - 路漫漫其修远兮,吾将上下而求索。</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+<link rel="alternate" type="application/rss+xml" href="https://www.zhaohaiyu.com/index.xml" title="赵海宇的博客" />
+
+<meta property="og:title" content="赵海宇的博客" />
+<meta name="twitter:title" content="赵海宇的博客" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="og:updated_time" content="2022-06-04T17:03:53+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+
+
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/overload/">从kratos分析BBR限流源码实现</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-04</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1769 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;4 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;无标签</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        什么是自适应限流 自适应限流从整体维度对应用入口流量进行控制，结合应用的 Load、CPU 使用率、总体平均 RT、入口 QPS 和并发线程数等几个维度的监控指标，通过自适应的流控策略，让系统的入口流量和系统的负载达
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/mysql-redolog-binlog/">mysql redo log和binlog</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-02</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2499 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;5 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/mysql">mysql</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        更新语句执行流程 下面是这个表的创建语句，这个表有一个主键 ID 和一个整型字段 c： create table T(ID int primary key, c int); 如果要将 ID=2 这一行的值加 1，SQL 语句就会这么写： update T set c=c+1 where ID=2; 前面我有跟你介绍过 SQL 语句基本的执行链路，这里我再
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/mysql-exec-order/">SQL查询语句执行流程</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-02</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1997 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;4 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/mysql">mysql</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        msyql执行流程 你有个最简单的表，表里只有一个 ID 字段，在执行下面这个查询语句时：： select * from T where ID=10； 我们看到的只是输入一条语句，返回一个结果，却不知道这条语句在 MySQL 内部的执行过程。 下面我给出的是 MySQL
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/mysql-transaction/">mysql事务</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-08-20</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2559 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;6 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/mysql">mysql</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        事务是什么 事务就是指逻辑上的一组SQL语句操作，组成这组操作的各个SQL语句，执行时要么全成功要么全失败。 在 MySQL 中，事务支持是在引擎层实现的。MySQL 是一个支持多引擎的系统，但并不是所有的引擎都支持事
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/mysql-lock/">mysql锁</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-08-20</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3304 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;7 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/mysql">mysql</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        MySQL中的锁 数据库锁设计的初衷是处理并发问题。作为多用户共享的资源，当出现并发访问的时候，数据库需要合理地控制资源的访问规则。而锁就是用来实现这些访问规则的重要数据结构。 根据加锁的范围，MySQL
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/kratos-log/">Kratos日志库的使用姿势</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-08-19</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2513 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;6 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;无标签</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        什么是日志 所谓日志（Log）是指系统所指定对象的某些操作和其操作结果按时间有序的集合。log文件就是日志文件，log文件记录了系统和系统的用户之间交互的信息，是自动捕获人与系统终端之间交互的类型、内容
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/rabbitmq/">RabbitMQ消息队列</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-07-01</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;7220 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;15 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/mq">mq</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        消息队列 本篇文章主要介绍了 RabbitMQ 这种消息队列，从消息队列的概念、应用场景、安装方式到它的核心概念、五种工作模式。在安装的时候推荐使用 Docker 方式进行安装。重点需要理解的就是消息队列的应用场景、核心概念和 RabbitMQ 的五种
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/grpc-timeout/">grpc超时控制</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-05-24</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;721 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;2 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>&nbsp;<a href="/tags/protobuf">protobuf</a>&nbsp;<a href="/tags/grpc">grpc</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        什么是超时控制？ 超时控制，使我们的服务之间调用可以快速抛错。比如API接口设置1s超时API调用A服务用了500ms，服务A调用和服务B用了600ms，n那么现在已经超时，还要调用服务C等等，再返回超
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/">grpc服务发现与负载均衡</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-05-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4524 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;10 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>&nbsp;<a href="/tags/protobuf">protobuf</a>&nbsp;<a href="/tags/grpc">grpc</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        前言 在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/go-gin/">Go Gin框架介绍及使用</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-05-09</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3316 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;7 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/http">http</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        Gin框架介绍 基于httprouter开发的Web框架。 中文文档，齐全。 简单易用的轻量级框架。 Gin框架安装 go get -u github.com/gin-gonic/gin 实例: package main import ( &quot;fmt&quot; &quot;github.com/gin-gonic/gin&quot; ) func main() { r := gin.Default() // 创建一个默认的路由引擎 // 也可以用gin.New()
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/go-gc/">Go gc垃圾回收</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-28</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3894 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;8 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。 Golang中的垃圾回收主要应用三色标记法，GC
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/go-net-http/">Go web源码解析</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-13</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3713 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;8 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/http">http</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        Go的web工作原理 在Go中使用及其简单的代码即可开启一个web服务。如下： //开启web服务 func test(){ http.HandleFunc(&quot;/&quot;, sayHello) err := http.ListenAndServe(&quot;:9090&quot;,nil) if err!=nil { log.Fatal(&quot;ListenAndServer:&quot;,err) } } func sayHello(w http.ResponseWriter, r *http.Request){ r.ParseForm() fmt.Println(&quot;path&quot;,r.URL.Path) fmt.Println(&quot;scheme&quot;,r.URL.Scheme) fmt.Fprintf(w, &quot;Hello Guest!&quot;) } 在使用ListenAndServe这个方法时，系统就会给
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/http-https/">Http Https</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-02-12</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2029 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;5 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/http">http</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        HTTP协议是什么？ HTTP协议是超文本传输协议的缩写，英文是Hyper Text Transfer Protocol。它是从WEB服务器传输超文本标记语言(HTML)到本地浏览器的传送协议。 设计HTTP最初的目的是为了提供一
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/distributed_id_lock/">分布式ID和锁</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-01-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3699 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;8 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        分布式id生成器 有时我们需要能够生成类似MySQL自增ID这样不断增大，同时又不会重复的id。以支持业务中的高并发场景。比较典型的，电商促销时，短时间内会有大量的订单涌入到系统，比如每秒10w+。明星
+    </div>
+</div>
+
+<div class="post">
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/thrift/">thrift的介绍及其使用</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-01-19</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5125 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;11 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>&nbsp;<a href="/tags/thrift">Thrift</a>&nbsp;</span>
+
+    </div>
+    <div class="post-item post-summary markdown-body">
+        什么是thrift Thrift是Facebook于2007年开发的跨语言的rpc服框架，提供多语言的编译功能，并提供多种服务器工作模式；用户通过Thrift的IDL（接口定义语言）来描述接口函数及数据
+    </div>
+</div>
+<div class="pagination"><div class="pag-first">
+    <a href="/"><i class="iconfont icon-caret-back-circle-sharp"></i></a>
+  </div><div class="pag-previous">
+    <a href="/"><i class="iconfont icon-chevron-back-circle-sharp"></i></a>
+  </div><div class="pag-item">
+    <a href="/">1</a>
+  </div><div class="pag-item pag-current">
+    <a href="/page/2/">2</a>
+  </div><div class="pag-item">
+    <a href="/page/3/">3</a>
+  </div><div class="pag-item">
+    <a href="/page/4/">4</a>
+  </div><div class="pag-item">
+    <a href="/page/5/">5</a>
+  </div><div class="pag-next">
+    <a href="/page/3/"><i class="iconfont icon-chevron-forward-circle-sharp"></i></a>
+  </div><div class="pag-last">
+    <a href="/page/5/"><i class="iconfont icon-caret-forward-circle-sharp"></i></a>
+  </div></div>
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

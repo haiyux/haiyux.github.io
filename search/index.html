@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Search - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+<link rel="alternate" type="application/rss+xml" href="https://www.zhaohaiyu.com/search/index.xml" title="赵海宇的博客" />
+
+<meta property="og:title" content="Search" />
+<meta name="twitter:title" content="Search" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/search/" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+
+<div class="page-info">
+    <form class="search-form" method="GET">
+        <div class="search-input">
+            <input name="s" type="search" autocapitalize="off" autocomplete="off" autocorrect="off"
+                   spellcheck="false" />
+            <button type="submit"><i class="iconfont icon-search-circle-sharp"></i></button>
+        </div>
+    </form>
+</div>
+
+<div class="search-result-info" style="display: none;"><span>找到 [NUM] 条结果 (用时 [TIME] 毫秒)</span></div>
+<div class="search-result-info" style="display: none;"><span>未找到结果</span></div>
+<div class="search-result-info" style="display: none;"><span>无法获取索引</span></div>
+<div id="search-result"></div>
+<script id="search-result-template" type="text/fuse-template">
+    <% for(var i = 0; i < $data.length; i++){ %>
+    <div class="post">
+        <h3 class="post-item post-title-archive">
+            <a href="<%= $data[i].item.permalink %>"><%= $data[i].item.title %></a>
+        </h3>
+        <div class="post-item post-meta-archive">
+            <span><i class="iconfont icon-today-sharp"></i>&nbsp;<%= $data[i].item.date %></span>
+            <span>
+                <i class="iconfont icon-pricetags-sharp"></i>&nbsp;<% if ($data[i].item.tags && $data[i].item.tags.length > 0) { %><% for(var j = 0; j < $data[i].item.tags.length; j++){ %><%= $data[i].item.tags[j] %>&nbsp;<% } %><% } else { %>无标签<% } %>
+            </span>
+        </div>
+    </div>
+    <% } %>
+</script>
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/art-template@4.13.2/lib/template-web.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/fuse.js@6.5.3/dist/fuse.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Go gc垃圾回收 - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+<meta name="keywords" content="golang" />
+
+
+<meta property="og:title" content="Go gc垃圾回收" />
+<meta name="twitter:title" content="Go gc垃圾回收" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/post/go-gc/" /><meta property="og:description" content="垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。 Golang中的垃圾回收主要应用三色标记法，GC" />
+<meta name="twitter:description" content="垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。 Golang中的垃圾回收主要应用三色标记法，GC" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2021-03-28T17:36:55+08:00" /><meta property="article:modified_time" content="2021-03-28T17:36:55+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/go-gc/">Go gc垃圾回收</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-28</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3894 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;8 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <p>垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。</p>
+<p>Golang中的垃圾回收主要应用三色标记法，GC过程和其他用户goroutine可并发运行，但需要一定时间的<strong>STW(stop the world)</strong>，STW的过程中，CPU不执行用户代码，全部用于垃圾回收，这个过程的影响很大，Golang进行了多次的迭代优化来解决这个问题。</p>
+<h2 id="go-v13之前的标记-清除mark-and-sweep算法">Go V1.3之前的标记-清除(mark and sweep)算法</h2>
+<p>此算法主要有两个主要的步骤：</p>
+<ul>
+<li>标记(Mark phase)</li>
+<li>清除(Sweep phase)</li>
+</ul>
+<p><strong>第一步</strong>，暂停程序业务逻辑, 找出不可达的对象，然后做上标记。第二步，回收标记好的对象。</p>
+<p>操作非常简单，但是有一点需要额外注意：mark and sweep算法在执行的时候，需要程序暂停！即 <code>STW(stop the world)</code>。也就是说，这段时间程序会卡在哪儿。</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134738450-233387257.png" alt="" />
+</p>
+<p><strong>第二步</strong>, 开始标记，程序找出它所有可达的对象，并做上标记。如下图所示：</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134816509-1225046791.png" alt="" />
+</p>
+<p><strong>第三步</strong>,  标记完了之后，然后开始清除未标记的对象. 结果如下.</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134831594-2009455091-20211027173922379.png" alt="" />
+</p>
+<p><strong>第四步</strong>, 停止暂停，让程序继续跑。然后循环重复这个过程，直到process程序生命周期结束。</p>
+<h2 id="标记-清扫mark-and-sweep的缺点">标记-清扫(mark and sweep)的缺点</h2>
+<ul>
+<li>STW，stop the world；让程序暂停，程序出现卡顿 <strong>(重要问题)</strong>。</li>
+<li>标记需要扫描整个heap</li>
+<li>清除数据会产生heap碎片</li>
+</ul>
+<p>所以Go V1.3版本之前就是以上来实施的,  流程是</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134844294-342675403.png" alt="" />
+</p>
+<p>Go V1.3 做了简单的优化,将STW提前, 减少STW暂停的时间范围.如下所示</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134855214-759969222.png" alt="" />
+</p>
+<p><strong>这里面最重要的问题就是：mark-and-sweep 算法会暂停整个程序</strong> 。</p>
+<p>Go是如何面对并这个问题的呢？接下来G V1.5版本 就用<strong>三色并发标记法</strong>来优化这个问题.</p>
+<h2 id="go-v15的三色并发标记法">Go V1.5的三色并发标记法</h2>
+<p>三色标记法 实际上就是通过三个阶段的标记来确定清楚的对象都有哪些. 我们来看一下具体的过程.</p>
+<p><strong>第一步</strong> , 就是只要是新创建的对象,默认的颜色都是标记为“白色”.</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134911273-2112264944.png" alt="" />
+</p>
+<p>这里面需要注意的是, 所谓“程序”, 则是一些对象的跟节点集合.</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134925182-2094352308.png" alt="" />
+</p>
+<p>所以上图,可以转换如下的方式来表示.</p>
+<p><strong>第二步</strong>, 每次GC回收开始, 然后从根节点开始遍历所有对象，把遍历到的对象从白色集合放入“灰色”集合。</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134941161-1656159709.png" alt="" />
+</p>
+<p><strong>第三步</strong>, 遍历灰色集合，将灰色对象引用的对象从白色集合放入灰色集合，之后将此灰色对象放入黑色集合</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819134953014-21532478.png" alt="" />
+</p>
+<p><strong>第四步</strong>, 重复<strong>第三步</strong>, 直到灰色中无任何对象.</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135004206-1064384172.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135016489-1757177171.png" alt="" />
+</p>
+<p><strong>第五步</strong>: 回收所有的白色标记表的对象. 也就是回收垃圾.</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135027150-1874800038.png" alt="" />
+</p>
+<p>以上便是<code>三色并发标记法</code>, 不难看出,我们上面已经清楚的体现<code>三色</code>的特性, 那么又是如何实现并行的呢?</p>
+<blockquote>
+<p>Go是如何解决标记-清除(mark and sweep)算法中的卡顿(stw，stop the world)问题的呢？</p>
+</blockquote>
+<h2 id="没有stw的三色标记法">没有STW的三色标记法</h2>
+<pre><code>   我们还是基于上述的三色并发标记法来说, 他是一定要依赖STW的. 因为如果不暂停程序, 程序的逻辑改变对象引用关系, 这种动作如果在标记阶段做了修改，会影响标记结果的正确性。我们举一个场景.
+</code></pre>
+<p>如果三色标记法, 标记过程不使用STW将会发生什么事情?</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135047095-74956246.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135057754-1240020023.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135106630-1309646112.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135115969-1266875961.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135127260-129035420.png" alt="" />
+</p>
+<p>可以看出，有两个问题, 在三色标记法中,是不希望被发生的</p>
+<ul>
+<li>条件1: 一个白色对象被黑色对象引用**(白色被挂在黑色下)**</li>
+<li>条件2: 灰色对象与它之间的可达关系的白色对象遭到破坏**(灰色同时丢了该白色)**</li>
+</ul>
+<p>当以上两个条件同时满足时, 就会出现对象丢失现象!</p>
+<p>当然, 如果上述中的白色对象3, 如果他还有很多下游对象的话, 也会一并都清理掉.</p>
+<pre><code>   为了防止这种现象的发生，最简单的方式就是STW，直接禁止掉其他用户程序对对象引用关系的干扰，但是**STW的过程有明显的资源浪费，对所有的用户程序都有很大影响**，如何能在保证对象不丢失的情况下合理的尽可能的提高GC效率，减少STW时间呢？
+
+   答案就是, 那么我们只要使用一个机制,来破坏上面的两个条件就可以了.
+</code></pre>
+<h2 id="屏障机制">屏障机制</h2>
+<p>我们让GC回收器,满足下面两种情况之一时,可保对象不丢失. 所以引出两种方式.</p>
+<h3 id="强-弱-三色不变式">“强-弱” 三色不变式</h3>
+<ul>
+<li>强三色不变式</li>
+</ul>
+<p>不存在黑色对象引用到白色对象的指针。</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135139558-344954774.png" alt="" />
+</p>
+<ul>
+<li>弱三色不变式</li>
+</ul>
+<p>所有被黑色对象引用的白色对象都处于灰色保护状态.</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135148387-101140928.png" alt="" />
+</p>
+<p>为了遵循上述的两个方式,Golang团队初步得到了如下具体的两种屏障方式“插入屏障”, “删除屏障”.</p>
+<h3 id="插入屏障">插入屏障</h3>
+<p><code>具体操作</code>: 在A对象引用B对象的时候，B对象被标记为灰色。(将B挂在A下游，B必须被标记为灰色)</p>
+<p><code>满足</code>: <strong>强三色不变式</strong>. (不存在黑色对象引用白色对象的情况了， 因为白色会强制变成灰色)</p>
+<p>伪码如下:</p>
+<pre><code class="language-go">添加下游对象(当前下游对象slot, 新下游对象ptr) {   
+  //1
+  标记灰色(新下游对象ptr)   
+  //2
+  当前下游对象slot = 新下游对象ptr                   
+}
+</code></pre>
+<p>场景：</p>
+<pre><code class="language-go">A.添加下游对象(nil, B)   //A 之前没有下游， 新添加一个下游对象B， B被标记为灰色
+A.添加下游对象(C, B)     //A 将下游对象C 更换为B，  B被标记为灰色
+</code></pre>
+<pre><code>   这段伪码逻辑就是写屏障,. 我们知道,黑色对象的内存槽有两种位置, `栈`和`堆`. 栈空间的特点是容量小,但是要求相应速度快,因为函数调用弹出频繁使用, 所以“插入屏障”机制,在**栈空间的对象操作中不使用**. 而仅仅使用在堆空间对象的操作中.
+
+   接下来，我们用几张图，来模拟整个一个详细的过程， 希望您能够更可观的看清晰整体流程。
+</code></pre>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135201586-57846882.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135211671-868120829.png" alt="" />
+</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135223109-2106803157.png" alt="" />
+</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135236167-362320582.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135244575-604253158.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135252635-1341263073.png" alt="" />
+</p>
+<hr>
+<p>但是如果栈不添加,当全部三色标记扫描之后,栈上有可能依然存在白色对象被引用的情况(如上图的对象9).  所以要对栈重新进行三色标记扫描, 但这次为了对象不丢失, 要对本次标记扫描启动STW暂停. 直到栈空间的三色标记结束.</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135303472-912253222.png" alt="" />
+</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135312053-1008932568.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135321619-1934603915.png" alt="" />
+</p>
+<hr>
+<p>最后将栈和堆空间 扫描剩余的全部 白色节点清除.  这次STW大约的时间在10~100ms间.</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135333388-598872633.png" alt="" />
+</p>
+<hr>
+<h3 id="删除屏障">删除屏障</h3>
+<p><code>具体操作</code>: 被删除的对象，如果自身为灰色或者白色，那么被标记为灰色。</p>
+<p><code>满足</code>: <strong>弱三色不变式</strong>. (保护灰色对象到白色对象的路径不会断)</p>
+<p>伪代码：</p>
+<pre><code class="language-go">添加下游对象(当前下游对象slot， 新下游对象ptr) {
+  //1
+  if (当前下游对象slot是灰色 || 当前下游对象slot是白色) {
+        标记灰色(当前下游对象slot)     //slot为被删除对象， 标记为灰色
+  }
+  //2
+  当前下游对象slot = 新下游对象ptr
+}
+</code></pre>
+<p>场景：</p>
+<pre><code class="language-go">A.添加下游对象(B, nil)   //A对象，删除B对象的引用。  B被A删除，被标记为灰(如果B之前为白)
+A.添加下游对象(B, C)       //A对象，更换下游B变成C。   B被A删除，被标记为灰(如果B之前为白)
+</code></pre>
+<p>接下来，我们用几张图，来模拟整个一个详细的过程， 希望您能够更可观的看清晰整体流程。</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135348055-1158501196.png" alt="" />
+</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135400890-1846151981.png" alt="" />
+</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135412436-690511697.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135421194-1000843871.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135434482-8253610.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135444053-2108369335.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135451572-2076031490.png" alt="" />
+</p>
+<hr>
+<p>这种方式的回收精度低，一个对象即使被删除了最后一个指向它的指针也依旧可以活过这一轮，在下一轮GC中被清理掉。</p>
+<h2 id="go-v18的混合写屏障hybrid-write-barrier机制">Go V1.8的混合写屏障(hybrid write barrier)机制</h2>
+<p>插入写屏障和删除写屏障的短板：</p>
+<ul>
+<li>插入写屏障：结束时需要STW来重新扫描栈，标记栈上引用的白色对象的存活；</li>
+<li>删除写屏障：回收精度低，GC开始时STW扫描堆栈来记录初始快照，这个过程会保护开始时刻的所有存活对象。</li>
+</ul>
+<p>Go V1.8版本引入了混合写屏障机制（hybrid write barrier），避免了对栈re-scan的过程，极大的减少了STW的时间。结合了两者的优点。</p>
+<hr>
+<h3 id="混合写屏障规则">混合写屏障规则</h3>
+<p><code>具体操作</code>:</p>
+<p>1、GC开始将栈上的对象全部扫描并标记为黑色(之后不再进行第二次重复扫描，无需STW)，</p>
+<p>2、GC期间，任何在栈上创建的新对象，均为黑色。</p>
+<p>3、被删除的对象标记为灰色。</p>
+<p>4、被添加的对象标记为灰色。</p>
+<p><code>满足</code>: 变形的<strong>弱三色不变式</strong>.</p>
+<p>伪代码：</p>
+<pre><code class="language-go">添加下游对象(当前下游对象slot, 新下游对象ptr) {
+    //1 
+        标记灰色(当前下游对象slot)    //只要当前下游对象被移走，就标记灰色
+    //2 
+    标记灰色(新下游对象ptr)    
+    //3
+    当前下游对象slot = 新下游对象ptr
+}
+</code></pre>
+<blockquote>
+<p>这里我们注意， 屏障技术是不在栈上应用的，因为要保证栈的运行效率。</p>
+</blockquote>
+<h3 id="混合写屏障的具体场景分析">混合写屏障的具体场景分析</h3>
+<p>接下来，我们用几张图，来模拟整个一个详细的过程， 希望您能够更可观的看清晰整体流程。</p>
+<blockquote>
+<p>注意混合写屏障是Gc的一种屏障机制，所以只是当程序执行GC的时候，才会触发这种机制。</p>
+</blockquote>
+<h4 id="gc开始扫描栈区将可达对象全部标记为黑">GC开始：扫描栈区，将可达对象全部标记为黑</h4>
+<p><img class="img-zoomable" src="/images/2344773-20210819135503137-531849594.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135511450-1733597481.png" alt="" />
+</p>
+<hr>
+<h4 id="场景一-对象被一个堆对象删除引用成为栈对象的下游">场景一： 对象被一个堆对象删除引用，成为栈对象的下游</h4>
+<blockquote>
+<p>伪代码</p>
+</blockquote>
+<pre><code class="language-go">//前提：堆对象4-&gt;对象7 = 对象7；  //对象7 被 对象4引用
+栈对象1-&gt;对象7 = 堆对象7；  //将堆对象7 挂在 栈对象1 下游
+堆对象4-&gt;对象7 = null；    //对象4 删除引用 对象7
+</code></pre>
+<p><img class="img-zoomable" src="/images/2344773-20210819135529724-1494889190.png" alt="" />
+</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135541856-78983193.png" alt="" />
+</p>
+<h4 id="场景二-对象被一个栈对象删除引用成为另一个栈对象的下游">场景二： 对象被一个栈对象删除引用，成为另一个栈对象的下游</h4>
+<blockquote>
+<p>伪代码</p>
+</blockquote>
+<pre><code class="language-go">new 栈对象9；
+对象8-&gt;对象3 = 对象3；      //将栈对象3 挂在 栈对象9 下游
+对象2-&gt;对象3 = null；      //对象2 删除引用 对象3
+</code></pre>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135551718-1314133326.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135600005-331385812.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135608830-251769685.png" alt="" />
+</p>
+<hr>
+<h4 id="场景三对象被一个堆对象删除引用成为另一个堆对象的下游">场景三：对象被一个堆对象删除引用，成为另一个堆对象的下游</h4>
+<blockquote>
+<p>伪代码</p>
+</blockquote>
+<pre><code class="language-go">堆对象10-&gt;对象7 = 堆对象7；       //将堆对象7 挂在 堆对象10 下游
+堆对象4-&gt;对象7 = null；         //对象4 删除引用 对象7
+</code></pre>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135618080-1033051038.png" alt="" />
+</p>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135627156-78881672.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135635135-664737074.png" alt="" />
+</p>
+<hr>
+<h4 id="场景四对象从一个栈对象删除引用成为另一个堆对象的下游">场景四：对象从一个栈对象删除引用，成为另一个堆对象的下游</h4>
+<blockquote>
+<p>伪代码</p>
+</blockquote>
+<pre><code class="language-go">堆对象10-&gt;对象7 = 堆对象7；       //将堆对象7 挂在 堆对象10 下游
+堆对象4-&gt;对象7 = null；         //对象4 删除引用 对象7
+</code></pre>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210819135644330-1501907443.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135652995-1683709771.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210819135702628-2039712813-20211027173902410.png" alt="" />
+</p>
+<hr>
+<pre><code>   Golang中的混合写屏障满足`弱三色不变式`，结合了删除写屏障和插入写屏障的优点，只需要在开始时并发扫描各个goroutine的栈，使其变黑并一直保持，这个过程不需要STW，而标记结束后，因为栈在扫描后始终是黑色的，也无需再进行re-scan操作了，减少了STW的时间。
+</code></pre>
+<h2 id="总结">总结</h2>
+<pre><code>   以上便是Golang的GC全部的标记-清除逻辑及场景演示全过程。
+</code></pre>
+<p>GoV1.3- 普通标记清除法，整体过程需要启动STW，效率极低。</p>
+<p>GoV1.5- 三色标记法， 堆空间启动写屏障，栈空间不启动，全部扫描之后，需要重新扫描一次栈(需要STW)，效率普通</p>
+<p>GoV1.8-三色标记法，混合写屏障机制， 栈空间不启动，堆空间启动。整个过程几乎不需要STW，效率较高。</p>
+<h2 id="文章转自">文章转自</h2>
+<p><a href="https://www.jianshu.com/p/4c5a303af470" target="_blank">https://www.jianshu.com/p/4c5a303af470</a></p>
+
+    </div>
+</article>
+
+
+<div class="license markdown-body">
+    <blockquote>
+        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
+    </blockquote>
+</div>
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#go-v13之前的标记-清除mark-and-sweep算法">Go V1.3之前的标记-清除(mark and sweep)算法</a></li>
+    <li><a href="#标记-清扫mark-and-sweep的缺点">标记-清扫(mark and sweep)的缺点</a></li>
+    <li><a href="#go-v15的三色并发标记法">Go V1.5的三色并发标记法</a></li>
+    <li><a href="#没有stw的三色标记法">没有STW的三色标记法</a></li>
+    <li><a href="#屏障机制">屏障机制</a>
+      <ul>
+        <li><a href="#强-弱-三色不变式">“强-弱” 三色不变式</a></li>
+        <li><a href="#插入屏障">插入屏障</a></li>
+        <li><a href="#删除屏障">删除屏障</a></li>
+      </ul>
+    </li>
+    <li><a href="#go-v18的混合写屏障hybrid-write-barrier机制">Go V1.8的混合写屏障(hybrid write barrier)机制</a>
+      <ul>
+        <li><a href="#混合写屏障规则">混合写屏障规则</a></li>
+        <li><a href="#混合写屏障的具体场景分析">混合写屏障的具体场景分析</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#文章转自">文章转自</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go-v13之前的标记-清除mark-and-sweep算法">Go V1.3之前的标记-清除(mark and sweep)算法</a></li>
+    <li><a href="#标记-清扫mark-and-sweep的缺点">标记-清扫(mark and sweep)的缺点</a></li>
+    <li><a href="#go-v15的三色并发标记法">Go V1.5的三色并发标记法</a></li>
+    <li><a href="#没有stw的三色标记法">没有STW的三色标记法</a></li>
+    <li><a href="#屏障机制">屏障机制</a>
+      <ul>
+        <li><a href="#强-弱-三色不变式">“强-弱” 三色不变式</a></li>
+        <li><a href="#插入屏障">插入屏障</a></li>
+        <li><a href="#删除屏障">删除屏障</a></li>
+      </ul>
+    </li>
+    <li><a href="#go-v18的混合写屏障hybrid-write-barrier机制">Go V1.8的混合写屏障(hybrid write barrier)机制</a>
+      <ul>
+        <li><a href="#混合写屏障规则">混合写屏障规则</a></li>
+        <li><a href="#混合写屏障的具体场景分析">混合写屏障的具体场景分析</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#文章转自">文章转自</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>创建者模式 - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+<meta name="keywords" content="设计模式" />
+
+
+<meta property="og:title" content="创建者模式" />
+<meta name="twitter:title" content="创建者模式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/post/creator/" /><meta property="og:description" content="单例模式 为什么要用单例模式 保证一个对象只有一个实例 ，减少内存开销。比如一些可以复用一个连接的网络，比如http2 client等，而且可以减少网络开销。 为什么不用个全局变量控制 因为任何代码都有可能覆盖掉" />
+<meta name="twitter:description" content="单例模式 为什么要用单例模式 保证一个对象只有一个实例 ，减少内存开销。比如一些可以复用一个连接的网络，比如http2 client等，而且可以减少网络开销。 为什么不用个全局变量控制 因为任何代码都有可能覆盖掉" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2022-04-23T16:28:58+08:00" /><meta property="article:modified_time" content="2022-04-23T16:28:58+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/creator/">创建者模式</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-04-23</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1444 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;3 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="单例模式">单例模式</h2>
+<h3 id="为什么要用单例模式">为什么要用单例模式</h3>
+<p><strong>保证一个对象只有一个实例</strong> ，减少内存开销。比如一些可以复用一个连接的网络，比如<code>http2 client</code>等，而且可以减少网络开销。</p>
+<h3 id="为什么不用个全局变量控制">为什么不用个全局变量控制</h3>
+<p>因为任何代码都有可能覆盖掉那些变量的内容， 从而引发程序崩溃。</p>
+<h3 id="代码实现">代码实现</h3>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;sync&quot;
+)
+
+type Single struct {
+}
+
+var single *Single
+var once = &amp;sync.Once{}
+
+func NewSingle() *Single {
+	once.Do(func() {
+		single = &amp;Single{
+			// 初始化
+		}
+	})
+	return single
+}
+
+func main() {
+	for i := 0; i &lt; 1000; i++ {
+		s := NewSingle()
+		fmt.Printf(&quot;create %d,address %p\n&quot;, i, s)
+	}
+}
+
+/*
+结果：
+create 0,address 0x1164fe0
+create 1,address 0x1164fe0
+create 2,address 0x1164fe0
+create 3,address 0x1164fe0
+create 4,address 0x1164fe0
+create 5,address 0x1164fe0
+create 6,address 0x1164fe0
+create 7,address 0x1164fe0
+create 8,address 0x1164fe0
+...
+*/
+</code></pre>
+<h2 id="工厂模式">工厂模式</h2>
+<p>我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。比如电脑支持<code>intel cpu</code>，现在要支持<code>amd cpu</code>，我们就可以让所有<code>cpu</code>实现接口。</p>
+<h3 id="简单工厂模式">简单工厂模式</h3>
+<p>实现简单，不适合复杂场景</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;errors&quot;
+	&quot;fmt&quot;
+)
+
+// 工厂接口
+type CpuFactory interface {
+	Run() string
+}
+
+type IntelCpu struct{}
+
+func (*IntelCpu) Run() string {
+	return &quot;intel cpu is running&quot;
+}
+
+type AmdCpu struct{}
+
+func (*AmdCpu) Run() string {
+	return &quot;amd cpu is running&quot;
+}
+
+func NewCpu(name string) (CpuFactory, error) {
+	switch name {
+	case &quot;intel&quot;:
+		return &amp;IntelCpu{}, nil
+	case &quot;amd&quot;:
+		return &amp;AmdCpu{}, nil
+	default:
+		return nil, errors.New(&quot;no such cpu&quot;)
+	}
+}
+
+func main() {
+	c1, err := NewCpu(&quot;intel&quot;)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(c1.Run())
+	c2, err := NewCpu(&quot;amd&quot;)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(c2.Run())
+	_, err = NewCpu(&quot;other&quot;)
+	fmt.Println(err)
+}
+/*
+结果：
+intel cpu is running
+amd cpu is running
+no such cpu
+*/
+</code></pre>
+<h3 id="工厂方法模式">工厂方法模式</h3>
+<p>大部分时候，我们创建对象要创建很多逻辑，比如初始化变量，从远端请求<code>config</code>等等。这是我们需要每次<code>struct</code>提供个创建方法。</p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;errors&quot;
+	&quot;fmt&quot;
+)
+
+// 工厂接口
+type CpuFactory interface {
+	Run() string
+}
+
+type IntelCpu struct{}
+
+func (*IntelCpu) Run() string {
+	return &quot;intel cpu is running&quot;
+}
+
+func NewIntelCpu() *IntelCpu {
+	// 做创建逻辑
+	return &amp;IntelCpu{}
+}
+
+type AmdCpu struct{}
+
+func (*AmdCpu) Run() string {
+	return &quot;amd cpu is running&quot;
+}
+
+func NewAmdCpu() *AmdCpu {
+	// 做创建逻辑
+	return &amp;AmdCpu{}
+}
+
+func NewCpu(name string) (CpuFactory, error) {
+	switch name {
+	case &quot;intel&quot;:
+		return NewIntelCpu(), nil
+	case &quot;amd&quot;:
+		return NewAmdCpu(), nil
+	default:
+		return nil, errors.New(&quot;no such cpu&quot;)
+	}
+}
+
+func main() {
+	c1, err := NewCpu(&quot;intel&quot;)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(c1.Run())
+	c2, err := NewCpu(&quot;amd&quot;)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(c2.Run())
+	_, err = NewCpu(&quot;other&quot;)
+	fmt.Println(err)
+}
+/*
+结果：
+intel cpu is running
+amd cpu is running
+no such cpu
+*/
+</code></pre>
+<h3 id="抽象工厂模式">抽象工厂模式</h3>
+<p>抽象工厂模式则是针对的多个产品等级结构， 我们可以将一种产品等级想象为一个产品族，所谓的产品族，是指位于不同产品等级结构中功能相关联的产品组成的家族。用于复杂场景，比如<code>amd</code>和<code>intel</code>都生成<code>cpu</code>和<code>gpu</code></p>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+// 抽象工厂接口
+type ElementAbstractFactory interface {
+	CreateCpu() Cpu // cpu
+	CreateGpu() Gpu // Gpu
+}
+
+func GetElementAbstractFactory(brand string) (ElementAbstractFactory, error) {
+	if brand == &quot;intel&quot; {
+		return &amp;intel{}, nil
+	}
+
+	if brand == &quot;amd&quot; {
+		return &amp;amd{}, nil
+	}
+
+	return nil, fmt.Errorf(&quot;Wrong brand type passed&quot;)
+}
+
+// cpu 具体工厂
+type Cpu interface {
+	Run() string
+}
+
+type Gpu interface {
+	Graphics() string
+}
+
+type intel struct{}
+
+func (*intel) CreateCpu() Cpu {
+	return &amp;intelCpu{}
+}
+
+func (*intel) CreateGpu() Gpu {
+	return &amp;intelGpu{}
+}
+
+type intelCpu struct{}
+
+func (*intelCpu) Run() string {
+	return &quot;intel cpu is running&quot;
+}
+
+type intelGpu struct{}
+
+func (*intelGpu) Graphics() string {
+	return &quot;intel gpu is working on graphics&quot;
+}
+
+type amd struct{}
+
+func (*amd) CreateCpu() Cpu {
+	return &amp;amdCpu{}
+}
+
+func (*amd) CreateGpu() Gpu {
+	return &amp;amdGpu{}
+}
+
+type amdCpu struct{}
+
+func (*amdCpu) Run() string {
+	return &quot;amd cpu is running&quot;
+}
+
+type amdGpu struct{}
+
+func (*amdGpu) Graphics() string {
+	return &quot;amd gpu is working on graphics&quot;
+}
+
+func main() {
+	e, _ := GetElementAbstractFactory(&quot;intel&quot;)
+	cpu := e.CreateCpu()
+	gpu := e.CreateGpu()
+	fmt.Println(cpu.Run())
+	fmt.Println(gpu.Graphics())
+	e2, _ := GetElementAbstractFactory(&quot;amd&quot;)
+	cpu2 := e2.CreateCpu()
+	gpu2 := e2.CreateGpu()
+	fmt.Println(cpu2.Run())
+	fmt.Println(gpu2.Graphics())
+}
+/*
+intel cpu is running
+intel gpu is working on graphics
+amd cpu is running
+amd gpu is working on graphics
+*/
+</code></pre>
+<h2 id="生成器模式">生成器模式</h2>
+<p>在对其进行构造时需要对诸多成员变量和嵌套对象进行繁复的初始化工作。 这些初始化代码通常深藏于一个包含众多参数且让人基本看不懂的构造函数中； 甚至还有更糟糕的情况， 那就是这些代码散落在客户端代码的多个位置。比如在<code>go</code>中，就可以利用指针传递完成初始化。</p>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+// Computer 是生成器接口
+type Computer interface {
+	Cpu()
+	Gpu()
+}
+
+type Director struct {
+	builder Computer
+}
+
+// NewDirector ...
+func NewDirector(builder Computer) *Director {
+	return &amp;Director{
+		builder: builder,
+	}
+}
+
+// Construct Product
+func (d *Director) Construct() {
+	d.builder.Cpu()
+	d.builder.Gpu()
+}
+
+type Computer1 struct {
+	cpu string
+	gpu string
+}
+
+func (c *Computer1) Cpu() {
+	c.cpu = &quot;intel&quot;
+}
+
+func (c *Computer1) Gpu() {
+	c.gpu = &quot;nvida&quot;
+}
+
+type Computer2 struct {
+	cpu string
+	gpu string
+}
+
+func (c *Computer2) Cpu() {
+	c.cpu = &quot;amd&quot;
+}
+
+func (c *Computer2) Gpu() {
+	c.gpu = &quot;amd&quot;
+}
+
+func main() {
+	c1 := Computer1{}
+	d := NewDirector(&amp;c1)
+	fmt.Printf(&quot;%+v\n&quot;, c1)
+	d.Construct()
+	fmt.Printf(&quot;%+v\n&quot;, c1)
+
+	c2 := Computer2{}
+	d2 := NewDirector(&amp;c2)
+	fmt.Printf(&quot;%+v\n&quot;, c2)
+	d2.Construct()
+	fmt.Printf(&quot;%+v\n&quot;, c2)
+}
+/*
+{cpu: gpu:}
+{cpu:intel gpu:nvida}
+{cpu: gpu:}
+{cpu:amd gpu:amd}
+*/
+</code></pre>
+<h2 id="原型模式">原型模式</h2>
+<p>原型模式使对象能复制自身，并且暴露到接口中，使客户端面向接口编程时，不知道接口实际对象的情况下生成新的对象。</p>
+<p>原型模式配合原型管理器使用，使得客户端在不知道具体类的情况下，通过接口管理器得到新的实例，并且包含部分预设定配置。</p>
+<pre><code class="language-go">package main
+
+//Cloneable 是原型对象需要实现的接口
+type Cloneable interface {
+	Clone() Cloneable
+}
+
+type PrototypeManager struct {
+	prototypes map[string]Cloneable
+}
+
+func NewPrototypeManager() *PrototypeManager {
+	return &amp;PrototypeManager{
+		prototypes: make(map[string]Cloneable),
+	}
+}
+
+func (p *PrototypeManager) Get(name string) Cloneable {
+	return p.prototypes[name].Clone()
+}
+
+func (p *PrototypeManager) Set(name string, prototype Cloneable) {
+	p.prototypes[name] = prototype
+}
+</code></pre>
+<h2 id="references">References</h2>
+<p><a href="https://github.com/senghoo/golang-design-pattern" target="_blank">https://github.com/senghoo/golang-design-pattern</a></p>
+<p><a href="https://refactoringguru.cn/design-patterns" target="_blank">https://refactoringguru.cn/design-patterns</a></p>
+<p><a href="https://lailin.xyz/post/singleton.html" target="_blank">https://lailin.xyz/post/singleton.html</a></p>
+
+    </div>
+</article>
+
+
+<div class="license markdown-body">
+    <blockquote>
+        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
+    </blockquote>
+</div>
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#单例模式">单例模式</a>
+      <ul>
+        <li><a href="#为什么要用单例模式">为什么要用单例模式</a></li>
+        <li><a href="#为什么不用个全局变量控制">为什么不用个全局变量控制</a></li>
+        <li><a href="#代码实现">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#工厂模式">工厂模式</a>
+      <ul>
+        <li><a href="#简单工厂模式">简单工厂模式</a></li>
+        <li><a href="#工厂方法模式">工厂方法模式</a></li>
+        <li><a href="#抽象工厂模式">抽象工厂模式</a></li>
+      </ul>
+    </li>
+    <li><a href="#生成器模式">生成器模式</a></li>
+    <li><a href="#原型模式">原型模式</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#单例模式">单例模式</a>
+      <ul>
+        <li><a href="#为什么要用单例模式">为什么要用单例模式</a></li>
+        <li><a href="#为什么不用个全局变量控制">为什么不用个全局变量控制</a></li>
+        <li><a href="#代码实现">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#工厂模式">工厂模式</a>
+      <ul>
+        <li><a href="#简单工厂模式">简单工厂模式</a></li>
+        <li><a href="#工厂方法模式">工厂方法模式</a></li>
+        <li><a href="#抽象工厂模式">抽象工厂模式</a></li>
+      </ul>
+    </li>
+    <li><a href="#生成器模式">生成器模式</a></li>
+    <li><a href="#原型模式">原型模式</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

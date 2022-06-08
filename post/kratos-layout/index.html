@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>通过 layout 探索 kratos 运行原理 - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+
+<meta property="og:title" content="通过 layout 探索 kratos 运行原理" />
+<meta name="twitter:title" content="通过 layout 探索 kratos 运行原理" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/post/kratos-layout/" /><meta property="og:description" content="创建项目 首先需要安装好对应的依赖环境，以及工具： go 下载 protoc go install google.golang.org/protobuf/cmd/protoc-gen-go@latest protoc-gen-go go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest # 创建项目模板 kratos new helloworld cd helloworld # 拉取项目依赖 go mod download # 生成proto模板 kratos proto add api/helloworld/helloworld.proto # 生成proto源码 kratos proto client api/helloworld/helloworld.proto # 生成server模板 kratos proto server api/helloworld/helloworld.proto" />
+<meta name="twitter:description" content="创建项目 首先需要安装好对应的依赖环境，以及工具： go 下载 protoc go install google.golang.org/protobuf/cmd/protoc-gen-go@latest protoc-gen-go go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest # 创建项目模板 kratos new helloworld cd helloworld # 拉取项目依赖 go mod download # 生成proto模板 kratos proto add api/helloworld/helloworld.proto # 生成proto源码 kratos proto client api/helloworld/helloworld.proto # 生成server模板 kratos proto server api/helloworld/helloworld.proto" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2021-10-02T18:03:24+08:00" /><meta property="article:modified_time" content="2021-10-02T18:03:24+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/kratos-layout/">通过 layout 探索 kratos 运行原理</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-10-02</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1158 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;3 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;无标签</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="创建项目">创建项目</h2>
+<p>首先需要安装好对应的依赖环境，以及工具：</p>
+<ol>
+<li>go
+<ul>
+<li><a href="https://studygolang.com/dl" target="_blank">下载</a></li>
+</ul>
+</li>
+<li>protoc
+<ul>
+<li><code>go install google.golang.org/protobuf/cmd/protoc-gen-go@latest</code></li>
+</ul>
+</li>
+<li>protoc-gen-go
+<ul>
+<li><code>go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest</code></li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-bash"># 创建项目模板
+kratos new helloworld
+
+cd helloworld
+# 拉取项目依赖
+go mod download
+# 生成proto模板
+kratos proto add api/helloworld/helloworld.proto
+# 生成proto源码
+kratos proto client api/helloworld/helloworld.proto
+# 生成server模板
+kratos proto server api/helloworld/helloworld.proto -t internal/service
+</code></pre>
+<p>执行命令后,会在当前目录下生成一个 service 工程,工程骨架如下,具体的工程骨架说明可以访问 <a href="https://go-kratos.dev/docs/intro/layout" target="_blank">layout</a></p>
+<p><img class="img-zoomable" src="/images/2344773-20210902224825993-166434377.png" alt="" />
+</p>
+<h2 id="运行项目">运行项目</h2>
+<pre><code class="language-shell"># 生成所有proto源码、wire等等
+go generate ./...
+
+# 编译成可执行文件
+go build -o ./bin/ ./...
+
+# 运行项目
+./bin/helloworld -conf ./configs
+</code></pre>
+<p>看到如下输出则证明项目启动正常</p>
+<pre><code class="language-bash">level=INFO module=app service_id=7114ad8a-b3bf-11eb-a1b9-f0189850d2cb service_name=  version=
+level=INFO module=transport/grpc msg=[gRPC] server listening on: [::]:9000
+level=INFO module=transport/http msg=[HTTP] server listening on: [::]:8000 
+</code></pre>
+<p>测试接口</p>
+<pre><code class="language-shell">curl 'http://127.0.0.1:8000/helloworld/krtaos'
+
+输出：
+{
+  &quot;message&quot;: &quot;Hello kratos&quot;
+}
+</code></pre>
+<h2 id="应用是如何跑起来的">应用是如何跑起来的?</h2>
+<p><img class="img-zoomable" src="/images/2344773-20210902224841022-2051641947.png" alt="" />
+</p>
+<p>通过上面的图例👆,我们可以直观观察到应用的调用链,简化来说如下图流程所示👇</p>
+<p><img class="img-zoomable" src="/images/2344773-20210902224857367-1591524951.png" alt="" />
+</p>
+<h3 id="1-注入依赖并调用-newapp-方法">1. 注入依赖并调用 newApp() 方法</h3>
+<pre><code class="language-go">// helloword/cmd/main.go
+func main() {
+    flag.Parse()
+    logger := log.NewStdLogger(os.Stdout)
+
+    // 调用 go-kratos/kratos/v2/config,创建 config 实例,并指定了来源和配置解析方法
+    c := config.New(
+    config.WithSource(
+        file.NewSource(flagconf),
+    ),
+    config.WithDecoder(func(kv *config.KeyValue, v map[string]interface{}) error {
+        return yaml.Unmarshal(kv.Value, v)
+    }),
+    )
+    if err := c.Load(); err != nil {
+        panic(err)
+    }
+
+    // 将配置扫描到,通过 proto 声明的 conf struct 上
+    var bc conf.Bootstrap
+    if err := c.Scan(&amp;bc); err != nil {
+        panic(err)
+    }
+
+    // 通过 wire 将依赖注入,并调用 newApp 方法
+    app, cleanup, err := initApp(bc.Server, bc.Data, logger)
+    if err != nil {
+        panic(err)
+    }
+    // 省略代码...
+}
+</code></pre>
+<h3 id="2-创建-kratos-实例">2. 创建 kratos 实例</h3>
+<p>项目 main.go 的 <strong>newApp()</strong> 方法中,调用了 <strong>go-kratos/kratos/v2/app.go</strong> 中的 <strong>kratos.New()</strong> 方法</p>
+<pre><code class="language-go">// helloword/cmd/main.go
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
+    return kratos.New(
+        // 配置应用   
+        kratos.Name(Name),
+        kratos.Version(Version),
+        kratos.Metadata(map[string]string{}),
+        kratos.Logger(logger),
+        // kratos.Server() 传入的 http/grpc 服务会通过 buildInstance() 转换成registry.ServiceInstance struct*
+        kratos.Server(
+            hs,
+            gs,
+        ),
+    )
+}
+</code></pre>
+<p>该方法会返回一个 <strong>App struct</strong>,包含 <strong>Run()</strong> 和 <strong>Stop()</strong> 方法</p>
+<pre><code class="language-go">// go-kratos/kratos/v2/app.go
+type App struct {
+    opts     options //配置
+    ctx      context.Context // 上下文
+    cancel   func() // context 的取消方法
+    instance *registry.ServiceInstance //通过 kratos.Server()声明的实例,并通过 buildInstance() 转换后的 *registry.ServiceInstance struct
+    log      *log.Helper // 日志
+}
+
+// Run executes all OnStart hooks registered with the application's Lifecycle.
+func (a *App) Run() error {
+    // 省略代码...
+}
+
+// Stop gracefully stops the application.
+func (a *App) Stop() error {
+    // 省略代码...
+}
+</code></pre>
+<h3 id="3-调用-run-方法httpsgo-kratosdevbloggo-layout-operation-process3-调用-run-方法">3. 调用 Run() 方法<a href="https://go-kratos.dev/blog/go-layout-operation-process/#3-%e8%b0%83%e7%94%a8-run-%e6%96%b9%e6%b3%95" target="_blank">#</a></h3>
+<p>项目在 main 方法中调用了 <strong>kratos.App struct</strong> 的 <strong>Run()</strong> 方法.</p>
+<pre><code class="language-go">// helloword/cmd/main.go
+// 省略代码...
+// 启动 Kratos
+if err := app.Run(); err != nil {
+    panic(err)
+}
+</code></pre>
+<p><strong>Run()</strong> 方法的实现细节</p>
+<pre><code class="language-go">// go-kratos/kratos/v2/app.go
+func (a *App) Run() error {
+    a.log.Infow(
+        &quot;service_id&quot;, a.opts.id,
+        &quot;service_name&quot;, a.opts.name,
+        &quot;version&quot;, a.opts.version,
+    )
+    g, ctx := errgroup.WithContext(a.ctx)
+        // 遍历通过 kratos.Server() 声明的服务实例
+    for _, srv := range a.opts.servers {
+        srv := srv
+                // 执行两个goroutine, 用于处理服务启动和退出
+        g.Go(func() error {
+            &lt;-ctx.Done() // 阻塞,等待调用 cancel 方法
+            return srv.Stop() // 协程退出后,调用实例的停止方法
+        })
+        g.Go(func() error {
+            return srv.Start() // 调用实例的运行方法
+        })
+    }
+        // 判断是否调用 kratos.Registrar() 配置了注册发现中心
+    if a.opts.registrar != nil {
+        // 将实例注册到注册中心
+        if err := a.opts.registrar.Register(a.opts.ctx, a.instance); err != nil 
+            return err
+        }
+    }
+        // 监听进程退出信号
+    c := make(chan os.Signal, 1)
+    signal.Notify(c, a.opts.sigs...)
+        
+        // 处理进程退出和 context 退出
+    g.Go(func() error {
+        for {
+            select {
+            case &lt;-ctx.Done():
+                return ctx.Err()
+            case &lt;-c:
+                        // 调用 kratos.App 的停止方法
+                a.Stop()
+            }
+        }
+    })
+    if err := g.Wait(); err != nil &amp;&amp; !errors.Is(err, context.Canceled) {
+        return err
+    }
+    return nil
+}
+</code></pre>
+<h3 id="4-应用退出">4. 应用退出</h3>
+<p>Kratos 实例在启动时,监听了系统的进程退出信号,当收到退出信号时,kratos 会调用 <strong>App struct</strong> 的 <strong>Stop()</strong> 方法</p>
+<pre><code class="language-go">// go-kratos/kratos/v2/app.go
+func (a *App) Stop() error {
+    // 判断是否有注册中心配置
+    if a.opts.registrar != nil {
+        // 在注册中心中将实例注销
+        if err := a.opts.registrar.Deregister(a.opts.ctx, a.instance); err != nil {
+            return err
+        }
+    }
+    // 控制 goroutine 的退出,当调用 a.cancel()时,Run()方法中 监听的 &lt;-ctx.Done() 收到消息后,没有阻塞后,方法会调用 server 的 Stop()方法,停止服务
+    if a.cancel != nil {
+        a.cancel()
+    }
+    return nil
+}
+</code></pre>
+<h2 id="文章转自">文章转自：</h2>
+<ul>
+<li><a href="https://go-kratos.dev/blog/go-layout-operation-process/" target="_blank">https://go-kratos.dev/blog/go-layout-operation-process/</a></li>
+</ul>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210902225224456-315933124.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210902225203602-1750987546.gif" alt="" />
+</p>
+
+    </div>
+</article>
+
+
+<div class="license markdown-body">
+    <blockquote>
+        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
+    </blockquote>
+</div>
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#创建项目">创建项目</a></li>
+    <li><a href="#运行项目">运行项目</a></li>
+    <li><a href="#应用是如何跑起来的">应用是如何跑起来的?</a>
+      <ul>
+        <li><a href="#1-注入依赖并调用-newapp-方法">1. 注入依赖并调用 newApp() 方法</a></li>
+        <li><a href="#2-创建-kratos-实例">2. 创建 kratos 实例</a></li>
+        <li><a href="#3-调用-run-方法httpsgo-kratosdevbloggo-layout-operation-process3-调用-run-方法">3. 调用 Run() 方法<a href="https://go-kratos.dev/blog/go-layout-operation-process/#3-%E8%B0%83%E7%94%A8-run-%E6%96%B9%E6%B3%95">#</a></a></li>
+        <li><a href="#4-应用退出">4. 应用退出</a></li>
+      </ul>
+    </li>
+    <li><a href="#文章转自">文章转自：</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#创建项目">创建项目</a></li>
+    <li><a href="#运行项目">运行项目</a></li>
+    <li><a href="#应用是如何跑起来的">应用是如何跑起来的?</a>
+      <ul>
+        <li><a href="#1-注入依赖并调用-newapp-方法">1. 注入依赖并调用 newApp() 方法</a></li>
+        <li><a href="#2-创建-kratos-实例">2. 创建 kratos 实例</a></li>
+        <li><a href="#3-调用-run-方法httpsgo-kratosdevbloggo-layout-operation-process3-调用-run-方法">3. 调用 Run() 方法<a href="https://go-kratos.dev/blog/go-layout-operation-process/#3-%E8%B0%83%E7%94%A8-run-%E6%96%B9%E6%B3%95">#</a></a></li>
+        <li><a href="#4-应用退出">4. 应用退出</a></li>
+      </ul>
+    </li>
+    <li><a href="#文章转自">文章转自：</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

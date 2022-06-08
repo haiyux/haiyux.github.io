@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Kratos日志库的使用姿势 - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+
+<meta property="og:title" content="Kratos日志库的使用姿势" />
+<meta name="twitter:title" content="Kratos日志库的使用姿势" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/post/kratos-log/" /><meta property="og:description" content="什么是日志 所谓日志（Log）是指系统所指定对象的某些操作和其操作结果按时间有序的集合。log文件就是日志文件，log文件记录了系统和系统的用户之间交互的信息，是自动捕获人与系统终端之间交互的类型、内容" />
+<meta name="twitter:description" content="什么是日志 所谓日志（Log）是指系统所指定对象的某些操作和其操作结果按时间有序的集合。log文件就是日志文件，log文件记录了系统和系统的用户之间交互的信息，是自动捕获人与系统终端之间交互的类型、内容" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2021-08-19T18:11:50+08:00" /><meta property="article:modified_time" content="2021-08-19T18:11:50+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/kratos-log/">Kratos日志库的使用姿势</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-08-19</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2513 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;6 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;无标签</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="什么是日志">什么是日志</h2>
+<blockquote>
+<p>所谓日志（Log）是指系统所指定对象的某些操作和其操作结果按时间有序的集合。log文件就是日志文件，log文件记录了系统和系统的用户之间交互的信息，是自动捕获人与系统终端之间交互的类型、内容或时间的数据收集方法。</p>
+</blockquote>
+<p>日志是用来记录，用户操作，系统状态，错误信息等等内容的文件，是一个软件系统的重要组成部分。一个良好的日志规范，对于系统运行状态的分析，以及线上问题的解决具有重大的意义。</p>
+<h3 id="日志规范">日志规范</h3>
+<p>在开发软件打印日志时，需要注意一些问题，举例可能不全，可以自行百度相关文章或查看文章底部文献：</p>
+<ul>
+<li>重要功能日志尽可能的完善。</li>
+<li>不要随意打印无用的日志，过多无用的日志会增加分析日志的难度。</li>
+<li>日志要区分等级 如 debug，warn，info，error 等。</li>
+<li>捕获到未处理错误时最好打印错误堆栈信息</li>
+</ul>
+<h3 id="go-语言常用的日志库">Go 语言常用的日志库</h3>
+<p>Go 语言标准库中就为我们提供了一个日志库 <strong>log</strong>，除了这个以外还有很多日志库，如 <strong>logrus</strong>，<strong>glog</strong>，<strong>logx</strong>，<strong>Uber</strong> 的 <strong>zap</strong> 等等，例如 <strong>zap</strong> 就有很多的优点：</p>
+<ul>
+<li>
+<p>高性能</p>
+</li>
+<li>
+<p>配置项丰富</p>
+</li>
+<li>
+<p>多种日志级别</p>
+</li>
+<li>
+<p>支持Hook</p>
+</li>
+<li>
+<p>丰富的工具包</p>
+</li>
+<li>
+<p>提供了sugar log</p>
+</li>
+<li>
+<p>多种日志打印格式</p>
+</li>
+<li>
+<p>&hellip;</p>
+<h5 id="简单使用">简单使用</h5>
+</li>
+</ul>
+<pre><code class="language-golang">package main
+
+import (
+    &quot;errors&quot;
+    &quot;go.uber.org/zap&quot;
+)
+
+var logger *zap.Logger
+
+func init() {
+    logger, _ = zap.NewProduction()
+}
+func main() {
+    logger.Error(
+        &quot;My name is baobao&quot;,
+        zap.String(&quot;from&quot;, &quot;Hulun Buir&quot;),
+        zap.Error(errors.New(&quot;no good&quot;)))
+
+    logger.Info(&quot;Worked in the Ministry of national development of China!&quot;,
+        zap.String(&quot;key&quot;, &quot;eat🍚&quot;),
+        zap.String(&quot;key&quot;, &quot;sleep😴&quot;))
+    defer logger.Sync()
+}
+</code></pre>
+<h2 id="kratos-日志库原理解析">Kratos 日志库原理解析</h2>
+<blockquote>
+<p>在私下与 <strong>Tony老师</strong> 沟通时关于日志库的实现理念时，<strong>Tony老师</strong> 说：由于目前日志库非常多并且好用，在 <strong>Kratos</strong> 的日志中，主要考虑以下几个问题：</p>
+<ol>
+<li>统一日志接口设计</li>
+<li>组织结构化日志</li>
+<li>并且需要有友好的日志级别使用</li>
+<li>支持多输出源对接需求，如log-agent 或者 3rd 日志库</li>
+</ol>
+</blockquote>
+<p><strong>kratos</strong> 的日志库，不强制具体实现方式，只提供适配器，用户可以自行实现日志功能，只需要实现<strong>kratos/log</strong> 的 <strong>Logger interface</strong> 即可接入自己喜欢的日志系统。</p>
+<p><strong>kratos</strong> 的日志库，在设计阶段，参考了很多优秀的开源项目和大厂的日志系统实现，经历了多次改动后才呈现给大家。</p>
+<h3 id="log库的组成">log库的组成</h3>
+<p><strong>kratos</strong> 的 <strong>log</strong> 库主要由以下几个文件组成</p>
+<ul>
+<li>
+<p><strong>level.go</strong> 定义日志级别</p>
+</li>
+<li>
+<p><strong>log.go</strong> 日志核心</p>
+</li>
+<li>
+<p><strong>helper.go</strong> <strong>log</strong>的<strong>helper</strong></p>
+</li>
+<li>
+<p><strong>value.go</strong> 实现动态值</p>
+<h3 id="源码分析">源码分析</h3>
+<p><strong>kratos</strong> 的 <strong>log</strong> 库中, 核心部分就是 <strong>log.go</strong> 代码非常简洁，符合 <strong>kratos</strong> 的设计理念。 <strong>log.go</strong> 中声明了 <strong>Logger interface</strong>，用户只需要实现接口，即可引入自己的日志实现，主要代码如下：</p>
+</li>
+</ul>
+<h4 id="loggo"><strong>log.go</strong></h4>
+<pre><code class="language-golang">package log
+
+import (
+    &quot;context&quot;
+    &quot;log&quot;
+)
+
+var (
+    // DefaultLogger is default logger.
+    DefaultLogger Logger = NewStdLogger(log.Writer())
+)
+
+// Logger 接口, 后面实现自定义日志库的时候，就是要实现这个接口。
+type Logger interface {
+    Log(level Level, keyvals ...interface{}) error
+}
+
+type logger struct {
+    logs      []Logger // logger 数组
+    prefix    []interface{} // 一些默认打印的值,例如通过 With 绑定的 Valuer
+    hasValuer bool // 是否包含 Valuer 
+    ctx       context.Context // 上下文
+}
+
+func (c *logger) Log(level Level, keyvals ...interface{}) error {
+    kvs := make([]interface{}, 0, len(c.prefix)+len(keyvals))
+    kvs = append(kvs, c.prefix...)
+        // 判断是否存在 valuer
+    if c.hasValuer {
+                // 绑定 valuer
+        bindValues(c.ctx, kvs)
+    }
+    kvs = append(kvs, keyvals...)
+        // 遍历 logs，调用所有的 logger 进行日志打印。
+    for _, l := range c.logs {
+        if err := l.Log(level, kvs...); err != nil {
+            return err
+        }
+    }
+    return nil
+}
+
+// With with logger fields.
+func With(l Logger, kv ...interface{}) Logger {
+    // 判断是否能 把传入的 logger 断言成 *logger
+    if c, ok := l.(*logger); ok {
+        // 预分配内存,make了一个空间长度为 c.prefix + keyvals长度的 interface数组
+        kvs := make([]interface{}, 0, len(c.prefix)+len(kv))
+        // 处理打印的内容
+        kvs = append(kvs, kv...)
+        kvs = append(kvs, c.prefix...)
+        // containsValuer()用来判断 kvs 里面是否存在 valuer
+        return &amp;logger{
+            logs:      c.logs,
+            prefix:    kvs,
+            hasValuer: containsValuer(kvs),
+            ctx:       c.ctx,
+        }
+    }
+    return &amp;logger{logs: []Logger{l}, prefix: kv, hasValuer: containsValuer(kv)}
+}
+
+// WithContext 绑定 ctx,注意 ctx 必须非空
+func WithContext(ctx context.Context, l Logger) Logger {
+    if c, ok := l.(*logger); ok {
+        return &amp;logger{
+            logs:      c.logs,
+            prefix:    c.prefix,
+            hasValuer: c.hasValuer,
+            ctx:       ctx,
+        }
+    }
+    return &amp;logger{logs: []Logger{l}, ctx: ctx}
+}
+
+// MultiLogger 包装多个logger，简单说就是同时使用多个logger打印
+func MultiLogger(logs ...Logger) Logger {
+    return &amp;logger{logs: logs}
+}
+</code></pre>
+<h4 id="valuego">value.go</h4>
+<pre><code class="language-golang">// 返回 valuer 函数.
+func Value(ctx context.Context, v interface{}) interface{} {
+    if v, ok := v.(Valuer); ok {
+        return v(ctx)
+    }
+    return v
+}
+
+// ...省略一些内置的 valuer 实现
+
+// 绑定 valuer
+func bindValues(ctx context.Context, keyvals []interface{}) {
+    for i := 1; i &lt; len(keyvals); i += 2 {
+        if v, ok := keyvals[i].(Valuer); ok {
+            keyvals[i] = v(ctx)
+        }
+    }
+}
+
+// 是否包含 valuer
+func containsValuer(keyvals []interface{}) bool {
+    for i := 1; i &lt; len(keyvals); i += 2 {
+        if _, ok := keyvals[i].(Valuer); ok {
+            return true
+        }
+    }
+    return false
+}
+</code></pre>
+<h4 id="helpergo">helper.go</h4>
+<pre><code class="language-golang">package log
+
+import (
+    &quot;context&quot;
+    &quot;fmt&quot;
+)
+
+// Helper is a logger helper.
+type Helper struct {
+    logger Logger
+}
+
+// 创建一个 logger helper 实例
+func NewHelper(logger Logger) *Helper {
+    return &amp;Helper{
+        logger: logger,
+    }
+}
+
+// 通过 WithContext() 返回包含 ctx 的一个日志的帮助类，包含一些定义好的按级别打印日志的方法
+func (h *Helper) WithContext(ctx context.Context) *Helper {
+    return &amp;Helper{
+        logger: WithContext(ctx, h.logger),
+    }
+}
+
+func (h *Helper) Log(level Level, keyvals ...interface{}) {
+    h.logger.Log(level, keyvals...)
+}
+
+func (h *Helper) Debug(a ...interface{}) {
+    h.logger.Log(LevelDebug, &quot;msg&quot;, fmt.Sprint(a...))
+}
+
+func (h *Helper) Debugf(format string, a ...interface{}) {
+    h.logger.Log(LevelDebug, &quot;msg&quot;, fmt.Sprintf(format, a...))
+}
+
+// ...省略一些重复的方法
+</code></pre>
+<h4 id="通过单元测试了解调用逻辑">通过单元测试了解调用逻辑</h4>
+<pre><code class="language-golang">func TestInfo(t *testing.T) {
+    logger := DefaultLogger
+    logger = With(logger, &quot;ts&quot;, DefaultTimestamp, &quot;caller&quot;, DefaultCaller)
+    logger.Log(LevelInfo, &quot;key1&quot;, &quot;value1&quot;)
+}
+</code></pre>
+<ol>
+<li>
+<p>单测中首先声明了一个 <strong>logger</strong> ，用的默认的 <strong>DefaultLogger</strong></p>
+</li>
+<li>
+<p>调用 <strong>log.go</strong> 中的 <strong>With()</strong> 函数， 传入了 <strong>logger</strong> ,和两个动态值， <strong>DefaultTimestamp</strong> 和 <strong>DefaultCaller</strong>。</p>
+</li>
+<li>
+<p>With方法被调用，判断是否能将参数 <strong>l</strong> 类型转换成 <strong>*logger</strong></p>
+</li>
+<li>
+<p>如果可以转换，将传入的KV，赋值给 <strong>logger.prefix</strong> 上，然后调用 <strong>value.go</strong> 中的 <strong>containsValuer()</strong> 判断传入的KV中是否存在 Valuer类型的值，将结果赋值给 <strong>context.hasValuer</strong>，最后返回 <strong>Logger</strong> 对象</p>
+</li>
+<li>
+<p>否则则直接返回一个 <strong>&amp;logger{logs: []Logger{l}, prefix: kv, hasValuer: containsValuer(kv)}</strong></p>
+</li>
+<li>
+<p>然后打印日志时，<strong>logger struct</strong> 的 <strong>Log</strong> 方法被调用</p>
+</li>
+<li>
+<p><strong>Log()</strong> 方法首先预分配了 <strong>keyvals</strong> 的空间，然后判断 <strong>hasValuer</strong>，如果为 <strong>true</strong>，则调用 <strong>valuer.go</strong> 中的 <strong>bindValuer()</strong> 并传入了 <strong>ctx</strong> 然后获取 <strong>valuer</strong> 的值`if v, ok := v.(Valuer); ok {</p>
+<pre><code> return v()
+</code></pre>
+<p>}`</p>
+</li>
+</ol>
+<p>8.最后遍历 <strong>logger.logs</strong> 打印日志</p>
+<h2 id="使用方法">使用方法</h2>
+<h3 id="使用-logger-打印日志">使用 Logger 打印日志</h3>
+<pre><code class="language-go">logger := log.DefaultLogger
+logger.Log(LevelInfo, &quot;key1&quot;, &quot;value1&quot;)
+</code></pre>
+<h3 id="使用-helper-打印日志">使用 Helper 打印日志</h3>
+<pre><code class="language-go">log := log.NewHelper(DefaultLogger)
+log.Debug(&quot;test debug&quot;)
+log.Info(&quot;test info&quot;)
+log.Warn(&quot;test warn&quot;)
+log.Error(&quot;test error&quot;)
+</code></pre>
+<h3 id="使用-valuer">使用 valuer</h3>
+<pre><code class="language-go">logger := DefaultLogger
+logger = With(logger, &quot;ts&quot;, DefaultTimestamp, &quot;caller&quot;, DefaultCaller)
+logger.Log(LevelInfo, &quot;msg&quot;, &quot;helloworld&quot;)
+</code></pre>
+<h3 id="同时打印多个-logger">同时打印多个 logger</h3>
+<pre><code class="language-go">out := log.NewStdLogger(os.Stdout)
+err := log.NewStdLogger(os.Stderr)
+l := log.With(MultiLogger(out, err))
+l.Log(LevelInfo, &quot;msg&quot;, &quot;test&quot;)
+</code></pre>
+<h3 id="使用-context">使用 context</h3>
+<pre><code class="language-go">logger := log.With(NewStdLogger(os.Stdout),
+    &quot;trace&quot;, Trace(),
+)
+log := log.NewHelper(logger)
+ctx := context.WithValue(context.Background(), &quot;trace_id&quot;, &quot;2233&quot;)
+log.WithContext(ctx).Info(&quot;got trace!&quot;)
+</code></pre>
+<h3 id="使用-filter-过滤日志">使用 filter 过滤日志</h3>
+<p>如果需要过滤日志中某些不应该被打印明文的字段如 password 等，可以通过 log.NewFilter() 来实现过滤功能。</p>
+<h4 id="通过-level-过滤日志">通过 level 过滤日志</h4>
+<pre><code class="language-go">l := log.NewHelper(log.NewFilter(log.DefaultLogger, log.FilterLevel(log.LevelWarn)))
+l.Log(LevelDebug, &quot;msg1&quot;, &quot;te1st debug&quot;)
+l.Debug(&quot;test debug&quot;)
+l.Debugf(&quot;test %s&quot;, &quot;debug&quot;)
+l.Debugw(&quot;log&quot;, &quot;test debug&quot;)
+l.Warn(&quot;warn log&quot;)
+</code></pre>
+<h4 id="通过-key-过滤日志">通过 key 过滤日志</h4>
+<pre><code class="language-go">l := log.NewHelper(log.NewFilter(log.DefaultLogger, log.FilterKey(&quot;password&quot;)))
+l.Debugw(&quot;password&quot;, &quot;123456&quot;)
+</code></pre>
+<h5 id="通过-value-过滤日志">通过 value 过滤日志</h5>
+<pre><code class="language-go">l := log.NewHelper(log.NewFilter(log.DefaultLogger, log.FilterValue(&quot;kratos&quot;)))
+l.Debugw(&quot;name&quot;, &quot;kratos&quot;)
+</code></pre>
+<h4 id="通过-hook-func-过滤日志">通过 hook func 过滤日志</h4>
+<pre><code class="language-go">l := log.NewHelper(log.NewFilter(log.DefaultLogger, log.FilterFunc(testFilterFunc)))
+l.Debug(&quot;debug level&quot;)
+l.Infow(&quot;password&quot;, &quot;123456&quot;)
+func testFilterFunc(level Level, keyvals ...interface{}) bool {
+    if level == LevelWarn {
+        return true
+    }
+    for i := 0; i &lt; len(keyvals); i++ {
+        if keyvals[i] == &quot;password&quot; {
+            keyvals[i+1] = &quot;***&quot;
+        }
+    }
+    return false
+}
+</code></pre>
+<h2 id="用-zap-实现-kratos-的日志接口">用 Zap 实现 kratos 的日志接口</h2>
+<p>实现的代码十分简单，仅有不到100 行代码，仅供大家参考。</p>
+<h3 id="实现">实现</h3>
+<pre><code class="language-golang">// kratos/examples/log/zap.go
+package logger
+
+import (
+    &quot;fmt&quot;
+        &quot;os&quot;
+
+    &quot;github.com/go-kratos/kratos/v2/log&quot;
+    &quot;go.uber.org/zap&quot;
+    &quot;go.uber.org/zap/zapcore&quot;
+    &quot;gopkg.in/natefinch/lumberjack.v2&quot;
+)
+
+var _ log.Logger = (*ZapLogger)(nil)
+
+// Zap 结构体
+type ZapLogger struct {
+    log  *zap.Logger
+    Sync func() error
+}
+
+// 创建一个 ZapLogger 实例
+func NewZapLogger(encoder zapcore.EncoderConfig, level zap.AtomicLevel, opts ...zap.Option) *ZapLogger {
+    writeSyncer := getLogWriter()
+    // 设置 zapcore
+    core := zapcore.NewCore(
+        zapcore.NewConsoleEncoder(encoder),
+        zapcore.NewMultiWriteSyncer(
+            zapcore.AddSync(os.Stdout),
+        ), level)
+    //  new 一个 *zap.Logger
+    zapLogger := zap.New(core, opts...)
+    return &amp;ZapLogger{log: zapLogger, Sync: zapLogger.Sync}
+}
+
+// Log 方法实现了 kratos/log/log.go 中的 Logger interface
+func (l *ZapLogger) Log(level log.Level, keyvals ...interface{}) error {
+    if len(keyvals) == 0 || len(keyvals)%2 != 0{
+            l.log.Warn(fmt.Sprint(&quot;Keyvalues must appear in pairs: &quot;, keyvals))
+        return nil
+    }
+    // 按照 KV 传入的时候,使用的 zap.Field
+    var data []zap.Field
+    for i := 0; i &lt; len(keyvals); i += 2 {
+        data = append(data, zap.Any(fmt.Sprint(keyvals[i]), fmt.Sprint(keyvals[i+1])))
+    }
+    switch level {
+    case log.LevelDebug:
+        l.log.Debug(&quot;&quot;, data...)
+    case log.LevelInfo:
+        l.log.Info(&quot;&quot;, data...)
+    case log.LevelWarn:
+        l.log.Warn(&quot;&quot;, data...)
+    case log.LevelError:
+        l.log.Error(&quot;&quot;, data...)
+    }
+    return nil
+}
+
+// 日志自动切割，采用 lumberjack 实现的
+func getLogWriter() zapcore.WriteSyncer {
+    lumberJackLogger := &amp;lumberjack.Logger{
+        Filename:   &quot;./test.log&quot;,
+        MaxSize:    10,
+        MaxBackups: 5,
+        MaxAge:     30,
+        Compress:   false,
+    }
+    return zapcore.AddSync(lumberJackLogger)
+}
+</code></pre>
+<h3 id="使用方法-1">使用方法</h3>
+<pre><code class="language-golang">// kratos/examples/log/zap_test.go
+package logger
+
+import (
+    &quot;testing&quot;
+
+    &quot;github.com/go-kratos/kratos/v2/log&quot;
+    &quot;go.uber.org/zap&quot;
+    &quot;go.uber.org/zap/zapcore&quot;
+)
+
+func TestZapLogger(t *testing.T) {
+    encoder := zapcore.EncoderConfig{
+        TimeKey:        &quot;t&quot;,
+        LevelKey:       &quot;level&quot;,
+        NameKey:        &quot;logger&quot;,
+        CallerKey:      &quot;caller&quot;,
+        MessageKey:     &quot;msg&quot;,
+        StacktraceKey:  &quot;stack&quot;,
+        EncodeTime:     zapcore.ISO8601TimeEncoder,
+        LineEnding:     zapcore.DefaultLineEnding,
+        EncodeLevel:    zapcore.LowercaseLevelEncoder,
+        EncodeDuration: zapcore.SecondsDurationEncoder,
+        EncodeCaller:   zapcore.FullCallerEncoder,
+    }
+    logger := NewZapLogger(
+        encoder,
+        zap.NewAtomicLevelAt(zapcore.DebugLevel),
+        zap.AddStacktrace(
+            zap.NewAtomicLevelAt(zapcore.ErrorLevel)),
+        zap.AddCallerSkip(2),
+        zap.Development(),
+    )
+    zlog := log.NewHelper(logger)
+    zlog.Infow(&quot;name&quot;,&quot;go 语言进阶&quot;)
+    defer logger.Sync()
+}
+</code></pre>
+<h2 id="参考文献">参考文献</h2>
+<ul>
+<li>关于 log 库的讨论 <a href="https://github.com/go-kratos/kratos/issues/882" target="_blank">issue</a></li>
+<li>Uber 的日志库 Zap <a href="https://github.com/uber-go/zap" target="_blank">uber/zap</a></li>
+<li>日志割接库 <a href="https://github.com/natefinch/lumberjack" target="_blank">lumberjack</a></li>
+<li>基于 zap 的日志demo <a href="https://github.com/go-kratos/kratos/tree/main/examples/log" target="_blank">log example </a></li>
+</ul>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210902225224456-315933124.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210902225203602-1750987546.gif" alt="" />
+</p>
+
+    </div>
+</article>
+
+
+<div class="license markdown-body">
+    <blockquote>
+        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
+    </blockquote>
+</div>
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是日志">什么是日志</a>
+      <ul>
+        <li><a href="#日志规范">日志规范</a></li>
+        <li><a href="#go-语言常用的日志库">Go 语言常用的日志库</a></li>
+      </ul>
+    </li>
+    <li><a href="#kratos-日志库原理解析">Kratos 日志库原理解析</a>
+      <ul>
+        <li><a href="#log库的组成">log库的组成</a></li>
+        <li><a href="#源码分析">源码分析</a></li>
+      </ul>
+    </li>
+    <li><a href="#使用方法">使用方法</a>
+      <ul>
+        <li><a href="#使用-logger-打印日志">使用 Logger 打印日志</a></li>
+        <li><a href="#使用-helper-打印日志">使用 Helper 打印日志</a></li>
+        <li><a href="#使用-valuer">使用 valuer</a></li>
+        <li><a href="#同时打印多个-logger">同时打印多个 logger</a></li>
+        <li><a href="#使用-context">使用 context</a></li>
+        <li><a href="#使用-filter-过滤日志">使用 filter 过滤日志</a></li>
+      </ul>
+    </li>
+    <li><a href="#用-zap-实现-kratos-的日志接口">用 Zap 实现 kratos 的日志接口</a>
+      <ul>
+        <li><a href="#实现">实现</a></li>
+        <li><a href="#使用方法-1">使用方法</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考文献">参考文献</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#什么是日志">什么是日志</a>
+      <ul>
+        <li><a href="#日志规范">日志规范</a></li>
+        <li><a href="#go-语言常用的日志库">Go 语言常用的日志库</a></li>
+      </ul>
+    </li>
+    <li><a href="#kratos-日志库原理解析">Kratos 日志库原理解析</a>
+      <ul>
+        <li><a href="#log库的组成">log库的组成</a></li>
+        <li><a href="#源码分析">源码分析</a></li>
+      </ul>
+    </li>
+    <li><a href="#使用方法">使用方法</a>
+      <ul>
+        <li><a href="#使用-logger-打印日志">使用 Logger 打印日志</a></li>
+        <li><a href="#使用-helper-打印日志">使用 Helper 打印日志</a></li>
+        <li><a href="#使用-valuer">使用 valuer</a></li>
+        <li><a href="#同时打印多个-logger">同时打印多个 logger</a></li>
+        <li><a href="#使用-context">使用 context</a></li>
+        <li><a href="#使用-filter-过滤日志">使用 filter 过滤日志</a></li>
+      </ul>
+    </li>
+    <li><a href="#用-zap-实现-kratos-的日志接口">用 Zap 实现 kratos 的日志接口</a>
+      <ul>
+        <li><a href="#实现">实现</a></li>
+        <li><a href="#使用方法-1">使用方法</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考文献">参考文献</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

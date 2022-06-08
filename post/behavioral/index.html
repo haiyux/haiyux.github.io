@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>行为模式 - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+<meta name="keywords" content="设计模式" />
+
+
+<meta property="og:title" content="行为模式" />
+<meta name="twitter:title" content="行为模式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/post/behavioral/" /><meta property="og:description" content="责任链模式 责任链模式是一种行为设计模式， 允许你将请求沿着处理者链进行发送。 收到请求后， 每个处理者均可对请求进行处理， 或将其传递给链上的下个处理者。比如 kratos,gin等开源库的中间件实现。 代码实现" />
+<meta name="twitter:description" content="责任链模式 责任链模式是一种行为设计模式， 允许你将请求沿着处理者链进行发送。 收到请求后， 每个处理者均可对请求进行处理， 或将其传递给链上的下个处理者。比如 kratos,gin等开源库的中间件实现。 代码实现" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2022-06-04T17:03:53+08:00" /><meta property="article:modified_time" content="2022-06-04T17:03:53+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/behavioral/">行为模式</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-06-04</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3259 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;7 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="责任链模式">责任链模式</h2>
+<p><strong>责任链模式</strong>是一种行为设计模式， 允许你将请求沿着处理者链进行发送。 收到请求后， 每个处理者均可对请求进行处理， 或将其传递给链上的下个处理者。比如 <code>kratos</code>,<code>gin</code>等开源库的中间件实现。</p>
+<h3 id="代码实现">代码实现</h3>
+<pre><code class="language-go">package main
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+)
+
+type Handler func(ctx context.Context, req interface{}) (resp interface{}, err error)
+
+type Middleware func(next Handler) Handler
+
+func Chain(middlewares ...Middleware) Middleware {
+	return func(next Handler) Handler {
+		for i := len(middlewares) - 1; i &gt;= 0; i-- {
+			next = middlewares[i](next)
+		}
+		return next
+	}
+}
+
+func main() {
+	c := Chain(func(next Handler) Handler {
+		return func(ctx context.Context, req interface{}) (resp interface{}, err error) {
+			fmt.Println(&quot;handler 1 before&quot;)
+			resp, err = next(ctx, req)
+			fmt.Println(&quot;handler 1 after&quot;)
+			return resp, err
+		}
+	}, func(next Handler) Handler {
+		return func(ctx context.Context, req interface{}) (resp interface{}, err error) {
+			fmt.Println(&quot;handler 2 before&quot;)
+			resp, err = next(ctx, req)
+			fmt.Println(&quot;handler 2 after&quot;)
+			return resp, err
+		}
+	})
+	resp, err := c(func(ctx context.Context, req interface{}) (resp interface{}, err error) {
+		fmt.Println(&quot;handler req:&quot;, req)
+		return req, nil
+	})(context.Background(), &quot;hello&quot;)
+	fmt.Println(resp, err)
+}
+
+/*
+handler 1 before
+handler 2 before
+handler req: hello
+handler 2 after
+handler 1 after
+hello &lt;nil&gt;
+*/
+</code></pre>
+<h2 id="观察者模式">观察者模式</h2>
+<p>观察者模式用于触发联动。一个对象的改变会触发其它观察者的相关动作，而此对象无需关心连动对象的具体实现。</p>
+<h3 id="代码实现-1">代码实现</h3>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+type subject interface {
+	register(Observer observer)
+	deregister(Observer observer)
+	notifyAll()
+}
+
+type observer interface {
+	update(string)
+	getID() string
+}
+
+type item struct {
+	observerList []observer
+	name         string
+	inStock      bool
+}
+
+func newItem(name string) *item {
+	return &amp;item{
+		name: name,
+	}
+}
+func (i *item) updateAvailability() {
+	fmt.Printf(&quot;Item %s is now in stock\n&quot;, i.name)
+	i.inStock = true
+	i.notifyAll()
+}
+func (i *item) register(o observer) {
+	i.observerList = append(i.observerList, o)
+}
+
+func (i *item) deregister(o observer) {
+	i.observerList = removeFromslice(i.observerList, o)
+}
+
+func (i *item) notifyAll() {
+	for _, observer := range i.observerList {
+		observer.update(i.name)
+	}
+}
+
+func removeFromslice(observerList []observer, observerToRemove observer) []observer {
+	observerListLength := len(observerList)
+	for i, observer := range observerList {
+		if observerToRemove.getID() == observer.getID() {
+			observerList[observerListLength-1], observerList[i] = observerList[i], observerList[observerListLength-1]
+			return observerList[:observerListLength-1]
+		}
+	}
+	return observerList
+}
+
+type customer struct {
+	id string
+}
+
+func (c *customer) update(itemName string) {
+	fmt.Printf(&quot;Sending email to customer %s for item %s\n&quot;, c.id, itemName)
+}
+
+func (c *customer) getID() string {
+	return c.id
+}
+
+func main() {
+
+	shirtItem := newItem(&quot;Nike Shirt&quot;)
+
+	observerFirst := &amp;customer{id: &quot;abc@gmail.com&quot;}
+	observerSecond := &amp;customer{id: &quot;xyz@gmail.com&quot;}
+
+	shirtItem.register(observerFirst)
+	shirtItem.register(observerSecond)
+
+	shirtItem.updateAvailability()
+}
+
+/*
+Item Nike Shirt is now in stock
+Sending email to customer abc@gmail.com for item Nike Shirt
+Sending email to customer xyz@gmail.com for item Nike Shirt
+*/
+</code></pre>
+<h2 id="模板方法模式">模板方法模式</h2>
+<p>模版方法模式使用继承机制，把通用步骤和通用方法放到父类中，把具体实现延迟到子类中实现。使得实现符合开闭原则。</p>
+<p>如实例代码中通用步骤在父类中实现（<code>准备</code>、<code>下载</code>、<code>保存</code>、<code>收尾</code>）下载和保存的具体实现留到子类中，并且提供 <code>保存</code>方法的默认实现。</p>
+<p>因为Golang不提供继承机制，需要使用匿名组合模拟实现继承。</p>
+<p>此处需要注意：因为父类需要调用子类方法，所以子类需要匿名组合父类的同时，父类需要持有子类的引用。</p>
+<h3 id="代码实现-2">代码实现</h3>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+type Downloader interface {
+	Download(uri string)
+}
+
+type template struct {
+	implement
+	uri string
+}
+
+type implement interface {
+	download()
+	save()
+}
+
+func newTemplate(impl implement) *template {
+	return &amp;template{
+		implement: impl,
+	}
+}
+
+func (t *template) Download(uri string) {
+	t.uri = uri
+	fmt.Print(&quot;prepare downloading\n&quot;)
+	t.implement.download()
+	t.implement.save()
+	fmt.Print(&quot;finish downloading\n&quot;)
+}
+
+func (t *template) save() {
+	fmt.Print(&quot;default save\n&quot;)
+}
+
+type HTTPDownloader struct {
+	*template
+}
+
+func NewHTTPDownloader() Downloader {
+	downloader := &amp;HTTPDownloader{}
+	template := newTemplate(downloader)
+	downloader.template = template
+	return downloader
+}
+
+func (d *HTTPDownloader) download() {
+	fmt.Printf(&quot;download %s via http\n&quot;, d.uri)
+}
+
+func (*HTTPDownloader) save() {
+	fmt.Printf(&quot;http save\n&quot;)
+}
+
+type FTPDownloader struct {
+	*template
+}
+
+func NewFTPDownloader() Downloader {
+	downloader := &amp;FTPDownloader{}
+	template := newTemplate(downloader)
+	downloader.template = template
+	return downloader
+}
+
+func (d *FTPDownloader) download() {
+	fmt.Printf(&quot;download %s via ftp\n&quot;, d.uri)
+}
+
+func main() {
+	downloader := NewHTTPDownloader()
+	downloader.Download(&quot;http://example.com/abc.zip&quot;)
+
+	downloader = NewFTPDownloader()
+	downloader.Download(&quot;ftp://example.com/abc.zip&quot;)
+}
+
+/*
+prepare downloading
+download http://example.com/abc.zip via http
+http save
+finish downloading
+prepare downloading
+download ftp://example.com/abc.zip via ftp
+default save
+finish downloading
+*/
+</code></pre>
+<h2 id="命令模式">命令模式</h2>
+<p><strong>命令模式</strong>是一种行为设计模式， 它可将请求转换为一个包含与请求相关的所有信息的独立对象。 该转换让你能根据不同的请求将方法参数化、 延迟请求执行或将其放入队列中， 且能实现可撤销操作。</p>
+<p>命令模式本质是把某个对象的方法调用封装到对象中，方便传递、存储、调用。</p>
+<p>示例中把主板单中的启动(start)方法和重启(reboot)方法封装为命令对象，再传递到主机(box)对象中。于两个按钮进行绑定：</p>
+<ul>
+<li>第一个机箱(box1)设置按钮1(button1) 为开机按钮2(button2)为重启。</li>
+<li>第二个机箱(box1)设置按钮2(button2) 为开机按钮1(button1)为重启。</li>
+</ul>
+<p>从而得到配置灵活性。</p>
+<p>除了配置灵活外，使用命令模式还可以用作：</p>
+<ul>
+<li>批处理</li>
+<li>任务队列</li>
+<li>undo, redo</li>
+</ul>
+<p>等把具体命令封装到对象中使用的场合</p>
+<h3 id="代码实现-3">代码实现</h3>
+<pre><code class="language-go">package command
+
+import &quot;fmt&quot;
+
+type Command interface {
+	Execute()
+}
+
+type StartCommand struct {
+	mb *MotherBoard
+}
+
+func NewStartCommand(mb *MotherBoard) *StartCommand {
+	return &amp;StartCommand{
+		mb: mb,
+	}
+}
+
+func (c *StartCommand) Execute() {
+	c.mb.Start()
+}
+
+type RebootCommand struct {
+	mb *MotherBoard
+}
+
+func NewRebootCommand(mb *MotherBoard) *RebootCommand {
+	return &amp;RebootCommand{
+		mb: mb,
+	}
+}
+
+func (c *RebootCommand) Execute() {
+	c.mb.Reboot()
+}
+
+type MotherBoard struct{}
+
+func (*MotherBoard) Start() {
+	fmt.Print(&quot;system starting\n&quot;)
+}
+
+func (*MotherBoard) Reboot() {
+	fmt.Print(&quot;system rebooting\n&quot;)
+}
+
+type Box struct {
+	button1 Command
+	button2 Command
+}
+
+func NewBox(button1, button2 Command) *Box {
+	return &amp;Box{
+		button1: button1,
+		button2: button2,
+	}
+}
+
+func (b *Box) PressButton1() {
+	b.button1.Execute()
+}
+
+func (b *Box) PressButton2() {
+	b.button2.Execute()
+}
+</code></pre>
+<h2 id="策略模式">策略模式</h2>
+<p>它能让你定义一系列算法， 并将每种算法分别放入独立的类中， 以使算法的对象能够相互替换。</p>
+<h3 id="代码实现-4">代码实现</h3>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+type Payment struct {
+	context  *PaymentContext
+	strategy PaymentStrategy
+}
+
+type PaymentContext struct {
+	Name, CardID string
+	Money        int
+}
+
+func NewPayment(name, cardid string, money int, strategy PaymentStrategy) *Payment {
+	return &amp;Payment{
+		context: &amp;PaymentContext{
+			Name:   name,
+			CardID: cardid,
+			Money:  money,
+		},
+		strategy: strategy,
+	}
+}
+
+func (p *Payment) Pay() {
+	p.strategy.Pay(p.context)
+}
+
+type PaymentStrategy interface {
+	Pay(*PaymentContext)
+}
+
+type Cash struct{}
+
+func (*Cash) Pay(ctx *PaymentContext) {
+	fmt.Printf(&quot;Pay $%d to %s by cash\n&quot;, ctx.Money, ctx.Name)
+}
+
+type Bank struct{}
+
+func (*Bank) Pay(ctx *PaymentContext) {
+	fmt.Printf(&quot;Pay $%d to %s by bank account %s\n&quot;, ctx.Money, ctx.Name, ctx.CardID)
+}
+
+func main() {
+	payment := NewPayment(&quot;Ada&quot;, &quot;&quot;, 123, &amp;Cash{})
+	payment.Pay()
+
+	payment = NewPayment(&quot;Bob&quot;, &quot;0002&quot;, 888, &amp;Bank{})
+	payment.Pay()
+}
+
+/*
+Pay $123 to Ada by cash
+Pay $888 to Bob by bank account 0002
+*/
+</code></pre>
+<h2 id="状态模式">状态模式</h2>
+<p>让你能在一个对象的内部状态变化时改变其行为， 使其看上去就像改变了自身所属的类一样。</p>
+<h3 id="代码实现-5">代码实现</h3>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+)
+
+// Machine 状态机
+type Machine struct {
+	state IState
+}
+
+// SetState 更新状态
+func (m *Machine) SetState(state IState) {
+	m.state = state
+}
+
+// GetStateName 获取当前状态
+func (m *Machine) GetStateName() string {
+	return m.state.GetName()
+}
+
+func (m *Machine) Approval() {
+	m.state.Approval(m)
+}
+
+func (m *Machine) Reject() {
+	m.state.Reject(m)
+}
+
+// IState 状态
+type IState interface {
+	// 审批通过
+	Approval(m *Machine)
+	// 驳回
+	Reject(m *Machine)
+	// 获取当前状态名称
+	GetName() string
+}
+
+// leaderApproveState 直属领导审批
+type leaderApproveState struct{}
+
+// Approval 获取状态名字
+func (leaderApproveState) Approval(m *Machine) {
+	fmt.Println(&quot;leader 审批成功&quot;)
+	m.SetState(GetFinanceApproveState())
+}
+
+// GetName 获取状态名字
+func (leaderApproveState) GetName() string {
+	return &quot;LeaderApproveState&quot;
+}
+
+// Reject 获取状态名字
+func (leaderApproveState) Reject(m *Machine) {}
+
+func GetLeaderApproveState() IState {
+	return &amp;leaderApproveState{}
+}
+
+// financeApproveState 财务审批
+type financeApproveState struct{}
+
+// Approval 审批通过
+func (f financeApproveState) Approval(m *Machine) {
+	fmt.Println(&quot;财务审批成功&quot;)
+	fmt.Println(&quot;出发打款操作&quot;)
+}
+
+// 拒绝
+func (f financeApproveState) Reject(m *Machine) {
+	m.SetState(GetLeaderApproveState())
+}
+
+// GetName 获取名字
+func (f financeApproveState) GetName() string {
+	return &quot;FinanceApproveState&quot;
+}
+
+// GetFinanceApproveState GetFinanceApproveState
+func GetFinanceApproveState() IState {
+	return &amp;financeApproveState{}
+}
+
+func main() {
+	m := &amp;Machine{state: GetLeaderApproveState()}
+	fmt.Println(&quot;LeaderApproveState&quot;, m.GetStateName())
+	m.Approval()
+	fmt.Println(&quot;FinanceApproveState&quot;, m.GetStateName())
+	m.Reject()
+	fmt.Println(&quot;LeaderApproveState&quot;, m.GetStateName())
+	m.Approval()
+	fmt.Println(&quot;FinanceApproveState&quot;, m.GetStateName())
+	m.Approval()
+}
+
+/*
+LeaderApproveState LeaderApproveState
+leader 审批成功
+FinanceApproveState FinanceApproveState
+LeaderApproveState LeaderApproveState
+leader 审批成功
+FinanceApproveState FinanceApproveState
+财务审批成功
+出发打款操作
+*/
+</code></pre>
+<h2 id="迭代器模式">迭代器模式</h2>
+<p>让你能在不暴露集合底层表现形式 （列表、 栈和树等） 的情况下遍历集合中所有的元素。</p>
+<h3 id="代码实现-6">代码实现</h3>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+type collection interface {
+	createIterator() iterator
+}
+
+type userCollection struct {
+	users []*user
+}
+
+func (u *userCollection) createIterator() iterator {
+	return &amp;userIterator{
+		users: u.users,
+	}
+}
+
+type iterator interface {
+	hasNext() bool
+	getNext() *user
+}
+
+type userIterator struct {
+	index int
+	users []*user
+}
+
+func (u *userIterator) hasNext() bool {
+	if u.index &lt; len(u.users) {
+		return true
+	}
+	return false
+
+}
+func (u *userIterator) getNext() *user {
+	if u.hasNext() {
+		user := u.users[u.index]
+		u.index++
+		return user
+	}
+	return nil
+}
+
+type user struct {
+	name string
+	age  int
+}
+
+func main() {
+
+	user1 := &amp;user{
+		name: &quot;a&quot;,
+		age:  30,
+	}
+	user2 := &amp;user{
+		name: &quot;b&quot;,
+		age:  20,
+	}
+
+	userCollection := &amp;userCollection{
+		users: []*user{user1, user2},
+	}
+
+	iterator := userCollection.createIterator()
+
+	for iterator.hasNext() {
+		user := iterator.getNext()
+		fmt.Printf(&quot;User is %+v\n&quot;, user)
+	}
+}
+
+/*
+User is &amp;{name:a age:30}
+User is &amp;{name:b age:20}
+*/
+</code></pre>
+<h2 id="访问者模式">访问者模式</h2>
+<p>访问者模式可以给一系列对象透明的添加功能，并且把相关代码封装到一个类中。</p>
+<p>对象只要预留访问者接口<code>Accept</code>则后期为对象添加功能的时候就不需要改动对象。</p>
+<h3 id="代码实现-7">代码实现</h3>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+type Customer interface {
+	Accept(Visitor)
+}
+
+type Visitor interface {
+	Visit(Customer)
+}
+
+type EnterpriseCustomer struct {
+	name string
+}
+
+type CustomerCol struct {
+	customers []Customer
+}
+
+func (c *CustomerCol) Add(customer Customer) {
+	c.customers = append(c.customers, customer)
+}
+
+func (c *CustomerCol) Accept(visitor Visitor) {
+	for _, customer := range c.customers {
+		customer.Accept(visitor)
+	}
+}
+
+func NewEnterpriseCustomer(name string) *EnterpriseCustomer {
+	return &amp;EnterpriseCustomer{
+		name: name,
+	}
+}
+
+func (c *EnterpriseCustomer) Accept(visitor Visitor) {
+	visitor.Visit(c)
+}
+
+type IndividualCustomer struct {
+	name string
+}
+
+func NewIndividualCustomer(name string) *IndividualCustomer {
+	return &amp;IndividualCustomer{
+		name: name,
+	}
+}
+
+func (c *IndividualCustomer) Accept(visitor Visitor) {
+	visitor.Visit(c)
+}
+
+type ServiceRequestVisitor struct{}
+
+func (*ServiceRequestVisitor) Visit(customer Customer) {
+	switch c := customer.(type) {
+	case *EnterpriseCustomer:
+		fmt.Printf(&quot;serving enterprise customer %s\n&quot;, c.name)
+	case *IndividualCustomer:
+		fmt.Printf(&quot;serving individual customer %s\n&quot;, c.name)
+	}
+}
+
+// only for enterprise
+type AnalysisVisitor struct{}
+
+func (*AnalysisVisitor) Visit(customer Customer) {
+	switch c := customer.(type) {
+	case *EnterpriseCustomer:
+		fmt.Printf(&quot;analysis enterprise customer %s\n&quot;, c.name)
+	}
+}
+
+func main() {
+	c := &amp;CustomerCol{}
+	c.Add(NewEnterpriseCustomer(&quot;A company&quot;))
+	c.Add(NewEnterpriseCustomer(&quot;B company&quot;))
+	c.Add(NewIndividualCustomer(&quot;bob&quot;))
+	c.Accept(&amp;ServiceRequestVisitor{})
+
+	c = &amp;CustomerCol{}
+	c.Add(NewEnterpriseCustomer(&quot;A company&quot;))
+	c.Add(NewIndividualCustomer(&quot;bob&quot;))
+	c.Add(NewEnterpriseCustomer(&quot;B company&quot;))
+	c.Accept(&amp;AnalysisVisitor{})
+}
+
+/*
+serving enterprise customer A company
+serving enterprise customer B company
+serving individual customer bob
+analysis enterprise customer A company
+analysis enterprise customer B company
+*/
+</code></pre>
+<h2 id="备忘录模式">备忘录模式</h2>
+<p>备忘录模式用于保存程序内部状态到外部，又不希望暴露内部状态的情形。</p>
+<p>程序内部状态使用窄接口传递给外部进行存储，从而不暴露程序实现细节。</p>
+<p>备忘录模式同时可以离线保存内部状态，如保存到数据库，文件等。</p>
+<h3 id="代码实现-8">代码实现</h3>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+type Memento interface{}
+
+type Game struct {
+	hp, mp int
+}
+
+type gameMemento struct {
+	hp, mp int
+}
+
+func (g *Game) Play(mpDelta, hpDelta int) {
+	g.mp += mpDelta
+	g.hp += hpDelta
+}
+
+func (g *Game) Save() Memento {
+	return &amp;gameMemento{
+		hp: g.hp,
+		mp: g.mp,
+	}
+}
+
+func (g *Game) Load(m Memento) {
+	gm := m.(*gameMemento)
+	g.mp = gm.mp
+	g.hp = gm.hp
+}
+
+func (g *Game) Status() {
+	fmt.Printf(&quot;Current HP:%d, MP:%d\n&quot;, g.hp, g.mp)
+}
+
+func main() {
+	game := &amp;Game{
+		hp: 10,
+		mp: 10,
+	}
+
+	game.Status()
+	progress := game.Save()
+
+	game.Play(-2, -3)
+	game.Status()
+
+	game.Load(progress)
+	game.Status()
+
+}
+
+/*
+Current HP:10, MP:10
+Current HP:7, MP:8
+Current HP:10, MP:10
+*/
+</code></pre>
+<h2 id="解释器模式">解释器模式</h2>
+<p>解释器模式定义一套语言文法，并设计该语言解释器，使用户能使用特定文法控制解释器行为。</p>
+<p>解释器模式的意义在于，它分离多种复杂功能的实现，每个功能只需关注自身的解释。</p>
+<p>对于调用者不用关心内部的解释器的工作，只需要用简单的方式组合命令就可以。</p>
+<h3 id="代码实现-9">代码实现</h3>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;strconv&quot;
+	&quot;strings&quot;
+)
+
+type Node interface {
+	Interpret() int
+}
+
+type ValNode struct {
+	val int
+}
+
+func (n *ValNode) Interpret() int {
+	return n.val
+}
+
+type AddNode struct {
+	left, right Node
+}
+
+func (n *AddNode) Interpret() int {
+	return n.left.Interpret() + n.right.Interpret()
+}
+
+type MinNode struct {
+	left, right Node
+}
+
+func (n *MinNode) Interpret() int {
+	return n.left.Interpret() - n.right.Interpret()
+}
+
+type Parser struct {
+	exp   []string
+	index int
+	prev  Node
+}
+
+func (p *Parser) Parse(exp string) {
+	p.exp = strings.Split(exp, &quot; &quot;)
+
+	for {
+		if p.index &gt;= len(p.exp) {
+			return
+		}
+		switch p.exp[p.index] {
+		case &quot;+&quot;:
+			p.prev = p.newAddNode()
+		case &quot;-&quot;:
+			p.prev = p.newMinNode()
+		default:
+			p.prev = p.newValNode()
+		}
+	}
+}
+
+func (p *Parser) newAddNode() Node {
+	p.index++
+	return &amp;AddNode{
+		left:  p.prev,
+		right: p.newValNode(),
+	}
+}
+
+func (p *Parser) newMinNode() Node {
+	p.index++
+	return &amp;MinNode{
+		left:  p.prev,
+		right: p.newValNode(),
+	}
+}
+
+func (p *Parser) newValNode() Node {
+	v, _ := strconv.Atoi(p.exp[p.index])
+	p.index++
+	return &amp;ValNode{
+		val: v,
+	}
+}
+
+func (p *Parser) Result() Node {
+	return p.prev
+}
+
+func main() {
+	p := &amp;Parser{}
+	p.Parse(&quot;1 + 2 + 3 - 4 + 5 - 6&quot;)
+	res := p.Result().Interpret()
+	expect := 1
+	if res != expect {
+		fmt.Println(res,expect)
+	}
+}
+</code></pre>
+<h2 id="中介模式">中介模式</h2>
+<p>中介者模式封装对象之间互交，使依赖变的简单，并且使复杂互交简单化，封装在中介者中。</p>
+<p>例子中的中介者使用单例模式生成中介者。</p>
+<p>中介者的change使用switch判断类型。</p>
+<h3 id="代码实现-10">代码实现</h3>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;strings&quot;
+)
+
+type CDDriver struct {
+	Data string
+}
+
+func (c *CDDriver) ReadData() {
+	c.Data = &quot;music,image&quot;
+
+	fmt.Printf(&quot;CDDriver: reading data %s\n&quot;, c.Data)
+	GetMediatorInstance().changed(c)
+}
+
+type CPU struct {
+	Video string
+	Sound string
+}
+
+func (c *CPU) Process(data string) {
+	sp := strings.Split(data, &quot;,&quot;)
+	c.Sound = sp[0]
+	c.Video = sp[1]
+
+	fmt.Printf(&quot;CPU: split data with Sound %s, Video %s\n&quot;, c.Sound, c.Video)
+	GetMediatorInstance().changed(c)
+}
+
+type VideoCard struct {
+	Data string
+}
+
+func (v *VideoCard) Display(data string) {
+	v.Data = data
+	fmt.Printf(&quot;VideoCard: display %s\n&quot;, v.Data)
+	GetMediatorInstance().changed(v)
+}
+
+type SoundCard struct {
+	Data string
+}
+
+func (s *SoundCard) Play(data string) {
+	s.Data = data
+	fmt.Printf(&quot;SoundCard: play %s\n&quot;, s.Data)
+	GetMediatorInstance().changed(s)
+}
+
+type Mediator struct {
+	CD    *CDDriver
+	CPU   *CPU
+	Video *VideoCard
+	Sound *SoundCard
+}
+
+var mediator *Mediator
+
+func GetMediatorInstance() *Mediator {
+	if mediator == nil {
+		mediator = &amp;Mediator{}
+	}
+	return mediator
+}
+
+func (m *Mediator) changed(i interface{}) {
+	switch inst := i.(type) {
+	case *CDDriver:
+		m.CPU.Process(inst.Data)
+	case *CPU:
+		m.Sound.Play(inst.Sound)
+		m.Video.Display(inst.Video)
+	}
+}
+
+func main() {
+	mediator := GetMediatorInstance()
+	mediator.CD = &amp;CDDriver{}
+	mediator.CPU = &amp;CPU{}
+	mediator.Video = &amp;VideoCard{}
+	mediator.Sound = &amp;SoundCard{}
+
+	//Tiggle
+	mediator.CD.ReadData()
+
+	fmt.Printf(&quot;%#v\n&quot;, mediator)
+}
+
+/*
+CDDriver: reading data music,image
+CPU: split data with Sound music, Video image
+SoundCard: play music
+VideoCard: display image
+&amp;main.Mediator{CD:(*main.CDDriver)(0xc000010250), CPU:(*main.CPU)(0xc000060040), Video:(*main.VideoCard)(0xc000010260), Sound:(*main.SoundCard)(0xc000010270)}
+*/
+</code></pre>
+<h2 id="references">References</h2>
+<p><a href="https://github.com/senghoo/golang-design-pattern" target="_blank">https://github.com/senghoo/golang-design-pattern</a></p>
+<p><a href="https://refactoringguru.cn/design-patterns" target="_blank">https://refactoringguru.cn/design-patterns</a></p>
+<p><a href="https://lailin.xyz/post/singleton.html" target="_blank">https://lailin.xyz/post/singleton.html</a></p>
+
+    </div>
+</article>
+
+
+<div class="license markdown-body">
+    <blockquote>
+        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
+    </blockquote>
+</div>
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#责任链模式">责任链模式</a>
+      <ul>
+        <li><a href="#代码实现">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#观察者模式">观察者模式</a>
+      <ul>
+        <li><a href="#代码实现-1">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#模板方法模式">模板方法模式</a>
+      <ul>
+        <li><a href="#代码实现-2">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#命令模式">命令模式</a>
+      <ul>
+        <li><a href="#代码实现-3">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#策略模式">策略模式</a>
+      <ul>
+        <li><a href="#代码实现-4">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#状态模式">状态模式</a>
+      <ul>
+        <li><a href="#代码实现-5">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#迭代器模式">迭代器模式</a>
+      <ul>
+        <li><a href="#代码实现-6">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#访问者模式">访问者模式</a>
+      <ul>
+        <li><a href="#代码实现-7">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#备忘录模式">备忘录模式</a>
+      <ul>
+        <li><a href="#代码实现-8">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#解释器模式">解释器模式</a>
+      <ul>
+        <li><a href="#代码实现-9">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#中介模式">中介模式</a>
+      <ul>
+        <li><a href="#代码实现-10">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#责任链模式">责任链模式</a>
+      <ul>
+        <li><a href="#代码实现">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#观察者模式">观察者模式</a>
+      <ul>
+        <li><a href="#代码实现-1">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#模板方法模式">模板方法模式</a>
+      <ul>
+        <li><a href="#代码实现-2">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#命令模式">命令模式</a>
+      <ul>
+        <li><a href="#代码实现-3">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#策略模式">策略模式</a>
+      <ul>
+        <li><a href="#代码实现-4">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#状态模式">状态模式</a>
+      <ul>
+        <li><a href="#代码实现-5">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#迭代器模式">迭代器模式</a>
+      <ul>
+        <li><a href="#代码实现-6">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#访问者模式">访问者模式</a>
+      <ul>
+        <li><a href="#代码实现-7">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#备忘录模式">备忘录模式</a>
+      <ul>
+        <li><a href="#代码实现-8">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#解释器模式">解释器模式</a>
+      <ul>
+        <li><a href="#代码实现-9">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#中介模式">中介模式</a>
+      <ul>
+        <li><a href="#代码实现-10">代码实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

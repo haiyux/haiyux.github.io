@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>基于 OpenTelemetry 的链路追踪 - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+<meta name="keywords" content="运维, traceing" />
+
+
+<meta property="og:title" content="基于 OpenTelemetry 的链路追踪" />
+<meta name="twitter:title" content="基于 OpenTelemetry 的链路追踪" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/post/open-telemetry/" /><meta property="og:description" content="链路追踪的前世今生 分布式跟踪（也称为分布式请求跟踪）是一种用于分析和监控应用程序的方法，尤其是使用微服务架构构建的应用程序。分布式跟踪有助于精确定位故障发生的位置以及导致性能差的原因。 起源 链路追踪(D" />
+<meta name="twitter:description" content="链路追踪的前世今生 分布式跟踪（也称为分布式请求跟踪）是一种用于分析和监控应用程序的方法，尤其是使用微服务架构构建的应用程序。分布式跟踪有助于精确定位故障发生的位置以及导致性能差的原因。 起源 链路追踪(D" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2021-09-21T18:01:58+08:00" /><meta property="article:modified_time" content="2021-09-21T18:01:58+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/open-telemetry/">基于 OpenTelemetry 的链路追踪</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-21</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;2443 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;5 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E8%BF%90%E7%BB%B4">运维</a>&nbsp;<a href="/tags/traceing">traceing</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="链路追踪的前世今生">链路追踪的前世今生</h2>
+<blockquote>
+<p>分布式跟踪（也称为分布式请求跟踪）是一种用于分析和监控应用程序的方法，尤其是使用微服务架构构建的应用程序。分布式跟踪有助于精确定位故障发生的位置以及导致性能差的原因。</p>
+</blockquote>
+<h3 id="起源">起源</h3>
+<p>链路追踪(Distributed Tracing)　一词最早出现于谷歌发布的论文 <strong>《Dapper, a Large-Scale Distributed Systems Tracing Infrastructure》</strong> 中,这篇论文对于实现链路追踪,对于后来出现的 Jaeger、Zipkin 等开源分布式追踪项目设计理念仍有很深的影响。</p>
+<p>微服务架构是一个分布式的架构,会有很多个不同的服务。不同的服务之前相互调用,如果出现了错误由于一个请求经过了 N 个服务。随着业务的增加越来越多的服务之间的调用，如果没有一个工具去记录调用链，解决问题的时候就会像下面图片里小猫咪玩的毛线球一样，毫无头绪，无从下手</p>
+<p><img class="img-zoomable" src="/images/2344773-20210921193741383-2071554467.png" alt="" />
+</p>
+<p>所以需要有一个工具能够清楚的了解一个请求经过了哪些服务,顺序是如何,从而能够轻易的定位问题。</p>
+<p><img class="img-zoomable" src="/images/2344773-20210921193754101-1413816946.png" alt="" />
+</p>
+<h3 id="百家争艳">百家争艳</h3>
+<p>从谷歌发布 <strong>Dapper</strong> 后，分布式链路追踪工具越来越多，以下简单列举了一些常用的链路追踪系统</p>
+<ul>
+<li>Skywalking</li>
+<li>阿里 鹰眼</li>
+<li>大众点评 CAT</li>
+<li>Twitter Zipkin</li>
+<li>Naver pinpoint</li>
+<li>Uber Jaeger</li>
+</ul>
+<h3 id="争锋相对">争锋相对？</h3>
+<p>随着链路追踪工具越来越多，开源领域主要分为两派，一派是以 <strong>CNCF技术委员</strong> 会为主的  <strong>OpenTracing</strong> 的规范，例如 jaeger zipkin 都是遵循了<strong>OpenTracing</strong> 的规范。而另一派则是谷歌作为发起者的 <strong>OpenCensus</strong>，而且谷歌本身还是最早提出链路追踪概念的公司，后期连微软也加入了 <strong>OpenCensus</strong></p>
+<p><img class="img-zoomable" src="/images/2344773-20210921193831213-490777137.png" alt="" />
+</p>
+<h3 id="opentelemetry-诞生">OpenTelemetry 诞生</h3>
+<blockquote>
+<p>OpenTelemetric 是一组 API、SDK、模组和集成，专为创建和管理‎‎遥测数据‎‎（如追踪、指标和日志）而设</p>
+</blockquote>
+<p>微软加入 <strong>OpenCensus</strong> 后，直接打破了之前平衡的局面，间接的导致了 <strong>OpenTelemetry</strong> 的诞生
+谷歌和微软下定决心结束江湖之乱，首要的问题是如何整合两个两个社区已有的项目，OpenTelemetry 主要的理念就是，兼容 <strong>OpenCensus</strong> 和 <strong>OpenTracing</strong> ，可以让使用者无需改动或者很小的改动就可以接入 <strong>OpenTelemetry</strong></p>
+<h2 id="kratos-的链路追踪实践">Kratos 的链路追踪实践</h2>
+<blockquote>
+<p>Kratos 一套轻量级 Go 微服务框架，包含大量微服务相关框架及工具。</p>
+</blockquote>
+<h3 id="tracing-中间件">tracing 中间件</h3>
+<p>kratos 框架提供的自带中间件中有一个名为 <strong>tracing</strong> 中间件，它基于 <strong>Opentelemetry</strong> 实现了kratos 框架的链路追踪功能，中间件的代码可以从 <strong><a href="https://github.com/go-kratos/kratos/tree/main/middleware/tracing" target="_blank">middleware/tracing</a></strong> 中看到。</p>
+<h4 id="实现原理">实现原理</h4>
+<p>kratos 的链路追踪中间件由三个文件组成 <strong>carrie.go</strong>,<strong>tracer.go</strong>,<strong>tracing.go</strong>。client和 server 的实现原理基本相同，本文以 server 实现进行原理解析。</p>
+<ol>
+<li>首先当请求进入时，<strong>tracing</strong> 中间件会被调用,首先调用了 <strong>tracer.go</strong> 中的 <strong>NewTracer</strong> 方法</li>
+</ol>
+<pre><code class="language-go">// Server returns a new server middleware for OpenTelemetry.
+func Server(opts ...Option) middleware.Middleware {
+        // 调用 tracer.go 中的 NewTracer 传入了一个 SpanKindServer 和配置项
+	tracer := NewTracer(trace.SpanKindServer, opts...)
+        // ... 省略代码
+}
+</code></pre>
+<ol start="2">
+<li><strong>tracer.go</strong> 中的 <strong>NewTracer</strong> 方法被调用后会返回一个 <strong>Tracer</strong>,实现如下</li>
+</ol>
+<pre><code class="language-go">func NewTracer(kind trace.SpanKind, opts ...Option) *Tracer {
+	options := options{}
+	for _, o := range opts {
+		o(&amp;options)
+	}
+	// 判断是否存在 otel 追踪提供者配置，如果存在则设置
+	if options.TracerProvider != nil {
+		otel.SetTracerProvider(options.TracerProvider)
+	}
+	/*
+	判断是否存在 Propagators 设置，如果存在设置则覆盖，不存在则设置一个默认的TextMapPropagator
+	注意如果没有设置默认的TextMapPropagator,链路信息则无法正确的传递
+	*/
+	if options.Propagators != nil {
+		otel.SetTextMapPropagator(options.Propagators)
+	} else {	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.Baggage{}, propagation.TraceContext{}))
+	}
+
+
+	var name string
+	// 判断当前中间件的类型，是 server 还是 client
+	if kind == trace.SpanKindServer {
+		name = &quot;server&quot;
+	} else if kind == trace.SpanKindClient {
+		name = &quot;client&quot;
+	} else {
+		panic(fmt.Sprintf(&quot;unsupported span kind: %v&quot;, kind))
+	}
+	// 调用 otel包的 Tracer 方法 传入 name 用来创建一个 tracer 实例
+	tracer := otel.Tracer(name)
+	return &amp;Tracer{tracer: tracer, kind: kind}
+}
+</code></pre>
+<ol start="3">
+<li>判断当前请求类型，处理需要采集的数据，并调用 <strong>tracer.go</strong> 中的 <strong>Start</strong> 方法</li>
+</ol>
+<pre><code class="language-go">var (
+	component string
+	operation string
+	carrier   propagation.TextMapCarrier
+)
+// 判断请求类型
+if info, ok := http.FromServerContext(ctx); ok {
+	// HTTP
+	component = &quot;HTTP&quot;
+	// 取出请求的地址
+	operation = info.Request.RequestURI
+	// 调用 otel/propagation包中的 HeaderCarrier，会处理 http.Header 以用来满足TextMapCarrier interface
+	// TextMapCarrier 是一个文本映射载体，用于承载信息
+	carrier = propagation.HeaderCarrier(info.Request.Header)
+	// otel.GetTextMapPropagator().Extract() 方法用于将文本映射载体，读取到上下文中
+	ctx = otel.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier(info.Request.Header))
+} else if info, ok := grpc.FromServerContext(ctx); ok {
+	// Grpc
+	component = &quot;gRPC&quot;
+	operation = info.FullMethod
+	//
+	// 调用 grpc/metadata包中metadata.FromIncomingContext(ctx)传入 ctx，转换 grpc 的元数据
+	if md, ok := metadata.FromIncomingContext(ctx); ok {
+		// 调用carrier.go 中的 MetadataCarrier 将 MD 转换 成文本映射载体
+		carrier = MetadataCarrier(md)
+	}
+}
+// 调用 tracer.Start 方法
+ctx, span := tracer.Start(ctx, component, operation, carrier)
+// ... 省略代码
+}
+</code></pre>
+<ol start="4">
+<li>调用 <strong>tracing.go</strong> 中的 <strong>Start</strong> 方法</li>
+</ol>
+<pre><code class="language-go">func (t *Tracer) Start(ctx context.Context, component string, operation string, carrier propagation.TextMapCarrier) (context.Context, trace.Span) {
+	// 判断当前中间件如果是 server则将 carrier 注入到上下文中
+	if t.kind == trace.SpanKindServer {
+		ctx = otel.GetTextMapPropagator().Extract(ctx, carrier)
+	}
+	// 调用otel/tracer 包中的 start 方法，用来创建一个 span
+	ctx, span := t.tracer.Start(ctx,
+		// tracing.go 中声明的请求路由作为 spanName
+		operation,
+		// 设置 span 的属性，设置了一个 component，component的值为请求类型
+		trace.WithAttributes(attribute.String(&quot;component&quot;, component)),
+		// 设置 span种类
+		trace.WithSpanKind(t.kind),
+	)
+	// 判断如果当前中间件是 client 则将 carrier 注入到请求里面
+	if t.kind == trace.SpanKindClient {
+		otel.GetTextMapPropagator().Inject(ctx, carrier)
+	}
+	return ctx, span
+}
+</code></pre>
+<ol start="5">
+<li><strong>defer</strong> 声明了一个闭包方法</li>
+</ol>
+<pre><code class="language-golang">// 这个地方要注意，需要使用闭包，因为 defer 的参数是实时计算的如果异常发生，err 会一直为 nil
+// https://github.com/go-kratos/kratos/issues/927
+defer func() { tracer.End(ctx, span, err) }()
+</code></pre>
+<ol start="6">
+<li>中间件继续执行</li>
+</ol>
+<pre><code class="language-go">// tracing.go 69行
+reply, err = handler(ctx, req)
+</code></pre>
+<ol start="7">
+<li>中间件调用结束 <strong>defer</strong> 中的闭包被调用后执行了 <strong>tracer.go</strong> 中的 <strong>End</strong> 方法</li>
+</ol>
+<pre><code class="language-go">func (t *Tracer) End(ctx context.Context, span trace.Span, err error) {
+	// 判断是否有异常发生，如果有则设置一些异常信息
+	if err != nil {
+		// 记录异常
+		span.RecordError(err)
+		// 设置span 属性
+		span.SetAttributes(
+			// 设置事件为异常
+			attribute.String(&quot;event&quot;, &quot;error&quot;),
+			// 设置 message 为 err.Error().
+			attribute.String(&quot;message&quot;, err.Error()),
+		)
+		//设置了 span 的状态
+		span.SetStatus(codes.Error, err.Error())
+	} else {
+		// 如果没有发生异常，span 状态则为 ok
+		span.SetStatus(codes.Ok, &quot;OK&quot;)
+	}
+	// 中止 span
+	span.End()
+}
+</code></pre>
+<h4 id="如何使用">如何使用</h4>
+<p>tracing 中间件的使用示例可以从  <a href="https://github.com/go-kratos/kratos/tree/main/examples/traces" target="_blank">kratos/examples/traces</a> ,该示例简单的实现了跨服务间的链路追踪,以下代码片段包含部分示例代码。</p>
+<pre><code class="language-go">// https://github.com/go-kratos/kratos/blob/7f835db398c9d0332e69b81bad4c652b4b45ae2e/examples/traces/app/message/main.go#L38
+// 首先调用otel 库方法，得到一个 TracerProvider
+func tracerProvider(url string) (*tracesdk.TracerProvider, error) {
+	// examples/traces 中使用的是 jaeger，其他方式可以查看 opentelemetry 官方示例
+	exp, err := jaeger.NewRawExporter(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
+	if err != nil {
+		return nil, err
+	}
+	tp := tracesdk.NewTracerProvider(
+		tracesdk.WithSampler(tracesdk.AlwaysSample()),
+		// 设置 Batcher，注册jaeger导出程序
+		tracesdk.WithBatcher(exp),
+		// 记录一些默认信息
+		tracesdk.WithResource(resource.NewWithAttributes(
+			semconv.ServiceNameKey.String(pb.User_ServiceDesc.ServiceName),
+			attribute.String(&quot;environment&quot;, &quot;development&quot;),
+			attribute.Int64(&quot;ID&quot;, 1),
+		)),
+	)
+	return tp, nil
+}
+</code></pre>
+<h4 id="在-grpcserver-中使用">在 grpc/server 中使用</h4>
+<pre><code class="language-go">// https://github.com/go-kratos/kratos/blob/main/examples/traces/app/message/main.go
+grpcSrv := grpc.NewServer(
+	grpc.Address(&quot;:9000&quot;),
+	grpc.Middleware(
+		// Configuring tracing Middleware
+		tracing.Server(
+			tracing.WithTracerProvider(tp),
+		),
+	),
+)
+</code></pre>
+<h4 id="在-grpcclient-中使用">在 grpc/client 中使用</h4>
+<pre><code class="language-go">// https://github.com/go-kratos/kratos/blob/149fc0195eb62ee1fbc2728adb92e1bcd1a12c4e/examples/traces/app/user/main.go#L63
+conn, err := grpc.DialInsecure(ctx,
+	grpc.WithEndpoint(&quot;127.0.0.1:9000&quot;),
+	grpc.WithMiddleware(
+		tracing.Client(
+			tracing.WithTracerProvider(s.tracer),
+			tracing.WithPropagators(
+				propagation.NewCompositeTextMapPropagator(propagation.Baggage{}, propagation.TraceContext{}),
+			),
+		)
+	),
+	grpc.WithTimeout(2*time.Second),
+)
+</code></pre>
+<h4 id="在-httpserver-中使用">在 http/server 中使用</h4>
+<pre><code class="language-go">// https://github.com/go-kratos/kratos/blob/main/examples/traces/app/user/main.go
+httpSrv := http.NewServer(http.Address(&quot;:8000&quot;))
+httpSrv.HandlePrefix(&quot;/&quot;, pb.NewUserHandler(s,
+	http.Middleware(
+		// Configuring tracing middleware
+		tracing.Server(
+			tracing.WithTracerProvider(tp),
+			tracing.WithPropagators(
+				propagation.NewCompositeTextMapPropagator(propagation.Baggage{}, propagation.TraceContext{}),
+			),
+		),
+	),
+)
+</code></pre>
+<h4 id="在-httpclient-中使用">在 http/client 中使用</h4>
+<pre><code class="language-go">http.NewClient(ctx, http.WithMiddleware(
+	tracing.Client(
+		tracing.WithTracerProvider(s.tracer),
+	),
+))
+</code></pre>
+<h4 id="如何实现一个其他场景的-tracing">如何实现一个其他场景的 tracing</h4>
+<p>我们可以借鉴 <strong>kratos</strong> 的 <strong>tracing</strong> 中间件的代码来实现例如数据库的 <strong>tracing</strong>，如下面的代码片段，作者借鉴了<strong>tracing</strong> 中间件，实现了 <strong>qmgo</strong> 库操作 <strong>MongoDB</strong> 数据库的 <strong>tracing</strong>。</p>
+<pre><code class="language-go">func mongoTracer(ctx context.Context,tp trace.TracerProvider, command interface{}) {
+	var (
+		commandName string
+		failure     string
+		nanos       int64
+		reply       bson.Raw
+		queryId     int64
+		eventName   string
+	)
+	otel.SetTracerProvider(tp)
+	reply = bson.Raw{}
+	switch value := command.(type) {
+	case *event.CommandStartedEvent:
+		commandName = value.CommandName
+		reply = value.Command
+		queryId = value.RequestID
+		eventName = &quot;CommandStartedEvent&quot;
+	case *event.CommandSucceededEvent:
+		commandName = value.CommandName
+		nanos = value.DurationNanos
+		queryId = value.RequestID
+		eventName = &quot;CommandSucceededEvent&quot;
+	case *event.CommandFailedEvent:
+		commandName = value.CommandName
+		failure = value.Failure
+		nanos = value.DurationNanos
+		queryId = value.RequestID
+		eventName = &quot;CommandFailedEvent&quot;
+	}
+	duration, _ := time.ParseDuration(strconv.FormatInt(nanos, 10) + &quot;ns&quot;)
+	tracer := otel.Tracer(&quot;mongodb&quot;)
+	kind := trace.SpanKindServer
+	ctx, span := tracer.Start(ctx,
+		commandName,
+		trace.WithAttributes(
+			attribute.String(&quot;event&quot;, eventName),
+			attribute.String(&quot;command&quot;, commandName),
+			attribute.String(&quot;query&quot;, reply.String()),
+			attribute.Int64(&quot;queryId&quot;, queryId),
+			attribute.String(&quot;ms&quot;, duration.String()),
+		),
+		trace.WithSpanKind(kind),
+	)
+	if failure != &quot;&quot; {
+		span.RecordError(errors.New(failure))
+	}
+	span.End()
+}
+</code></pre>
+<h2 id="文章转自">文章转自</h2>
+<ul>
+<li><a href="https://go-kratos.dev/blog/go-kratos-opentelemetry-practice" target="_blank">https://go-kratos.dev/blog/go-kratos-opentelemetry-practice</a></li>
+</ul>
+<hr>
+<p><img class="img-zoomable" src="/images/2344773-20210902225224456-315933124.png" alt="" />
+</p>
+<p><img class="img-zoomable" src="/images/2344773-20210902225203602-1750987546.gif" alt="" />
+</p>
+
+    </div>
+</article>
+
+
+<div class="license markdown-body">
+    <blockquote>
+        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
+    </blockquote>
+</div>
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#链路追踪的前世今生">链路追踪的前世今生</a>
+      <ul>
+        <li><a href="#起源">起源</a></li>
+        <li><a href="#百家争艳">百家争艳</a></li>
+        <li><a href="#争锋相对">争锋相对？</a></li>
+        <li><a href="#opentelemetry-诞生">OpenTelemetry 诞生</a></li>
+      </ul>
+    </li>
+    <li><a href="#kratos-的链路追踪实践">Kratos 的链路追踪实践</a>
+      <ul>
+        <li><a href="#tracing-中间件">tracing 中间件</a></li>
+      </ul>
+    </li>
+    <li><a href="#文章转自">文章转自</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#链路追踪的前世今生">链路追踪的前世今生</a>
+      <ul>
+        <li><a href="#起源">起源</a></li>
+        <li><a href="#百家争艳">百家争艳</a></li>
+        <li><a href="#争锋相对">争锋相对？</a></li>
+        <li><a href="#opentelemetry-诞生">OpenTelemetry 诞生</a></li>
+      </ul>
+    </li>
+    <li><a href="#kratos-的链路追踪实践">Kratos 的链路追踪实践</a>
+      <ul>
+        <li><a href="#tracing-中间件">tracing 中间件</a></li>
+      </ul>
+    </li>
+    <li><a href="#文章转自">文章转自</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

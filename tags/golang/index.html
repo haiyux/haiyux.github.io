@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>golang - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+<link rel="alternate" type="application/rss+xml" href="https://www.zhaohaiyu.com/tags/golang/index.xml" title="赵海宇的博客" />
+
+<meta property="og:title" content="golang" />
+<meta name="twitter:title" content="golang" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/tags/golang/" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="og:updated_time" content="2022-01-22T15:40:42+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+
+<div class="page-info">
+  <span>拥有标签 golang 的文章：</span>
+</div>
+
+
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-error/">Go错误处理</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-22</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5436 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;11 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    error定义 数据结构 go语言error是一普通的值，实现方式为简单一个接口。 // The error built-in interface type is the conventional interface for // representing an error condition, with the nil value representing no error. type error interface { Error() string } 创建error 使用errors.New() // New returns an error that formats as the given
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/project-directory/">项目目录结构</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2022-01-02</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;971 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;2 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/ddd">DDD</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    什么是DDD？ DDD 是 Domain-Driven Design 的缩写。 其主要的思想是，我们在设计软件时，先从业务出发，理解真实的业务含义，将业务中的一些概念吸收到软件建模中来，避免造出“大而无用”软件。也避免软件设计没有内在联系，否则一团散
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-generics/">Go泛型入门</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-25</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4264 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;9 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/%E6%B3%9B%E5%9E%8B">泛型</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    备注：这是一个 beta 版本的内容 这个教程介绍了 Go 泛型的基础概念。 通过泛型，你可以声明并使用函数或者是类型，那些用于调用代码时参数需要兼容多个不同类型的情况。 在这个教程里，你会声明两个普通的函数，然后复制一份
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/nethttp-gin/">Nethttp Gin</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-16</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4116 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;9 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/http">http</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    net/http 路由注册 func test1() { http.HandleFunc(&quot;/&quot;, func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, &quot;Hello world!&quot;) }) err := http.ListenAndServe(&quot;:9001&quot;, nil) if err != nil { log.Fatal(&quot;ListenAndServer:&quot;, err) } } 在使用ListenAndServe这个方法时，系统就会给我们指派一个路由器，DefaultServeMux是系统默认使用的路由器，如果Li
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/wire/">Go工程化 - 依赖注入</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-09-06</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;5466 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;11 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/wire">wire</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    我们在微服务框架kratos v2的默认项目模板中kratos-layout使用了google/wire进行依赖注入，也建议开发者在维护项目时使用该工具。 wire 乍看起来比较违反直觉，导致很多同学不理解为什么
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-gin/">Go Gin框架介绍及使用</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-05-09</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3316 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;7 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/http">http</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    Gin框架介绍 基于httprouter开发的Web框架。 中文文档，齐全。 简单易用的轻量级框架。 Gin框架安装 go get -u github.com/gin-gonic/gin 实例: package main import ( &quot;fmt&quot; &quot;github.com/gin-gonic/gin&quot; ) func main() { r := gin.Default() // 创建一个默认的路由引擎 // 也可以用gin.New()
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-gc/">Go gc垃圾回收</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-28</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3894 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;8 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的对象，让出存储器资源，无需程序员手动执行。 Golang中的垃圾回收主要应用三色标记法，GC
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-net-http/">Go web源码解析</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-03-13</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3713 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;8 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/http">http</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    Go的web工作原理 在Go中使用及其简单的代码即可开启一个web服务。如下： //开启web服务 func test(){ http.HandleFunc(&quot;/&quot;, sayHello) err := http.ListenAndServe(&quot;:9090&quot;,nil) if err!=nil { log.Fatal(&quot;ListenAndServer:&quot;,err) } } func sayHello(w http.ResponseWriter, r *http.Request){ r.ParseForm() fmt.Println(&quot;path&quot;,r.URL.Path) fmt.Println(&quot;scheme&quot;,r.URL.Scheme) fmt.Fprintf(w, &quot;Hello Guest!&quot;) } 在使用ListenAndServe这个方法时，系统就会给
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-zap/">Go zap高性能日志</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-01-12</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3619 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;8 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    摘要 日志在整个工程实践中的重要性不言而喻，在选择日志组件的时候也有多方面的考量。详细、正确和及时的反馈是必不可少的，但是整个性能表现是否也是必要考虑的点呢？在长期的实践中发现有的日志组件对于计算资源的
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-viper/">Go viper配置管理</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-01-02</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;7088 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;15 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    安装 go get github.com/spf13/viper viper支持的功能 1、可以设置默认值 2、可以加载多种格式的配置文件，如JSON，TOML，YAML，HCL和Java属性配置文件 3、应用程序运行过程中，保持监听和重新读取配置文件 4、可以从
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-redis/">Go操作redis</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-01-01</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;413 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;1 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/redis">redis</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    安装 下载第三方包: go get -u github.com/go-redis/redis/v9 连接 // 定义一个rdis客户端 var redisdb *redis.Client // 初始化 func initClient() (err error) { redisdb = redis.NewClient(&amp;redis.Options{ Addr: &quot;localhost:6379&quot;, // post端口 Password: &quot;&quot;, // 密码 DB: 0, // 使用redis的库 }) _, err = redisdb.Ping(context.Background()).Result() if err != nil { fmt.Println(&quot;连接失败
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-soup/">Go HTML标签提取器soup</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-31</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1070 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;3 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    什么是soup 类似python中beatifulsoup，用于提取html标签提取，多用于爬虫。它可以很好的处理不规范标记并生成剖析树(parse tree)。 它提供简单又常用的导航，搜索以及修改剖析树
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-test/">Go单元测试</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-28</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;7792 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;16 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    go test go test命令是一个按照一定的约定和组织来测试代码的程序。在包目录内，所有以_test.go为后缀名的源文件在执行go build时不会被构建成包的一部分，它们是go test测试的一部分。 go test
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-channel/">Go Channel</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-27</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1072 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;3 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    什么是channel channels 是一种类型安全的消息队列，充当两个 goroutine 之间的管道，将通过它同步的进行任意资源的交换。chan 控制 goroutines 交互的能力从而创建了 Go 同步机制。当创建的 chan 没有容量时，称为无缓冲通道。反过来，使用
+  </div>
+</div>
+
+<div class="post">
+  <h2 class="post-item post-title">
+    <a href="https://www.zhaohaiyu.com/post/go-context/">Go context包</a>
+  </h2>
+  <div class="post-item post-meta">
+    <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-24</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4440 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;9 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+  </div>
+  <div class="post-item post-summary markdown-body">
+    go context标准库 context包在Go1.7版本时加入到标准库中。其设计目标是给Golang提供一个标准接口来给其他任务发送取消信号和传递数据。其具体作用为： 可以通过context发送取消信号。
+  </div>
+</div>
+
+
+<div class="pagination"><div class="pag-item pag-current">
+    <a href="/tags/golang/">1</a>
+  </div><div class="pag-item">
+    <a href="/tags/golang/page/2/">2</a>
+  </div><div class="pag-next">
+    <a href="/tags/golang/page/2/"><i class="iconfont icon-chevron-forward-circle-sharp"></i></a>
+  </div><div class="pag-last">
+    <a href="/tags/golang/page/2/"><i class="iconfont icon-caret-forward-circle-sharp"></i></a>
+  </div></div>
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>

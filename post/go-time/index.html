@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="HandheldFriendly" content="True" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="generator" content="Hugo 0.100.1" />
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+<link rel="manifest" href="/img/site.webmanifest">
+<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+
+<title>Go time包 - 赵海宇的博客</title>
+
+
+<meta name="author" content="haiyux" />
+
+
+<meta name="description" content="欢迎来到haiyux的博客" />
+
+
+<meta name="keywords" content="golang" />
+
+
+<meta property="og:title" content="Go time包" />
+<meta name="twitter:title" content="Go time包" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.zhaohaiyu.com/post/go-time/" /><meta property="og:description" content="时间类型 time.Time类型表示时间。 func demo() { now := time.Now() //获取当前时间 fmt.Printf(&quot;Now:%v\n&quot;, now) // Now:2020-08-19 21:53:31.1633023 &#43;0800 CST m=&#43;0.003989401 year := now.Year() //年 month := now.Month() //月 day := now.Day() //日 hour := now.Hour() //小时 minute := now.Minute() //分钟 second := now.Second() //秒 fmt.Printf(&quot;%d-%02d-%02d %02d:%02d:%02d\n&quot;, year, month, day, hour, minute, second) // 2020-08-19 21:53:31 } 时间戳 func stamp() { now :=" />
+<meta name="twitter:description" content="时间类型 time.Time类型表示时间。 func demo() { now := time.Now() //获取当前时间 fmt.Printf(&quot;Now:%v\n&quot;, now) // Now:2020-08-19 21:53:31.1633023 &#43;0800 CST m=&#43;0.003989401 year := now.Year() //年 month := now.Month() //月 day := now.Day() //日 hour := now.Hour() //小时 minute := now.Minute() //分钟 second := now.Second() //秒 fmt.Printf(&quot;%d-%02d-%02d %02d:%02d:%02d\n&quot;, year, month, day, hour, minute, second) // 2020-08-19 21:53:31 } 时间戳 func stamp() { now :=" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2020-02-20T11:26:32+08:00" /><meta property="article:modified_time" content="2020-02-20T11:26:32+08:00" />
+
+
+<style>
+    @media (prefers-color-scheme: dark) {
+        body[data-theme='auto'] img {
+            filter: brightness(60%);
+        }
+    }
+
+    body[data-theme='dark'] img {
+        filter: brightness(60%);
+    }
+</style>
+
+
+
+
+<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
+
+
+
+
+
+
+
+
+</head>
+
+<body
+  data-theme="auto"
+  data-theme-auto='true'
+  >
+    <script data-cfasync="false">
+  
+  var fujiThemeData = localStorage.getItem('fuji_data-theme');
+  
+  if (!fujiThemeData) {
+    localStorage.setItem('fuji_data-theme', 'auto');
+  } else {
+    
+    if (fujiThemeData !== 'auto') {
+      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
+    }
+  }
+</script>
+
+    <header>
+    <div class="container-lg clearfix">
+        <div class="col-12 header">
+            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
+            
+            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
+            
+        </div>
+    </div>
+</header>
+
+    <main>
+        <div class="container-lg clearfix">
+            
+            <div class="col-12 col-md-9 float-left content">
+                
+<article>
+    
+    <h2 class="post-item post-title">
+        <a href="https://www.zhaohaiyu.com/post/go-time/">Go time包</a>
+    </h2>
+    <div class="post-item post-meta">
+        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-02-20</span>
+
+<span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;726 字</span>
+<span><i class="iconfont icon-time-sharp"></i>&nbsp;2 分钟</span>
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
+
+    </div>
+    
+    <div class="post-content markdown-body">
+        <h2 id="时间类型">时间类型</h2>
+<p>time.Time类型表示时间。</p>
+<pre><code class="language-go">func demo() {
+	now := time.Now() //获取当前时间
+	fmt.Printf(&quot;Now:%v\n&quot;, now)  // Now:2020-08-19 21:53:31.1633023 +0800 CST m=+0.003989401
+	year := now.Year()     //年
+	month := now.Month()   //月
+	day := now.Day()       //日
+	hour := now.Hour()     //小时
+	minute := now.Minute() //分钟
+	second := now.Second() //秒
+	fmt.Printf(&quot;%d-%02d-%02d %02d:%02d:%02d\n&quot;, year, month, day, hour, minute, second) // 2020-08-19 21:53:31
+}
+</code></pre>
+<h2 id="时间戳">时间戳</h2>
+<pre><code class="language-go">func stamp() {
+	now := time.Now()            //获取当前时间
+	timestamp1 := now.Unix()     //时间戳
+	timestamp2 := now.UnixNano() //纳秒时间戳
+    fmt.Printf(&quot;秒时间戳:%v\n&quot;, timestamp1) // 秒时间戳:1597845356
+	fmt.Printf(&quot;纳秒时间戳:%v\n&quot;, timestamp2) // 纳秒时间戳:1597845356562315400
+}
+</code></pre>
+<p>使用time.Unix()函数可以将时间戳转为时间格式。</p>
+<pre><code class="language-go">func demo2(timestamp int64) {
+	timeObj := time.Unix(1462032000, 0) //将时间戳转为时间格式
+    fmt.Println(timeObj) // 2016-05-01 00:00:00 +0800 CST
+}
+</code></pre>
+<h2 id="时间格式化">时间格式化</h2>
+<p>时间类型有一个自带的方法Format进行格式化，需要注意的是Go语言中格式化时间模板不是常见的Y-m-d H:M:S而是使用Go的诞生时间2006年1月2号15点04分</p>
+<pre><code class="language-go">func demo4() {
+	now := time.Now()
+	fmt.Println(now.Format(&quot;2006-01-02 15:04:05.000 Mon Jan&quot;)) // 2020-08-19 22:02:46.296 Wed Aug
+	fmt.Println(now.Format(&quot;2006-01-02 03:04:05.000 PM Mon Jan&quot;)) // 2020-08-19 10:02:46.296 PM Wed Aug
+	fmt.Println(now.Format(&quot;2006*01*02&quot;)) // 2020*08*19
+}
+</code></pre>
+<p><strong>解析字符串格式的时间</strong></p>
+<pre><code class="language-go">// 加载时区
+loc, err := time.LoadLocation(&quot;Asia/Shanghai&quot;)
+if err != nil {
+    fmt.Println(err)
+    return
+}
+// 解析字符串时间
+timeObj, err := time.ParseInLocation(&quot;2006/01/02 15:04:05&quot;, &quot;2016/04/30 22:00:00&quot;, loc)
+if err != nil {
+    fmt.Println(err)
+    return
+}
+fmt.Println(timeObj) // 2016-04-30 22:00:00 +0800 CST
+fmt.Println(timeObj.Unix()) // 1462024800
+</code></pre>
+<h2 id="时间操作">时间操作</h2>
+<ul>
+<li>func (t Time) Add(d Duration) Time加时间</li>
+<li>func (t Time) Sub(u Time) Duration减时间</li>
+<li>func (t Time) Before(u Time) bool在u之前</li>
+<li>func (t Time) After(u Time) bool在u之后</li>
+</ul>
+<pre><code class="language-go">package main
+import (
+	&quot;fmt&quot;
+	&quot;time&quot;
+)
+func formatDemo() {
+	now := time.Now()
+	fmt.Println(now.Format(&quot;2006-01-02 15:04:05.000 Mon Jan&quot;))    // 2020-08-19 22:02:46.296 Wed Aug
+	fmt.Println(now.Format(&quot;2006-01-02 03:04:05.000 PM Mon Jan&quot;)) // 2020-08-19 10:02:46.296 PM Wed Aug
+	fmt.Println(now.Format(&quot;2006*01*02&quot;))                         // 2020*08*19
+}
+func main() {
+	// 加载时区
+	loc, err := time.LoadLocation(&quot;Asia/Shanghai&quot;)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// 解析字符串时间
+	timeObj, err := time.ParseInLocation(&quot;2006/01/02 15:04:05&quot;, &quot;2016/04/30 22:00:00&quot;, loc)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(timeObj) // 2016-04-30 22:00:00 +0800 CST
+
+	now := time.Now()
+	a := now.Add(time.Hour) 
+	fmt.Println(a)   // 2020-08-19 23:15:30.0153059 +0800 CST m=+3600.002023801
+	s := now.Sub(timeObj)
+	fmt.Println(s) // 37728h15m30.0153059s
+	fmt.Println(now.Before(timeObj)) // false
+	fmt.Println(now.After(timeObj)) // true
+}
+</code></pre>
+<h2 id="定时器">定时器</h2>
+<p>使用time.Tick(时间间隔)来设置定时器，定时器的本质上是一个channel</p>
+<pre><code class="language-go">func tickDemo() {
+	ticker := time.Tick(time.Second) //定义一个1秒间隔的定时器
+	for i := range ticker {
+		fmt.Println(i) //每秒都会打印时间
+	}
+}
+</code></pre>
+
+    </div>
+</article>
+
+
+<div class="license markdown-body">
+    <blockquote>
+        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
+    </blockquote>
+</div>
+
+
+<div class="post-comment" data-comment="utterances">
+    <span class="post-comment-notloaded">
+        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
+    </span>
+    <script>
+        function loadComment() {
+            var commentArea = document.querySelector('.post-comment');
+            var utterancesTheme = document.body.getAttribute('data-theme');
+            if (utterancesTheme === 'auto') {
+                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
+                    'github-light';
+            } else {
+                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
+            }
+            var s = document.createElement('script');
+            s.src = 'https://utteranc.es/client.js';
+            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
+            s.setAttribute('issue-term', 'pathname');
+            s.setAttribute('theme', utterancesTheme);
+            s.setAttribute('crossorigin', 'anonymous');
+            s.setAttribute('async', '');
+            document.querySelector('.post-comment').appendChild(s);
+            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
+        }
+    </script>
+</div>
+
+
+            </div>
+            <aside class="col-12 col-md-3 float-left sidebar">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3><nav id="TableOfContents">
+  <ul>
+    <li><a href="#时间类型">时间类型</a></li>
+    <li><a href="#时间戳">时间戳</a></li>
+    <li><a href="#时间格式化">时间格式化</a></li>
+    <li><a href="#时间操作">时间操作</a></li>
+    <li><a href="#定时器">定时器</a></li>
+  </ul>
+</nav></div>
+</aside>
+
+        </div>
+        <div class="btn">
+    <div class="btn-menu" id="btn-menu">
+        <i class="iconfont icon-grid-sharp"></i>
+    </div>
+    <div class="btn-toggle-mode">
+        <i class="iconfont icon-contrast-sharp"></i>
+    </div>
+    <div class="btn-scroll-top">
+        <i class="iconfont icon-chevron-up-circle-sharp"></i>
+    </div>
+</div>
+<aside class="sidebar-mobile" style="display: none;">
+  <div class="sidebar-wrapper">
+    
+    <div class="sidebar-item sidebar-pages">
+        <h3>页面</h3>
+        <ul>
+            
+            <li>
+                <a href="/">主页</a>
+            </li>
+            
+            <li>
+                <a href="/archives/">文章</a>
+            </li>
+            
+            <li>
+                <a href="/about/">关于</a>
+            </li>
+            
+            <li>
+                <a href="/search/">搜索</a>
+            </li>
+            
+            <li>
+                <a href="/index.xml">RSS</a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-links">
+        <h3>链接</h3>
+        <ul>
+            
+            <li>
+                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
+            </li>
+            
+            <li>
+                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
+            </li>
+            
+            <li>
+                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
+            </li>
+            
+        </ul>
+    </div>
+    
+    <div class="sidebar-item sidebar-tags">
+        <h3>标签</h3>
+        <div>
+            
+            <span>
+                <a href="/tags/ddd/">DDD</a>
+            </span>
+            
+            <span>
+                <a href="/tags/docker/">docker</a>
+            </span>
+            
+            <span>
+                <a href="/tags/golang/">golang</a>
+            </span>
+            
+            <span>
+                <a href="/tags/grpc/">grpc</a>
+            </span>
+            
+            <span>
+                <a href="/tags/http/">http</a>
+            </span>
+            
+            <span>
+                <a href="/tags/kratos/">kratos</a>
+            </span>
+            
+            <span>
+                <a href="/tags/makefile/">makefile</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mq/">mq</a>
+            </span>
+            
+            <span>
+                <a href="/tags/mysql/">mysql</a>
+            </span>
+            
+            <span>
+                <a href="/tags/nginx/">nginx</a>
+            </span>
+            
+            <span>
+                <a href="/tags/protobuf/">protobuf</a>
+            </span>
+            
+            <span>
+                <a href="/tags/raft/">raft</a>
+            </span>
+            
+            <span>
+                <a href="/tags/redis/">redis</a>
+            </span>
+            
+            <span>
+                <a href="/tags/thrift/">Thrift</a>
+            </span>
+            
+            <span>
+                <a href="/tags/traceing/">traceing</a>
+            </span>
+            
+            <span>
+                <a href="/tags/wire/">wire</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+            </span>
+            
+            <span>
+                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+            </span>
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="sidebar-item sidebar-toc">
+        <h3>目录</h3>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#时间类型">时间类型</a></li>
+    <li><a href="#时间戳">时间戳</a></li>
+    <li><a href="#时间格式化">时间格式化</a></li>
+    <li><a href="#时间操作">时间操作</a></li>
+    <li><a href="#定时器">定时器</a></li>
+  </ul>
+</nav>
+    </div>
+    
+    
+  </div>
+</aside>
+    </main>
+
+    <footer>
+    <div class="container-lg clearfix">
+        <div class="col-12 footer">
+            
+            <span>&copy; 2019-2022
+                <a href="https://www.zhaohaiyu.com">haiyux</a>
+                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
+                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
+                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
+                                                    target="_blank">Hugo</a> 构建
+            </span>
+        </div>
+    </div>
+</footer>
+
+    
+<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+
+<script defer src="/assets/js/fuji.min.js"></script>
+
+
+
+</body>
+
+</html>
