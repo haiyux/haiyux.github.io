@@ -1,1 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>raft on haiyux's blog</title><link>https://www.zhaohaiyu.com/tags/raft/</link><description>Recent content in raft on haiyux's blog</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 27 Nov 2020 10:33:45 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/raft/index.xml" rel="self" type="application/rss+xml"/><item><title>微服务架构及raft协议</title><link>https://www.zhaohaiyu.com/post/microservice/microservice-raft/</link><pubDate>Fri, 27 Nov 2020 10:33:45 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/microservice/microservice-raft/</guid><description>微服务架构全景图 服务注册和发现 Client side implement 调用需要维护所有调用服务的地址 有一定的技术难度，需要rpc框架支持 Server side implement 架构简单 有单点故障 注册中心 etc</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>raft on 赵海宇的博客</title>
+    <link>/tags/raft/</link>
+    <description>Recent content in raft on 赵海宇的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 27 Nov 2020 10:33:45 +0800</lastBuildDate><atom:link href="/tags/raft/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>微服务架构及raft协议</title>
+      <link>/post/microservice-raft/</link>
+      <pubDate>Fri, 27 Nov 2020 10:33:45 +0800</pubDate>
+      
+      <guid>/post/microservice-raft/</guid>
+      <description>微服务架构全景图 服务注册和发现 Client side implement 调用需要维护所有调用服务的地址 有一定的技术难度，需要rpc框架支持 Server side implement 架构简单 有单点故障 注册中心 etcd注册中心 分布式一致性系统 基于raft一致性协议 etcd使用</description>
+    </item>
+    
+  </channel>
+</rss>
