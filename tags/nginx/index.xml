@@ -1,1 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>nginx on 赵海宇的博客</title><link>https://www.zhaohaiyu.com/tags/nginx/</link><description>Recent content in nginx on 赵海宇的博客</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 13 Jun 2020 18:30:43 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/nginx/index.xml" rel="self" type="application/rss+xml"/><item><title>Nginx基础</title><link>https://www.zhaohaiyu.com/post/nginx/</link><pubDate>Sat, 13 Jun 2020 18:30:43 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/nginx/</guid><description>nginx是什么 nginx是一个开源的，支持高性能，高并发的www服务和代理服务软件。 支持高并发，能支持几万并发连接 资源消耗少，在3万并发连接下开启10个nginx线程消耗的内存不到200M 可以做ht</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nginx on 赵海宇的博客</title>
+    <link>https://www.zhaohaiyu.com/tags/nginx/</link>
+    <description>Recent content in nginx on 赵海宇的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 13 Jun 2020 18:30:43 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Nginx基础</title>
+      <link>https://www.zhaohaiyu.com/post/nginx/</link>
+      <pubDate>Sat, 13 Jun 2020 18:30:43 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/nginx/</guid>
+      <description>nginx是什么 nginx是一个开源的，支持高性能，高并发的www服务和代理服务软件。 支持高并发，能支持几万并发连接 资源消耗少，在3万并发连接下开启10个nginx线程消耗的内存不到200M 可以做ht</description>
+    </item>
+    
+  </channel>
+</rss>

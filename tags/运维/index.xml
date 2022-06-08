@@ -1,1 +1,47 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>运维 on 赵海宇的博客</title><link>https://www.zhaohaiyu.com/tags/%E8%BF%90%E7%BB%B4/</link><description>Recent content in 运维 on 赵海宇的博客</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 21 Sep 2021 18:01:58 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/%E8%BF%90%E7%BB%B4/index.xml" rel="self" type="application/rss+xml"/><item><title>基于 OpenTelemetry 的链路追踪</title><link>https://www.zhaohaiyu.com/post/open-telemetry/</link><pubDate>Tue, 21 Sep 2021 18:01:58 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/open-telemetry/</guid><description>链路追踪的前世今生 分布式跟踪（也称为分布式请求跟踪）是一种用于分析和监控应用程序的方法，尤其是使用微服务架构构建的应用程序。分布式跟踪有助于精确定位故障发生的位置以及导致性能差的原因。 起源 链路追踪(D</description></item><item><title>Docker</title><link>https://www.zhaohaiyu.com/post/docker/</link><pubDate>Sat, 12 Dec 2020 17:30:43 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/docker/</guid><description>docker的定义 Docker 最初是 dotCloud 公司创始人 Solomon Hykes 在法国期间发起的一个公司内部项目，于 2013 年 3 月以 Apache 2.0 授权协议开源，主要项目代码在 GitHub 上进行维护。 Docker 使用 Google 公司推出的 Go 语言 进行开发实现。 docker是linux容器</description></item><item><title>Nginx基础</title><link>https://www.zhaohaiyu.com/post/nginx/</link><pubDate>Sat, 13 Jun 2020 18:30:43 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/nginx/</guid><description>nginx是什么 nginx是一个开源的，支持高性能，高并发的www服务和代理服务软件。 支持高并发，能支持几万并发连接 资源消耗少，在3万并发连接下开启10个nginx线程消耗的内存不到200M 可以做ht</description></item><item><title>Makefile</title><link>https://www.zhaohaiyu.com/post/makefile/</link><pubDate>Fri, 12 Jun 2020 17:30:43 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/makefile/</guid><description>make make是一个构建自动化工具，会在当前目录下寻找Makefile或makefile文件。如果存在相应的文件，它就会依据其中定义好的规则完成构建任务。 makefile 什么是makefile？或许很多Winodws的</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>运维 on 赵海宇的博客</title>
+    <link>https://www.zhaohaiyu.com/tags/%E8%BF%90%E7%BB%B4/</link>
+    <description>Recent content in 运维 on 赵海宇的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 21 Sep 2021 18:01:58 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/%E8%BF%90%E7%BB%B4/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>基于 OpenTelemetry 的链路追踪</title>
+      <link>https://www.zhaohaiyu.com/post/open-telemetry/</link>
+      <pubDate>Tue, 21 Sep 2021 18:01:58 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/open-telemetry/</guid>
+      <description>链路追踪的前世今生 分布式跟踪（也称为分布式请求跟踪）是一种用于分析和监控应用程序的方法，尤其是使用微服务架构构建的应用程序。分布式跟踪有助于精确定位故障发生的位置以及导致性能差的原因。 起源 链路追踪(D</description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>https://www.zhaohaiyu.com/post/docker/</link>
+      <pubDate>Sat, 12 Dec 2020 17:30:43 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/docker/</guid>
+      <description>docker的定义 Docker 最初是 dotCloud 公司创始人 Solomon Hykes 在法国期间发起的一个公司内部项目，于 2013 年 3 月以 Apache 2.0 授权协议开源，主要项目代码在 GitHub 上进行维护。 Docker 使用 Google 公司推出的 Go 语言 进行开发实现。 docker是linux容器</description>
+    </item>
+    
+    <item>
+      <title>Nginx基础</title>
+      <link>https://www.zhaohaiyu.com/post/nginx/</link>
+      <pubDate>Sat, 13 Jun 2020 18:30:43 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/nginx/</guid>
+      <description>nginx是什么 nginx是一个开源的，支持高性能，高并发的www服务和代理服务软件。 支持高并发，能支持几万并发连接 资源消耗少，在3万并发连接下开启10个nginx线程消耗的内存不到200M 可以做ht</description>
+    </item>
+    
+    <item>
+      <title>Makefile</title>
+      <link>https://www.zhaohaiyu.com/post/makefile/</link>
+      <pubDate>Fri, 12 Jun 2020 17:30:43 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/makefile/</guid>
+      <description>make make是一个构建自动化工具，会在当前目录下寻找Makefile或makefile文件。如果存在相应的文件，它就会依据其中定义好的规则完成构建任务。 makefile 什么是makefile？或许很多Winodws的</description>
+    </item>
+    
+  </channel>
+</rss>

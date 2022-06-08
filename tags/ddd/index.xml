@@ -1,1 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DDD on 赵海宇的博客</title><link>https://www.zhaohaiyu.com/tags/ddd/</link><description>Recent content in DDD on 赵海宇的博客</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 02 Jan 2022 17:03:34 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/ddd/index.xml" rel="self" type="application/rss+xml"/><item><title>项目目录结构</title><link>https://www.zhaohaiyu.com/post/project-directory/</link><pubDate>Sun, 02 Jan 2022 17:03:34 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/project-directory/</guid><description>什么是DDD？ DDD 是 Domain-Driven Design 的缩写。 其主要的思想是，我们在设计软件时，先从业务出发，理解真实的业务含义，将业务中的一些概念吸收到软件建模中来，避免造出“大而无用”软件。也避免软件设计没有内在联系，否则一团散</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DDD on 赵海宇的博客</title>
+    <link>https://www.zhaohaiyu.com/tags/ddd/</link>
+    <description>Recent content in DDD on 赵海宇的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 02 Jan 2022 17:03:34 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/ddd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>项目目录结构</title>
+      <link>https://www.zhaohaiyu.com/post/project-directory/</link>
+      <pubDate>Sun, 02 Jan 2022 17:03:34 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/project-directory/</guid>
+      <description>什么是DDD？ DDD 是 Domain-Driven Design 的缩写。 其主要的思想是，我们在设计软件时，先从业务出发，理解真实的业务含义，将业务中的一些概念吸收到软件建模中来，避免造出“大而无用”软件。也避免软件设计没有内在联系，否则一团散</description>
+    </item>
+    
+  </channel>
+</rss>

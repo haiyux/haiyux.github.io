@@ -1,1 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>redis on 赵海宇的博客</title><link>https://www.zhaohaiyu.com/tags/redis/</link><description>Recent content in redis on 赵海宇的博客</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 01 Jan 2021 17:36:55 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/redis/index.xml" rel="self" type="application/rss+xml"/><item><title>Go操作redis</title><link>https://www.zhaohaiyu.com/post/go-redis/</link><pubDate>Fri, 01 Jan 2021 17:36:55 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/go-redis/</guid><description>安装 下载第三方包: go get -u github.com/go-redis/redis/v9 连接 // 定义一个rdis客户端 var redisdb *redis.Client // 初始化 func initClient() (err error) { redisdb = redis.NewClient(&amp;amp;redis.Options{ Addr: &amp;quot;localhost:6379&amp;quot;, // post端口 Password: &amp;quot;&amp;quot;, // 密码 DB: 0, // 使用redis的库 }) _, err = redisdb.Ping(context.Background()).Result() if err != nil { fmt.Println(&amp;quot;连接失败</description></item><item><title>reids基础</title><link>https://www.zhaohaiyu.com/post/redis/</link><pubDate>Sat, 10 Oct 2020 06:33:45 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/redis/</guid><description>redis介绍 Redis 是完全开源的，遵守 BSD 协议，是一个高性能的 key-value 数据库。 Redis 与其他 key - value 缓存产品有以下三个特点： Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。 Re</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>redis on 赵海宇的博客</title>
+    <link>https://www.zhaohaiyu.com/tags/redis/</link>
+    <description>Recent content in redis on 赵海宇的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 01 Jan 2021 17:36:55 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go操作redis</title>
+      <link>https://www.zhaohaiyu.com/post/go-redis/</link>
+      <pubDate>Fri, 01 Jan 2021 17:36:55 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/go-redis/</guid>
+      <description>安装 下载第三方包: go get -u github.com/go-redis/redis/v9 连接 // 定义一个rdis客户端 var redisdb *redis.Client // 初始化 func initClient() (err error) { redisdb = redis.NewClient(&amp;amp;redis.Options{ Addr: &amp;quot;localhost:6379&amp;quot;, // post端口 Password: &amp;quot;&amp;quot;, // 密码 DB: 0, // 使用redis的库 }) _, err = redisdb.Ping(context.Background()).Result() if err != nil { fmt.Println(&amp;quot;连接失败</description>
+    </item>
+    
+    <item>
+      <title>reids基础</title>
+      <link>https://www.zhaohaiyu.com/post/redis/</link>
+      <pubDate>Sat, 10 Oct 2020 06:33:45 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/redis/</guid>
+      <description>redis介绍 Redis 是完全开源的，遵守 BSD 协议，是一个高性能的 key-value 数据库。 Redis 与其他 key - value 缓存产品有以下三个特点： Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。 Re</description>
+    </item>
+    
+  </channel>
+</rss>

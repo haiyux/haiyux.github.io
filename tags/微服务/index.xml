@@ -1,1 +1,83 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>微服务 on 赵海宇的博客</title><link>https://www.zhaohaiyu.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link><description>Recent content in 微服务 on 赵海宇的博客</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 26 Dec 2021 21:05:44 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml"/><item><title>kratos v2版本命令行工具使用</title><link>https://www.zhaohaiyu.com/post/kratos-v2-tool/</link><pubDate>Sun, 26 Dec 2021 21:05:44 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/kratos-v2-tool/</guid><description>kratos命令行工具是什么？ kratos tool 是微服务框架 kratos 的命令行工具，提供创建模板，编译protobuf 文件，运行项目等功能。 使用 下载 go install github.com/go-kratos/kratos/cmd/kratos/v2@latest 查看是否安装成功 kratos -v kratos version v2.1.3 升级 kratos upgrade 查看帮助 kratos --help Kratos: An elegant toolkit for Go microservices. Usage: kratos [command] Available</description></item><item><title>grpc超时控制</title><link>https://www.zhaohaiyu.com/post/grpc-timeout/</link><pubDate>Mon, 24 May 2021 15:13:11 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/grpc-timeout/</guid><description>什么是超时控制？ 超时控制，使我们的服务之间调用可以快速抛错。比如API接口设置1s超时API调用A服务用了500ms，服务A调用和服务B用了600ms，n那么现在已经超时，还要调用服务C等等，再返回超</description></item><item><title>grpc服务发现与负载均衡</title><link>https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/</link><pubDate>Sun, 23 May 2021 15:13:11 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/</guid><description>前言 在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。</description></item><item><title>分布式ID和锁</title><link>https://www.zhaohaiyu.com/post/distributed_id_lock/</link><pubDate>Sat, 23 Jan 2021 15:13:11 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/distributed_id_lock/</guid><description>分布式id生成器 有时我们需要能够生成类似MySQL自增ID这样不断增大，同时又不会重复的id。以支持业务中的高并发场景。比较典型的，电商促销时，短时间内会有大量的订单涌入到系统，比如每秒10w+。明星</description></item><item><title>thrift的介绍及其使用</title><link>https://www.zhaohaiyu.com/post/thrift/</link><pubDate>Tue, 19 Jan 2021 20:10:55 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/thrift/</guid><description>什么是thrift Thrift是Facebook于2007年开发的跨语言的rpc服框架，提供多语言的编译功能，并提供多种服务器工作模式；用户通过Thrift的IDL（接口定义语言）来描述接口函数及数据</description></item><item><title>grpc基础</title><link>https://www.zhaohaiyu.com/post/grpc/</link><pubDate>Sun, 29 Nov 2020 06:33:45 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/grpc/</guid><description>RPC 框架原理 RPC 框架的目标就是让远程服务调用更加简单、透明，RPC 框架负责屏蔽底层的传输方式（TCP 或者 UDP）、序列化方式（XML/Json/ 二进制）和通信细节。服务调用者可以像调用本地接口一样调用远程</description></item><item><title>proto bufer</title><link>https://www.zhaohaiyu.com/post/protobufer/</link><pubDate>Sat, 28 Nov 2020 10:33:45 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/protobufer/</guid><description>protobuf是一种高效的数据格式，平台无关、语言无关、可扩展，可用于 RPC 系统和持续数据存储系统。 protobuf介绍 Protobuf是Protocol Buffer的简称，它是Google公司于200</description></item><item><title>微服务架构及raft协议</title><link>https://www.zhaohaiyu.com/post/microservice-raft/</link><pubDate>Fri, 27 Nov 2020 10:33:45 +0800</pubDate><guid>https://www.zhaohaiyu.com/post/microservice-raft/</guid><description>微服务架构全景图 服务注册和发现 Client side implement 调用需要维护所有调用服务的地址 有一定的技术难度，需要rpc框架支持 Server side implement 架构简单 有单点故障 注册中心 etcd注册中心 分布式一致性系统 基于raft一致性协议 etcd使用</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>微服务 on 赵海宇的博客</title>
+    <link>https://www.zhaohaiyu.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+    <description>Recent content in 微服务 on 赵海宇的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 26 Dec 2021 21:05:44 +0800</lastBuildDate><atom:link href="https://www.zhaohaiyu.com/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kratos v2版本命令行工具使用</title>
+      <link>https://www.zhaohaiyu.com/post/kratos-v2-tool/</link>
+      <pubDate>Sun, 26 Dec 2021 21:05:44 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/kratos-v2-tool/</guid>
+      <description>kratos命令行工具是什么？ kratos tool 是微服务框架 kratos 的命令行工具，提供创建模板，编译protobuf 文件，运行项目等功能。 使用 下载 go install github.com/go-kratos/kratos/cmd/kratos/v2@latest 查看是否安装成功 kratos -v kratos version v2.1.3 升级 kratos upgrade 查看帮助 kratos --help Kratos: An elegant toolkit for Go microservices. Usage: kratos [command] Available</description>
+    </item>
+    
+    <item>
+      <title>grpc超时控制</title>
+      <link>https://www.zhaohaiyu.com/post/grpc-timeout/</link>
+      <pubDate>Mon, 24 May 2021 15:13:11 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/grpc-timeout/</guid>
+      <description>什么是超时控制？ 超时控制，使我们的服务之间调用可以快速抛错。比如API接口设置1s超时API调用A服务用了500ms，服务A调用和服务B用了600ms，n那么现在已经超时，还要调用服务C等等，再返回超</description>
+    </item>
+    
+    <item>
+      <title>grpc服务发现与负载均衡</title>
+      <link>https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/</link>
+      <pubDate>Sun, 23 May 2021 15:13:11 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/</guid>
+      <description>前言 在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。</description>
+    </item>
+    
+    <item>
+      <title>分布式ID和锁</title>
+      <link>https://www.zhaohaiyu.com/post/distributed_id_lock/</link>
+      <pubDate>Sat, 23 Jan 2021 15:13:11 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/distributed_id_lock/</guid>
+      <description>分布式id生成器 有时我们需要能够生成类似MySQL自增ID这样不断增大，同时又不会重复的id。以支持业务中的高并发场景。比较典型的，电商促销时，短时间内会有大量的订单涌入到系统，比如每秒10w+。明星</description>
+    </item>
+    
+    <item>
+      <title>thrift的介绍及其使用</title>
+      <link>https://www.zhaohaiyu.com/post/thrift/</link>
+      <pubDate>Tue, 19 Jan 2021 20:10:55 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/thrift/</guid>
+      <description>什么是thrift Thrift是Facebook于2007年开发的跨语言的rpc服框架，提供多语言的编译功能，并提供多种服务器工作模式；用户通过Thrift的IDL（接口定义语言）来描述接口函数及数据</description>
+    </item>
+    
+    <item>
+      <title>grpc基础</title>
+      <link>https://www.zhaohaiyu.com/post/grpc/</link>
+      <pubDate>Sun, 29 Nov 2020 06:33:45 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/grpc/</guid>
+      <description>RPC 框架原理 RPC 框架的目标就是让远程服务调用更加简单、透明，RPC 框架负责屏蔽底层的传输方式（TCP 或者 UDP）、序列化方式（XML/Json/ 二进制）和通信细节。服务调用者可以像调用本地接口一样调用远程</description>
+    </item>
+    
+    <item>
+      <title>proto bufer</title>
+      <link>https://www.zhaohaiyu.com/post/protobufer/</link>
+      <pubDate>Sat, 28 Nov 2020 10:33:45 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/protobufer/</guid>
+      <description>protobuf是一种高效的数据格式，平台无关、语言无关、可扩展，可用于 RPC 系统和持续数据存储系统。 protobuf介绍 Protobuf是Protocol Buffer的简称，它是Google公司于200</description>
+    </item>
+    
+    <item>
+      <title>微服务架构及raft协议</title>
+      <link>https://www.zhaohaiyu.com/post/microservice-raft/</link>
+      <pubDate>Fri, 27 Nov 2020 10:33:45 +0800</pubDate>
+      
+      <guid>https://www.zhaohaiyu.com/post/microservice-raft/</guid>
+      <description>微服务架构全景图 服务注册和发现 Client side implement 调用需要维护所有调用服务的地址 有一定的技术难度，需要rpc框架支持 Server side implement 架构简单 有单点故障 注册中心 etcd注册中心 分布式一致性系统 基于raft一致性协议 etcd使用</description>
+    </item>
+    
+  </channel>
+</rss>
