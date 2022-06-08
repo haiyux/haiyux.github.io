@@ -1,203 +1,20 @@
-<!DOCTYPE html>
-<html lang="zh-hans">
-
-<head>
-    
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="HandheldFriendly" content="True" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-<meta name="generator" content="Hugo 0.100.1" />
-
-
-<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-<link rel="manifest" href="/img/site.webmanifest">
-<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-
-
-<title>Go泛型入门 - 赵海宇的博客</title>
-
-
-<meta name="author" content="haiyux" />
-
-
-<meta name="description" content="欢迎来到haiyux的博客" />
-
-
-<meta name="keywords" content="golang, 泛型" />
-
-
-<meta property="og:title" content="Go泛型入门" />
-<meta name="twitter:title" content="Go泛型入门" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.zhaohaiyu.com/post/go-generics/" /><meta property="og:description" content="备注：这是一个 beta 版本的内容 这个教程介绍了 Go 泛型的基础概念。 通过泛型，你可以声明并使用函数或者是类型，那些用于调用代码时参数需要兼容多个不同类型的情况。 在这个教程里，你会声明两个普通的函数，然后复制一份" />
-<meta name="twitter:description" content="备注：这是一个 beta 版本的内容 这个教程介绍了 Go 泛型的基础概念。 通过泛型，你可以声明并使用函数或者是类型，那些用于调用代码时参数需要兼容多个不同类型的情况。 在这个教程里，你会声明两个普通的函数，然后复制一份" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2021-12-25T18:17:00+08:00" /><meta property="article:modified_time" content="2021-12-25T18:17:00+08:00" />
-
-
-<style>
-    @media (prefers-color-scheme: dark) {
-        body[data-theme='auto'] img {
-            filter: brightness(60%);
-        }
-    }
-
-    body[data-theme='dark'] img {
-        filter: brightness(60%);
-    }
-</style>
-
-
-
-
-<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
-
-
-
-
-
-
-
-
-</head>
-
-<body
-  data-theme="auto"
-  data-theme-auto='true'
-  >
-    <script data-cfasync="false">
-  
-  var fujiThemeData = localStorage.getItem('fuji_data-theme');
-  
-  if (!fujiThemeData) {
-    localStorage.setItem('fuji_data-theme', 'auto');
-  } else {
-    
-    if (fujiThemeData !== 'auto') {
-      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
-    }
-  }
-</script>
-
-    <header>
-    <div class="container-lg clearfix">
-        <div class="col-12 header">
-            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
-            
-            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
-            
-        </div>
-    </div>
-</header>
-
-    <main>
-        <div class="container-lg clearfix">
-            
-            <div class="col-12 col-md-9 float-left content">
-                
-<article>
-    
-    <h2 class="post-item post-title">
-        <a href="https://www.zhaohaiyu.com/post/go-generics/">Go泛型入门</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-25</span>
-
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=HandheldFriendly content="True"><meta http-equiv=x-ua-compatible content="IE=edge"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=generator content="Hugo 0.100.1"><link rel=apple-touch-icon sizes=180x180 href=/img/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/img/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/img/favicon-16x16.png><link rel=manifest href=/img/site.webmanifest><link rel=mask-icon href=/img/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Go泛型入门 - 赵海宇的博客</title><meta name=author content="haiyux"><meta name=description content="欢迎来到haiyux的博客"><meta name=keywords content="golang,泛型"><meta property="og:title" content="Go泛型入门"><meta name=twitter:title content="Go泛型入门"><meta property="og:type" content="article"><meta property="og:url" content="https://www.zhaohaiyu.com/post/go-generics/"><meta property="og:description" content="备注：这是一个 beta 版本的内容 这个教程介绍了 Go 泛型的基础概念。 通过泛型，你可以声明并使用函数或者是类型，那些用于调用代码时参数需要兼容多个不同类型的情况。 在这个教程里，你会声明两个普通的函数，然后复制一份"><meta name=twitter:description content="备注：这是一个 beta 版本的内容 这个教程介绍了 Go 泛型的基础概念。 通过泛型，你可以声明并使用函数或者是类型，那些用于调用代码时参数需要兼容多个不同类型的情况。 在这个教程里，你会声明两个普通的函数，然后复制一份"><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta property="article:published_time" content="2021-12-25T18:17:00+08:00"><meta property="article:modified_time" content="2021-12-25T18:17:00+08:00"><style>@media(prefers-color-scheme:dark){body[data-theme=auto] img{filter:brightness(60%)}}body[data-theme=dark] img{filter:brightness(60%)}</style><link rel=stylesheet href=https://www.zhaohaiyu.com/assets/css/fuji.min.css></head><body data-theme=auto data-theme-auto=true><script data-cfasync=false>var fujiThemeData=localStorage.getItem('fuji_data-theme');fujiThemeData?fujiThemeData!=='auto'&&document.body.setAttribute('data-theme',fujiThemeData==='dark'?'dark':'light'):localStorage.setItem('fuji_data-theme','auto')</script><header><div class="container-lg clearfix"><div class="col-12 header"><a class=title-main href=https://www.zhaohaiyu.com>赵海宇的博客</a>
+<span class=title-sub>路漫漫其修远兮,吾将上下而求索。</span></div></div></header><main><div class="container-lg clearfix"><div class="col-12 col-md-9 float-left content"><article><h2 class="post-item post-title"><a href=https://www.zhaohaiyu.com/post/go-generics/>Go泛型入门</a></h2><div class="post-item post-meta"><span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-12-25</span>
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4264 字</span>
 <span><i class="iconfont icon-time-sharp"></i>&nbsp;9 分钟</span>
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;<a href="/tags/%E6%B3%9B%E5%9E%8B">泛型</a>&nbsp;</span>
-
-    </div>
-    
-    <div class="post-content markdown-body">
-        <blockquote>
-<p>备注：这是一个 beta 版本的内容</p>
-</blockquote>
-<p>这个教程介绍了 Go 泛型的基础概念。 通过泛型，你可以声明并使用函数或者是类型，那些用于调用代码时参数需要兼容多个不同类型的情况。</p>
-<p>在这个教程里，你会声明两个普通的函数，然后复制一份相同的逻辑到一个泛型的方法里。</p>
-<p>你会通过以下几个章节来进行学习：</p>
-<ol>
-<li>为你的代码创建一个文件夹；</li>
-<li>添加非泛型函数；</li>
-<li>添加一个泛型函数来处理多种类型；</li>
-<li>在调用泛型函数时删除类型参数；</li>
-<li>声明一个类型约束。</li>
-</ol>
-<blockquote>
-<p>备注：对其他教程，可以查看<a href="https://go.dev/doc/tutorial/" target="_blank">教程</a></p>
-<p>备注：你同时也可以使用 <a href="https://go.dev/play/?v=gotip" target="_blank">&ldquo;Go dev branch&quot;模式</a>来编辑和运行你的代码，如果你更喜欢以这种形式的话</p>
-</blockquote>
-<h2 id="前提条件">前提条件</h2>
-<ul>
-<li>安装 Go 1.18 Beta 1 或者更新的版本。对安装流程，请看安装并使用 beta 版本。</li>
-<li>代码编辑器。任何你顺手的代码编辑器。</li>
-<li>一个命令终端。Go 在任何终端工具上都很好使用，比如 Linux 、Mac、PowerShell 或者 Windows 上的 cmd。</li>
-</ul>
-<h3 id="安装并使用-beta-版本">安装并使用 beta 版本</h3>
-<p>这个教程需要 Beta 1 的泛型特性。安装 beta 版本，需要通过下面几个步骤：</p>
-<p>1、 执行下面的指令安装 beta 版本</p>
-<pre><code class="language-bash">$ go install golang.org/dl/go1.18beta1@latest
-</code></pre>
-<p>2、 执行下面的指令下载更新</p>
-<pre><code class="language-bash">$ go1.18beta1 download
-</code></pre>
-<p>3、用 beta 版本执行 go 命令，而不是 Go 的发布版本 (如果你本地有安装的话)</p>
-<p>你可以使用 beta 版本名称或者把 beta 重命名成别的名称来执行命令。</p>
-<ul>
-<li>
-<p>使用 beta 版本名称，你可以通过 go1.18beta1 来执行指令而不是 go：</p>
-<pre><code class="language-bash">$ go1.18beta1 version
-</code></pre>
-</li>
-<li>
-<p>通过对 beta 版本名称重命名，你可以简化指令：</p>
-<pre><code class="language-bash">$ alias go=go1.18beta1
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href=/tags/golang>golang</a>&nbsp;<a href=/tags/%E6%B3%9B%E5%9E%8B>泛型</a>&nbsp;</span></div><div class="post-content markdown-body"><blockquote><p>备注：这是一个 beta 版本的内容</p></blockquote><p>这个教程介绍了 Go 泛型的基础概念。 通过泛型，你可以声明并使用函数或者是类型，那些用于调用代码时参数需要兼容多个不同类型的情况。</p><p>在这个教程里，你会声明两个普通的函数，然后复制一份相同的逻辑到一个泛型的方法里。</p><p>你会通过以下几个章节来进行学习：</p><ol><li>为你的代码创建一个文件夹；</li><li>添加非泛型函数；</li><li>添加一个泛型函数来处理多种类型；</li><li>在调用泛型函数时删除类型参数；</li><li>声明一个类型约束。</li></ol><blockquote><p>备注：对其他教程，可以查看<a href=https://go.dev/doc/tutorial/ target=_blank>教程</a></p><p>备注：你同时也可以使用 <a href="https://go.dev/play/?v=gotip" target=_blank>&ldquo;Go dev branch"模式</a>来编辑和运行你的代码，如果你更喜欢以这种形式的话</p></blockquote><h2 id=前提条件>前提条件</h2><ul><li>安装 Go 1.18 Beta 1 或者更新的版本。对安装流程，请看安装并使用 beta 版本。</li><li>代码编辑器。任何你顺手的代码编辑器。</li><li>一个命令终端。Go 在任何终端工具上都很好使用，比如 Linux 、Mac、PowerShell 或者 Windows 上的 cmd。</li></ul><h3 id=安装并使用-beta-版本>安装并使用 beta 版本</h3><p>这个教程需要 Beta 1 的泛型特性。安装 beta 版本，需要通过下面几个步骤：</p><p>1、 执行下面的指令安装 beta 版本</p><pre><code class=language-bash>$ go install golang.org/dl/go1.18beta1@latest
+</code></pre><p>2、 执行下面的指令下载更新</p><pre><code class=language-bash>$ go1.18beta1 download
+</code></pre><p>3、用 beta 版本执行 go 命令，而不是 Go 的发布版本 (如果你本地有安装的话)</p><p>你可以使用 beta 版本名称或者把 beta 重命名成别的名称来执行命令。</p><ul><li><p>使用 beta 版本名称，你可以通过 go1.18beta1 来执行指令而不是 go：</p><pre><code class=language-bash>$ go1.18beta1 version
+</code></pre></li><li><p>通过对 beta 版本名称重命名，你可以简化指令：</p><pre><code class=language-bash>$ alias go=go1.18beta1
 $ go version
-</code></pre>
-</li>
-</ul>
-<p>在这个教程中将假设你已经对 beta 版本名称进行了重命名。</p>
-<h2 id="为你的代码创建一个文件夹">为你的代码创建一个文件夹</h2>
-<p>在一开始，先给你要写的代码创建一个文件夹</p>
-<p>1、 打开一个命令提示符并切换到/home 文件夹</p>
-<p>在 Linux 或者 Mac 上：</p>
-<pre><code class="language-bash">$ cd
-</code></pre>
-<p>在 windows 上：</p>
-<pre><code class="language-bash">C:\&gt; cd %HOMEPATH%
-</code></pre>
-<p>在接下去的教程里面会用<code>$</code>来代表提示符。指令在 windows 上也适用。</p>
-<p>2、 在命令提示符下，为你的代码创建一个名为 generics 的目录</p>
-<pre><code class="language-bash">$ mkdir generics
+</code></pre></li></ul><p>在这个教程中将假设你已经对 beta 版本名称进行了重命名。</p><h2 id=为你的代码创建一个文件夹>为你的代码创建一个文件夹</h2><p>在一开始，先给你要写的代码创建一个文件夹</p><p>1、 打开一个命令提示符并切换到/home 文件夹</p><p>在 Linux 或者 Mac 上：</p><pre><code class=language-bash>$ cd
+</code></pre><p>在 windows 上：</p><pre><code class=language-bash>C:\&gt; cd %HOMEPATH%
+</code></pre><p>在接下去的教程里面会用<code>$</code>来代表提示符。指令在 windows 上也适用。</p><p>2、 在命令提示符下，为你的代码创建一个名为 generics 的目录</p><pre><code class=language-bash>$ mkdir generics
 $ cd generics
-</code></pre>
-<p>3、 创建一个 module 来存放你的代码</p>
-<p>执行<code>go mod init</code>指令，参数为你新代码的 module 路径</p>
-<pre><code class="language-bash">$ go mod init example/generics
+</code></pre><p>3、 创建一个 module 来存放你的代码</p><p>执行<code>go mod init</code>指令，参数为你新代码的 module 路径</p><pre><code class=language-bash>$ go mod init example/generics
 go: creating new go.mod: module example/generics
-</code></pre>
-<blockquote>
-<p>备注：对生产环境，你会指定一个更符合你自己需求的 module 路径。更多的请看<a href="https://go.dev/doc/modules/managing-dependencies" target="_blank">依赖管理</a></p>
-</blockquote>
-<p>接下来，你会增加一些简单的和 maps 相关的代码。</p>
-<h2 id="添加普通函数">添加普通函数</h2>
-<p>在这一步中，你将添加两个函数，每个函数都会累加 map 中的值 ，并返回总和。</p>
-<p>你将声明两个函数而不是一个，因为你要处理两种不同类型的 map：一个存储 int64 类型的值，另一个存储 float64 类型的值。</p>
-<h3 id="写代码">写代码</h3>
-<p>1、 用你的文本编辑器，在 generics 文件夹里面创建一个叫 main.go 的文件。你将会在这个文件内写你的 Go 代码。</p>
-<p>2、 到 main.go 文件的上方，粘贴如下的包的声明。</p>
-<pre><code class="language-go">package main
-</code></pre>
-<p>一个独立的程序（相对于一个库）总是在 main 包中。</p>
-<p>3、 在包的声明下面，粘贴以下两个函数的声明。</p>
-<pre><code class="language-go">// SumInts adds together the values of m.
+</code></pre><blockquote><p>备注：对生产环境，你会指定一个更符合你自己需求的 module 路径。更多的请看<a href=https://go.dev/doc/modules/managing-dependencies target=_blank>依赖管理</a></p></blockquote><p>接下来，你会增加一些简单的和 maps 相关的代码。</p><h2 id=添加普通函数>添加普通函数</h2><p>在这一步中，你将添加两个函数，每个函数都会累加 map 中的值 ，并返回总和。</p><p>你将声明两个函数而不是一个，因为你要处理两种不同类型的 map：一个存储 int64 类型的值，另一个存储 float64 类型的值。</p><h3 id=写代码>写代码</h3><p>1、 用你的文本编辑器，在 generics 文件夹里面创建一个叫 main.go 的文件。你将会在这个文件内写你的 Go 代码。</p><p>2、 到 main.go 文件的上方，粘贴如下的包的声明。</p><pre><code class=language-go>package main
+</code></pre><p>一个独立的程序（相对于一个库）总是在 main 包中。</p><p>3、 在包的声明下面，粘贴以下两个函数的声明。</p><pre><code class=language-go>// SumInts adds together the values of m.
 func SumInts(m map[string]int64) int64 {
     var s int64
     for _, v := range m {
@@ -214,18 +31,7 @@ func SumFloats(m map[string]float64) float64 {
     }
     return s
 }
-</code></pre>
-<p>在这段代码中，你：</p>
-<ul>
-<li>声明两个函数，将一个 map 的值加在一起，并返回总和。
-<ul>
-<li>SumFloats 接收一个 map，key 为 string 类型，value 为 floa64 类型。</li>
-<li>SumInt 接收一个 map，key 为 string 类型，value 为 int64 类型。</li>
-</ul>
-</li>
-</ul>
-<p>4、 在 main.go 的顶部，包声明的下面，粘贴以下 main 函数，用来初始化两个 map，并在调用你在上一步中声明的函数时将它们作为参数。</p>
-<pre><code class="language-go">func main() {
+</code></pre><p>在这段代码中，你：</p><ul><li>声明两个函数，将一个 map 的值加在一起，并返回总和。<ul><li>SumFloats 接收一个 map，key 为 string 类型，value 为 floa64 类型。</li><li>SumInt 接收一个 map，key 为 string 类型，value 为 int64 类型。</li></ul></li></ul><p>4、 在 main.go 的顶部，包声明的下面，粘贴以下 main 函数，用来初始化两个 map，并在调用你在上一步中声明的函数时将它们作为参数。</p><pre><code class=language-go>func main() {
 // Initialize a map for the integer values
 ints := map[string]int64{
     &quot;first&quot;: 34,
@@ -242,36 +48,11 @@ fmt.Printf(&quot;Non-Generic Sums: %v and %v\n&quot;,
     SumInts(ints),
     SumFloats(floats))
 }
-</code></pre>
-<p>在这段代码中，你：</p>
-<ul>
-<li>初始化一个 key 为 string，value 为<code>float64</code>的 map 和一个 key 为 string，value 为<code>int64</code>的 map，各有 2 条数据；</li>
-<li>调用之前声明的两个方法来获取每个 map 的值的总和；</li>
-<li>打印结果。</li>
-</ul>
-<p>5、 靠近 main.go 顶部，仅在包声明的下方，导入你刚刚写的代码所需要引用的包。</p>
-<p>第一行代码应该看起来如下所示：</p>
-<pre><code class="language-go">package main
+</code></pre><p>在这段代码中，你：</p><ul><li>初始化一个 key 为 string，value 为<code>float64</code>的 map 和一个 key 为 string，value 为<code>int64</code>的 map，各有 2 条数据；</li><li>调用之前声明的两个方法来获取每个 map 的值的总和；</li><li>打印结果。</li></ul><p>5、 靠近 main.go 顶部，仅在包声明的下方，导入你刚刚写的代码所需要引用的包。</p><p>第一行代码应该看起来如下所示：</p><pre><code class=language-go>package main
 import &quot;fmt&quot;
-</code></pre>
-<p>6、 保存 main.go.</p>
-<h3 id="运行代码">运行代码</h3>
-<p>在 main.go 所在目录下，通过命令行运行代码</p>
-<pre><code class="language-go">$ go run .
+</code></pre><p>6、 保存 main.go.</p><h3 id=运行代码>运行代码</h3><p>在 main.go 所在目录下，通过命令行运行代码</p><pre><code class=language-go>$ go run .
 Non-Generic Sums: 46 and 62.97
-</code></pre>
-<p>有了泛型，你可以只写一个函数而不是两个。接下来，你将为 maps 添加一个泛型函数，来允许接收整数类型或者是浮点数类型。</p>
-<h2 id="添加泛型函数处理多种类型">添加泛型函数处理多种类型</h2>
-<p>在这一节，你将会添加一个泛型函数来接收一个 map，可能值是整数类型或者浮点数类型的 map，有效地用一个函数替换掉你刚才写的 2 个函数。</p>
-<p>为了支持不同类型的值，这个函数需要有一个方法来声明它所支持的类型。另一方面，调用代码将需要一种方法来指定它是用整数还是浮点数来调用。</p>
-<p>为了实现上面的描述，你将会声明一个除了有普通函数参数，还有<code>类型参数</code>的函数。这个类型参数实现了函数的通用性，使得它可以处理多个不同的类型。你将会用<code>类型参数</code>和普通函数参数来调用这个泛型函数。</p>
-<p>每个类型参数都有一个<code>类型约束</code>，类似于每个类型参数的 meta-type。每个类型约束都指定了调用代码时每个对应输入参数的可允许的类型。</p>
-<p>虽然类型参数的约束通常代表某些类型，但是在编译的时候类型参数只代表一个类型 - 在调用代码时作为类型参数。如果类型参数的类型不被类型参数的约束所允许，代码则无法编译。</p>
-<p>需要记住的是类型参数必须满足泛型代码对它的所有的操作。举个例子，如果你的代码尝试去做一些 string 的操作 (比如索引)，而这个类型参数包含数字的类型，那代码是无法编译的。</p>
-<p>在下面你要编写的代码里，你会使用允许整数或者浮点数类型的限制。</p>
-<h3 id="写代码-1">写代码</h3>
-<p>1、 在你之前写的两个函数的下方，粘贴下面的泛型函数</p>
-<pre><code class="language-go">// SumIntsOrFloats sums the values of map m. It supports both int64 and float64
+</code></pre><p>有了泛型，你可以只写一个函数而不是两个。接下来，你将为 maps 添加一个泛型函数，来允许接收整数类型或者是浮点数类型。</p><h2 id=添加泛型函数处理多种类型>添加泛型函数处理多种类型</h2><p>在这一节，你将会添加一个泛型函数来接收一个 map，可能值是整数类型或者浮点数类型的 map，有效地用一个函数替换掉你刚才写的 2 个函数。</p><p>为了支持不同类型的值，这个函数需要有一个方法来声明它所支持的类型。另一方面，调用代码将需要一种方法来指定它是用整数还是浮点数来调用。</p><p>为了实现上面的描述，你将会声明一个除了有普通函数参数，还有<code>类型参数</code>的函数。这个类型参数实现了函数的通用性，使得它可以处理多个不同的类型。你将会用<code>类型参数</code>和普通函数参数来调用这个泛型函数。</p><p>每个类型参数都有一个<code>类型约束</code>，类似于每个类型参数的 meta-type。每个类型约束都指定了调用代码时每个对应输入参数的可允许的类型。</p><p>虽然类型参数的约束通常代表某些类型，但是在编译的时候类型参数只代表一个类型 - 在调用代码时作为类型参数。如果类型参数的类型不被类型参数的约束所允许，代码则无法编译。</p><p>需要记住的是类型参数必须满足泛型代码对它的所有的操作。举个例子，如果你的代码尝试去做一些 string 的操作 (比如索引)，而这个类型参数包含数字的类型，那代码是无法编译的。</p><p>在下面你要编写的代码里，你会使用允许整数或者浮点数类型的限制。</p><h3 id=写代码-1>写代码</h3><p>1、 在你之前写的两个函数的下方，粘贴下面的泛型函数</p><pre><code class=language-go>// SumIntsOrFloats sums the values of map m. It supports both int64 and float64
 // as types for map values.
 func SumIntsOrFloats[K comparable, V int64 | float64](m map[K]V) V {
     var s V
@@ -280,89 +61,23 @@ func SumIntsOrFloats[K comparable, V int64 | float64](m map[K]V) V {
     }
     return s
 }
-</code></pre>
-<p>在这段代码里，你：</p>
-<ul>
-<li>声明了一个带有 2 个类型参数 (方括号内) 的 SumIntsOrFloats 函数，K 和 V，一个使用类型参数的参数，类型为 map[K] V 的参数 m。
-<ul>
-<li>为 K 类型参数指定可比较的类型约束。事实上，针对此类情况，在 Go 里面可比较的限制是会提前声明。它允许任何类型的值可以作为比较运算符==和!=的操作符。在 Go 里面，map 的 key 是需要可比较的。因此，将 K 声明为可比较的是很有必要的，这样你就可以使用 K 作为 map 变量的 key。这样也保证了调用代码方使用一个被允许的类型做 map 的 key。</li>
-<li>为 V 类型参数指定一个两个类型合集的类型约束：int64 和 float64。使用<code>|</code>指定了 2 个类型的合集，表示约束允许这两种类型。任何一个类型都会被编译器认定为合法的传参参数。</li>
-<li>指定参数 m 为类型 map[K] V，其中 K 和 V 的类型已经指定为类型参数。注意到因为 K 是可比较的类型，所以 map[K] V 是一个有效的 map 类型。如果我们没有声明 K 是可比较的，那么编译器会拒绝对 map[K] V 的引用。</li>
-</ul>
-</li>
-</ul>
-<p>2、 在 main.go 里，在你现在的代码下方，粘贴如下代码：</p>
-<pre><code class="language-go">fmt.Printf(&quot;Generic Sums: %v and %v\n&quot;,
+</code></pre><p>在这段代码里，你：</p><ul><li>声明了一个带有 2 个类型参数 (方括号内) 的 SumIntsOrFloats 函数，K 和 V，一个使用类型参数的参数，类型为 map[K] V 的参数 m。<ul><li>为 K 类型参数指定可比较的类型约束。事实上，针对此类情况，在 Go 里面可比较的限制是会提前声明。它允许任何类型的值可以作为比较运算符==和!=的操作符。在 Go 里面，map 的 key 是需要可比较的。因此，将 K 声明为可比较的是很有必要的，这样你就可以使用 K 作为 map 变量的 key。这样也保证了调用代码方使用一个被允许的类型做 map 的 key。</li><li>为 V 类型参数指定一个两个类型合集的类型约束：int64 和 float64。使用<code>|</code>指定了 2 个类型的合集，表示约束允许这两种类型。任何一个类型都会被编译器认定为合法的传参参数。</li><li>指定参数 m 为类型 map[K] V，其中 K 和 V 的类型已经指定为类型参数。注意到因为 K 是可比较的类型，所以 map[K] V 是一个有效的 map 类型。如果我们没有声明 K 是可比较的，那么编译器会拒绝对 map[K] V 的引用。</li></ul></li></ul><p>2、 在 main.go 里，在你现在的代码下方，粘贴如下代码：</p><pre><code class=language-go>fmt.Printf(&quot;Generic Sums: %v and %v\n&quot;,
     SumIntsOrFloats[string, int64](ints),
     SumIntsOrFloats[string, float64](floats))
-</code></pre>
-<p>在这段代码里，你：</p>
-<ul>
-<li>
-<p>调用你刚才声明的泛型函数，传递你创建的每个 map。</p>
-</li>
-<li>
-<p>指定类型参数 - 在方括号内的类型名称 - 来明确你所调用的函数中应该用哪些类型来替代类型参数。</p>
-<p>你将会在下一节看到，你通常可以在函数调用时省略类型参数。Go 通常可以从代码里推断出来。</p>
-</li>
-<li>
-<p>打印函数返回的总和。</p>
-</li>
-</ul>
-<h3 id="运行代码-1">运行代码</h3>
-<p>在 main.go 所在目录下，通过命令行运行代码</p>
-<pre><code class="language-go">$ go run .
+</code></pre><p>在这段代码里，你：</p><ul><li><p>调用你刚才声明的泛型函数，传递你创建的每个 map。</p></li><li><p>指定类型参数 - 在方括号内的类型名称 - 来明确你所调用的函数中应该用哪些类型来替代类型参数。</p><p>你将会在下一节看到，你通常可以在函数调用时省略类型参数。Go 通常可以从代码里推断出来。</p></li><li><p>打印函数返回的总和。</p></li></ul><h3 id=运行代码-1>运行代码</h3><p>在 main.go 所在目录下，通过命令行运行代码</p><pre><code class=language-go>$ go run .
 Non-Generic Sums: 46 and 62.97
 Generic Sums: 46 and 62.97
-</code></pre>
-<p>为了运行你的代码，在每次调用的时候，编译器都会用该调用中指定的具体类型替换类型参数。</p>
-<p>在调用你写的泛型函数时，你指定了类型参数来告诉编译器用什么类型来替换函数的类型参数。正如你将在下一节所看到的，在许多情况下，你可以省略这些类型参数，因为编译器可以推断出它们。</p>
-<h2 id="当调用泛型函数时移除类型参数">当调用泛型函数时移除类型参数</h2>
-<p>在这一节，你会添加一个泛型函数调用的修改版本，通过一个小的改变来简化代码。在这个例子里你将移除掉不需要的类型参数。</p>
-<p>当 Go 编译器可以推断出你要使用的类型时，你可以在调用代码中省略类型参数。编译器从函数参数的类型中推断出类型参数。</p>
-<p>注意这不是每次都可行的。举个例子，如果你需要调用一个没有参数的泛型函数，那么你需要在调用函数时带上类型参数。</p>
-<h3 id="写代码-2">写代码</h3>
-<ul>
-<li>在 main.go 的代码下方，粘贴下面的代码。</li>
-</ul>
-<pre><code class="language-go">fmt.Printf(&quot;Generic Sums, type parameters inferred: %v and %v\n&quot;,
+</code></pre><p>为了运行你的代码，在每次调用的时候，编译器都会用该调用中指定的具体类型替换类型参数。</p><p>在调用你写的泛型函数时，你指定了类型参数来告诉编译器用什么类型来替换函数的类型参数。正如你将在下一节所看到的，在许多情况下，你可以省略这些类型参数，因为编译器可以推断出它们。</p><h2 id=当调用泛型函数时移除类型参数>当调用泛型函数时移除类型参数</h2><p>在这一节，你会添加一个泛型函数调用的修改版本，通过一个小的改变来简化代码。在这个例子里你将移除掉不需要的类型参数。</p><p>当 Go 编译器可以推断出你要使用的类型时，你可以在调用代码中省略类型参数。编译器从函数参数的类型中推断出类型参数。</p><p>注意这不是每次都可行的。举个例子，如果你需要调用一个没有参数的泛型函数，那么你需要在调用函数时带上类型参数。</p><h3 id=写代码-2>写代码</h3><ul><li>在 main.go 的代码下方，粘贴下面的代码。</li></ul><pre><code class=language-go>fmt.Printf(&quot;Generic Sums, type parameters inferred: %v and %v\n&quot;,
     SumIntsOrFloats(ints),
     SumIntsOrFloats(floats))
-</code></pre>
-<p>在这段代码里，你：</p>
-<ul>
-<li>调用泛型函数，省略类型参数。</li>
-</ul>
-<h3 id="运行代码-2">运行代码</h3>
-<p>在 main.go 所在目录下，通过命令行运行代码</p>
-<pre><code class="language-go">$ go run .
+</code></pre><p>在这段代码里，你：</p><ul><li>调用泛型函数，省略类型参数。</li></ul><h3 id=运行代码-2>运行代码</h3><p>在 main.go 所在目录下，通过命令行运行代码</p><pre><code class=language-go>$ go run .
 Non-Generic Sums: 46 and 62.97
 Generic Sums: 46 and 62.97
 Generic Sums, type parameters inferred: 46 and 62.97
-</code></pre>
-<p>接下来，你将通过把整数和浮点数的合集定义到一个你可以重复使用的类型约束中，比如从其他的代码，来进一步简化这个函数。</p>
-<h2 id="声明类型约束">声明类型约束</h2>
-<p>在最后一节中，你将把你先前定义的约束移到它自己的 interface 中，这样你就可以在多个地方重复使用它。以这种方式声明约束有助于简化代码，尤其当一个约束越来越复杂的时候。</p>
-<p>你将类型参数定义为一个 interface。约束允许任何类型实现这个 interface。举个例子，如果你定义了一个有三个方法的类型参数 interface，然后用它作为一个泛型函数的类型参数，那么调用这个函数的类型参数必须实现这些方法。</p>
-<p>你将在本节中看到，约束 interface 也可以指代特定的类型。</p>
-<h3 id="写代码-3">写代码</h3>
-<p>1、 在 main 函数上面，紧接着 import 下方，粘贴如下代码来定义类型约束。</p>
-<pre><code class="language-go">type Number interface {
+</code></pre><p>接下来，你将通过把整数和浮点数的合集定义到一个你可以重复使用的类型约束中，比如从其他的代码，来进一步简化这个函数。</p><h2 id=声明类型约束>声明类型约束</h2><p>在最后一节中，你将把你先前定义的约束移到它自己的 interface 中，这样你就可以在多个地方重复使用它。以这种方式声明约束有助于简化代码，尤其当一个约束越来越复杂的时候。</p><p>你将类型参数定义为一个 interface。约束允许任何类型实现这个 interface。举个例子，如果你定义了一个有三个方法的类型参数 interface，然后用它作为一个泛型函数的类型参数，那么调用这个函数的类型参数必须实现这些方法。</p><p>你将在本节中看到，约束 interface 也可以指代特定的类型。</p><h3 id=写代码-3>写代码</h3><p>1、 在 main 函数上面，紧接着 import 下方，粘贴如下代码来定义类型约束。</p><pre><code class=language-go>type Number interface {
     int64 | float64
 }
-</code></pre>
-<p>在这段代码里，你：</p>
-<ul>
-<li>
-<p>声明一个 Number interface 类型作为类型限制</p>
-</li>
-<li>
-<p>在 interface 内声明 int64 和 float64 的合集</p>
-<p>本质上，你是在把函数声明中的合集移到一个新的类型约束中。这样子，当你想要约束一个类型参数为 int64 或者 float64，你可以使用 Number interface 而不是写 int64 | float64。</p>
-</li>
-</ul>
-<p>2、 在你已写好的函数下方，粘贴如下泛型函数，SumNumbers。</p>
-<pre><code class="language-go">// SumNumbers sums the values of map m. Its supports both integers
+</code></pre><p>在这段代码里，你：</p><ul><li><p>声明一个 Number interface 类型作为类型限制</p></li><li><p>在 interface 内声明 int64 和 float64 的合集</p><p>本质上，你是在把函数声明中的合集移到一个新的类型约束中。这样子，当你想要约束一个类型参数为 int64 或者 float64，你可以使用 Number interface 而不是写 int64 | float64。</p></li></ul><p>2、 在你已写好的函数下方，粘贴如下泛型函数，SumNumbers。</p><pre><code class=language-go>// SumNumbers sums the values of map m. Its supports both integers
 // and floats as map values.
 func SumNumbers[K comparable, V Number](m map[K]V) V {
     var s V
@@ -371,40 +86,15 @@ func SumNumbers[K comparable, V Number](m map[K]V) V {
     }
     return s
 }
-</code></pre>
-<p>在这段代码，你：</p>
-<ul>
-<li>声明一个泛型函数，其逻辑与你之前声明的泛型函数相同，但是是使用新的 interface 类型作为类型参数而不是合集。和之前一样，你使用类型参数作为参数和返回类型。</li>
-</ul>
-<p>3、 在 main.go，在你已写完的代码下方，粘贴如下代码。</p>
-<pre><code class="language-go">fmt.Printf(&quot;Generic Sums with Constraint: %v and %v\n&quot;,
+</code></pre><p>在这段代码，你：</p><ul><li>声明一个泛型函数，其逻辑与你之前声明的泛型函数相同，但是是使用新的 interface 类型作为类型参数而不是合集。和之前一样，你使用类型参数作为参数和返回类型。</li></ul><p>3、 在 main.go，在你已写完的代码下方，粘贴如下代码。</p><pre><code class=language-go>fmt.Printf(&quot;Generic Sums with Constraint: %v and %v\n&quot;,
     SumNumbers(ints),
     SumNumbers(floats))
-</code></pre>
-<p>在这段代码里，你：</p>
-<ul>
-<li>每个 map 依次调用 SumNumbers，并打印数值的总和。</li>
-<li>与上一节一样，你可以在调用泛型函数时省略类型参数（方括号中的类型名称）。Go 编译器可以从其他参数中推断出类型参数。</li>
-</ul>
-<h3 id="运行代码-3">运行代码</h3>
-<p>在 main.go 所在目录下，通过命令行运行代码</p>
-<pre><code class="language-go">$ go run .
+</code></pre><p>在这段代码里，你：</p><ul><li>每个 map 依次调用 SumNumbers，并打印数值的总和。</li><li>与上一节一样，你可以在调用泛型函数时省略类型参数（方括号中的类型名称）。Go 编译器可以从其他参数中推断出类型参数。</li></ul><h3 id=运行代码-3>运行代码</h3><p>在 main.go 所在目录下，通过命令行运行代码</p><pre><code class=language-go>$ go run .
 Non-Generic Sums: 46 and 62.97
 Generic Sums: 46 and 62.97
 Generic Sums, type parameters inferred: 46 and 62.97
 Generic Sums with Constraint: 46 and 62.97
-</code></pre>
-<h2 id="总结">总结</h2>
-<p>完美结束！你刚才已经给你自己介绍了 Go 的泛型。</p>
-<p>如果你想继续试验，你可以尝试用整数约束和浮点数约束来写 Number interface，来允许更多的数字类型。</p>
-<p>建议阅读的相关文章：</p>
-<ul>
-<li><a href="https://tour.golang.org/welcome/1" target="_blank">Go Tour</a> 是一个很好的，手把手教 Go 基础的介绍。</li>
-<li>你可以在 <a href="https://go.dev/doc/effective_go" target="_blank">Effective Go</a> 和 <a href="https://go.dev/doc/code" target="_blank">How to write Go code</a> 中找到非常实用的 GO 的练习。</li>
-</ul>
-<h2 id="完整代码">完整代码</h2>
-<p>你可以在 Go playground 运行这个代码。在 playground 只需要点击<code>Run</code>按钮即可。</p>
-<pre><code class="language-go">package main
+</code></pre><h2 id=总结>总结</h2><p>完美结束！你刚才已经给你自己介绍了 Go 的泛型。</p><p>如果你想继续试验，你可以尝试用整数约束和浮点数约束来写 Number interface，来允许更多的数字类型。</p><p>建议阅读的相关文章：</p><ul><li><a href=https://tour.golang.org/welcome/1 target=_blank>Go Tour</a> 是一个很好的，手把手教 Go 基础的介绍。</li><li>你可以在 <a href=https://go.dev/doc/effective_go target=_blank>Effective Go</a> 和 <a href=https://go.dev/doc/code target=_blank>How to write Go code</a> 中找到非常实用的 GO 的练习。</li></ul><h2 id=完整代码>完整代码</h2><p>你可以在 Go playground 运行这个代码。在 playground 只需要点击<code>Run</code>按钮即可。</p><pre><code class=language-go>package main
 
 import &quot;fmt&quot;
 
@@ -479,455 +169,50 @@ func SumNumbers[K comparable, V Number](m map[K]V) V {
     }
     return s
 }
-</code></pre>
-<h2 id="原文地址">原文地址</h2>
-<ul>
-<li>
-<p><a href="https://go.dev/doc/tutorial/generics" target="_blank">Tutorial: Getting started with generics - The Go Programming Language</a></p>
-</li>
-<li>
-<p><a href="https://gocn.vip/topics/20885" target="_blank">Go 官方出品泛型教程：如何开始使用泛型 · GoCN社区</a></p>
-</li>
-</ul>
-
-    </div>
-</article>
-
-
-<div class="license markdown-body">
-    <blockquote>
-        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
-    </blockquote>
-</div>
-
-
-<div class="post-comment" data-comment="utterances">
-    <span class="post-comment-notloaded">
-        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
-    </span>
-    <script>
-        function loadComment() {
-            var commentArea = document.querySelector('.post-comment');
-            var utterancesTheme = document.body.getAttribute('data-theme');
-            if (utterancesTheme === 'auto') {
-                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
-                    'github-light';
-            } else {
-                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
-            }
-            var s = document.createElement('script');
-            s.src = 'https://utteranc.es/client.js';
-            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
-            s.setAttribute('issue-term', 'pathname');
-            s.setAttribute('theme', utterancesTheme);
-            s.setAttribute('crossorigin', 'anonymous');
-            s.setAttribute('async', '');
-            document.querySelector('.post-comment').appendChild(s);
-            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
-        }
-    </script>
-</div>
-
-
-            </div>
-            <aside class="col-12 col-md-3 float-left sidebar">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3><nav id="TableOfContents">
-  <ul>
-    <li><a href="#前提条件">前提条件</a>
-      <ul>
-        <li><a href="#安装并使用-beta-版本">安装并使用 beta 版本</a></li>
-      </ul>
-    </li>
-    <li><a href="#为你的代码创建一个文件夹">为你的代码创建一个文件夹</a></li>
-    <li><a href="#添加普通函数">添加普通函数</a>
-      <ul>
-        <li><a href="#写代码">写代码</a></li>
-        <li><a href="#运行代码">运行代码</a></li>
-      </ul>
-    </li>
-    <li><a href="#添加泛型函数处理多种类型">添加泛型函数处理多种类型</a>
-      <ul>
-        <li><a href="#写代码-1">写代码</a></li>
-        <li><a href="#运行代码-1">运行代码</a></li>
-      </ul>
-    </li>
-    <li><a href="#当调用泛型函数时移除类型参数">当调用泛型函数时移除类型参数</a>
-      <ul>
-        <li><a href="#写代码-2">写代码</a></li>
-        <li><a href="#运行代码-2">运行代码</a></li>
-      </ul>
-    </li>
-    <li><a href="#声明类型约束">声明类型约束</a>
-      <ul>
-        <li><a href="#写代码-3">写代码</a></li>
-        <li><a href="#运行代码-3">运行代码</a></li>
-      </ul>
-    </li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#完整代码">完整代码</a></li>
-    <li><a href="#原文地址">原文地址</a></li>
-  </ul>
-</nav></div>
-</aside>
-
-        </div>
-        <div class="btn">
-    <div class="btn-menu" id="btn-menu">
-        <i class="iconfont icon-grid-sharp"></i>
-    </div>
-    <div class="btn-toggle-mode">
-        <i class="iconfont icon-contrast-sharp"></i>
-    </div>
-    <div class="btn-scroll-top">
-        <i class="iconfont icon-chevron-up-circle-sharp"></i>
-    </div>
-</div>
-<aside class="sidebar-mobile" style="display: none;">
-  <div class="sidebar-wrapper">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    
-    
-    
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3>
-        <nav id="TableOfContents">
-  <ul>
-    <li><a href="#前提条件">前提条件</a>
-      <ul>
-        <li><a href="#安装并使用-beta-版本">安装并使用 beta 版本</a></li>
-      </ul>
-    </li>
-    <li><a href="#为你的代码创建一个文件夹">为你的代码创建一个文件夹</a></li>
-    <li><a href="#添加普通函数">添加普通函数</a>
-      <ul>
-        <li><a href="#写代码">写代码</a></li>
-        <li><a href="#运行代码">运行代码</a></li>
-      </ul>
-    </li>
-    <li><a href="#添加泛型函数处理多种类型">添加泛型函数处理多种类型</a>
-      <ul>
-        <li><a href="#写代码-1">写代码</a></li>
-        <li><a href="#运行代码-1">运行代码</a></li>
-      </ul>
-    </li>
-    <li><a href="#当调用泛型函数时移除类型参数">当调用泛型函数时移除类型参数</a>
-      <ul>
-        <li><a href="#写代码-2">写代码</a></li>
-        <li><a href="#运行代码-2">运行代码</a></li>
-      </ul>
-    </li>
-    <li><a href="#声明类型约束">声明类型约束</a>
-      <ul>
-        <li><a href="#写代码-3">写代码</a></li>
-        <li><a href="#运行代码-3">运行代码</a></li>
-      </ul>
-    </li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#完整代码">完整代码</a></li>
-    <li><a href="#原文地址">原文地址</a></li>
-  </ul>
-</nav>
-    </div>
-    
-    
-  </div>
-</aside>
-    </main>
-
-    <footer>
-    <div class="container-lg clearfix">
-        <div class="col-12 footer">
-            
-            <span>&copy; 2019-2022
-                <a href="https://www.zhaohaiyu.com">haiyux</a>
-                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
-                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
-                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
-                                                    target="_blank">Hugo</a> 构建
-            </span>
-        </div>
-    </div>
-</footer>
-
-    
-<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
-
-
-
-<script defer src="/assets/js/fuji.min.js"></script>
-
-
-
-</body>
-
-</html>
+</code></pre><h2 id=原文地址>原文地址</h2><ul><li><p><a href=https://go.dev/doc/tutorial/generics target=_blank>Tutorial: Getting started with generics - The Go Programming Language</a></p></li><li><p><a href=https://gocn.vip/topics/20885 target=_blank>Go 官方出品泛型教程：如何开始使用泛型 · GoCN社区</a></p></li></ul></div></article><div class="license markdown-body"><blockquote><p>除特殊注明部分，本站内容采用 <a rel=license href=http://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a> 进行许可。</p></blockquote></div><div class=post-comment data-comment=utterances><span class=post-comment-notloaded><i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论</span>
+<script>function loadComment(){var e,n=document.querySelector('.post-comment'),t=document.body.getAttribute('data-theme');t==='auto'?t=window.matchMedia('(prefers-color-scheme: dark)').matches?'photon-dark':'github-light':t=t==='dark'?'photon-dark':'github-light',e=document.createElement('script'),e.src='https://utteranc.es/client.js',e.setAttribute('repo','haiyux/haiyux.github.io'),e.setAttribute('issue-term','pathname'),e.setAttribute('theme',t),e.setAttribute('crossorigin','anonymous'),e.setAttribute('async',''),document.querySelector('.post-comment').appendChild(e),document.querySelector('span.post-comment-notloaded').setAttribute('style','display: none;')}</script></div></div><aside class="col-12 col-md-3 float-left sidebar"><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#前提条件>前提条件</a><ul><li><a href=#安装并使用-beta-版本>安装并使用 beta 版本</a></li></ul></li><li><a href=#为你的代码创建一个文件夹>为你的代码创建一个文件夹</a></li><li><a href=#添加普通函数>添加普通函数</a><ul><li><a href=#写代码>写代码</a></li><li><a href=#运行代码>运行代码</a></li></ul></li><li><a href=#添加泛型函数处理多种类型>添加泛型函数处理多种类型</a><ul><li><a href=#写代码-1>写代码</a></li><li><a href=#运行代码-1>运行代码</a></li></ul></li><li><a href=#当调用泛型函数时移除类型参数>当调用泛型函数时移除类型参数</a><ul><li><a href=#写代码-2>写代码</a></li><li><a href=#运行代码-2>运行代码</a></li></ul></li><li><a href=#声明类型约束>声明类型约束</a><ul><li><a href=#写代码-3>写代码</a></li><li><a href=#运行代码-3>运行代码</a></li></ul></li><li><a href=#总结>总结</a></li><li><a href=#完整代码>完整代码</a></li><li><a href=#原文地址>原文地址</a></li></ul></nav></div></aside></div><div class=btn><div class=btn-menu id=btn-menu><i class="iconfont icon-grid-sharp"></i></div><div class=btn-toggle-mode><i class="iconfont icon-contrast-sharp"></i></div><div class=btn-scroll-top><i class="iconfont icon-chevron-up-circle-sharp"></i></div></div><aside class=sidebar-mobile style=display:none><div class=sidebar-wrapper><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#前提条件>前提条件</a><ul><li><a href=#安装并使用-beta-版本>安装并使用 beta 版本</a></li></ul></li><li><a href=#为你的代码创建一个文件夹>为你的代码创建一个文件夹</a></li><li><a href=#添加普通函数>添加普通函数</a><ul><li><a href=#写代码>写代码</a></li><li><a href=#运行代码>运行代码</a></li></ul></li><li><a href=#添加泛型函数处理多种类型>添加泛型函数处理多种类型</a><ul><li><a href=#写代码-1>写代码</a></li><li><a href=#运行代码-1>运行代码</a></li></ul></li><li><a href=#当调用泛型函数时移除类型参数>当调用泛型函数时移除类型参数</a><ul><li><a href=#写代码-2>写代码</a></li><li><a href=#运行代码-2>运行代码</a></li></ul></li><li><a href=#声明类型约束>声明类型约束</a><ul><li><a href=#写代码-3>写代码</a></li><li><a href=#运行代码-3>运行代码</a></li></ul></li><li><a href=#总结>总结</a></li><li><a href=#完整代码>完整代码</a></li><li><a href=#原文地址>原文地址</a></li></ul></nav></div></div></aside></main><footer><div class="container-lg clearfix"><div class="col-12 footer"><span>&copy; 2019-2022
+<a href=https://www.zhaohaiyu.com>haiyux</a>
+| <a href=https://www.zhaohaiyu.com>Source code</a>
+| 基于 <a href=https://github.com/dsrkafuu/hugo-theme-fuji/ target=_blank>Fuji-v2</a> & <a href=https://gohugo.io/ target=_blank>Hugo</a> 构建</span></div></div></footer><script defer src=https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js></script>
+<script defer src=/assets/js/fuji.min.js></script></body></html>

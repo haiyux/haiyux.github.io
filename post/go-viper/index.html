@@ -1,163 +1,28 @@
-<!DOCTYPE html>
-<html lang="zh-hans">
-
-<head>
-    
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="HandheldFriendly" content="True" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-<meta name="generator" content="Hugo 0.100.1" />
-
-
-<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-<link rel="manifest" href="/img/site.webmanifest">
-<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-
-
-<title>Go viper配置管理 - 赵海宇的博客</title>
-
-
-<meta name="author" content="haiyux" />
-
-
-<meta name="description" content="欢迎来到haiyux的博客" />
-
-
-<meta name="keywords" content="golang" />
-
-
-<meta property="og:title" content="Go viper配置管理" />
-<meta name="twitter:title" content="Go viper配置管理" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.zhaohaiyu.com/post/go-viper/" /><meta property="og:description" content="安装 go get github.com/spf13/viper viper支持的功能 1、可以设置默认值 2、可以加载多种格式的配置文件，如JSON，TOML，YAML，HCL和Java属性配置文件 3、应用程序运行过程中，保持监听和重新读取配置文件 4、可以从" />
-<meta name="twitter:description" content="安装 go get github.com/spf13/viper viper支持的功能 1、可以设置默认值 2、可以加载多种格式的配置文件，如JSON，TOML，YAML，HCL和Java属性配置文件 3、应用程序运行过程中，保持监听和重新读取配置文件 4、可以从" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2021-01-02T11:36:55+08:00" /><meta property="article:modified_time" content="2021-01-02T11:36:55+08:00" />
-
-
-<style>
-    @media (prefers-color-scheme: dark) {
-        body[data-theme='auto'] img {
-            filter: brightness(60%);
-        }
-    }
-
-    body[data-theme='dark'] img {
-        filter: brightness(60%);
-    }
-</style>
-
-
-
-
-<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
-
-
-
-
-
-
-
-
-</head>
-
-<body
-  data-theme="auto"
-  data-theme-auto='true'
-  >
-    <script data-cfasync="false">
-  
-  var fujiThemeData = localStorage.getItem('fuji_data-theme');
-  
-  if (!fujiThemeData) {
-    localStorage.setItem('fuji_data-theme', 'auto');
-  } else {
-    
-    if (fujiThemeData !== 'auto') {
-      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
-    }
-  }
-</script>
-
-    <header>
-    <div class="container-lg clearfix">
-        <div class="col-12 header">
-            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
-            
-            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
-            
-        </div>
-    </div>
-</header>
-
-    <main>
-        <div class="container-lg clearfix">
-            
-            <div class="col-12 col-md-9 float-left content">
-                
-<article>
-    
-    <h2 class="post-item post-title">
-        <a href="https://www.zhaohaiyu.com/post/go-viper/">Go viper配置管理</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-01-02</span>
-
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=HandheldFriendly content="True"><meta http-equiv=x-ua-compatible content="IE=edge"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=generator content="Hugo 0.100.1"><link rel=apple-touch-icon sizes=180x180 href=/img/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/img/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/img/favicon-16x16.png><link rel=manifest href=/img/site.webmanifest><link rel=mask-icon href=/img/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Go viper配置管理 - 赵海宇的博客</title><meta name=author content="haiyux"><meta name=description content="欢迎来到haiyux的博客"><meta name=keywords content="golang"><meta property="og:title" content="Go viper配置管理"><meta name=twitter:title content="Go viper配置管理"><meta property="og:type" content="article"><meta property="og:url" content="https://www.zhaohaiyu.com/post/go-viper/"><meta property="og:description" content="安装 go get github.com/spf13/viper viper支持的功能 1、可以设置默认值 2、可以加载多种格式的配置文件，如JSON，TOML，YAML，HCL和Java属性配置文件 3、应用程序运行过程中，保持监听和重新读取配置文件 4、可以从"><meta name=twitter:description content="安装 go get github.com/spf13/viper viper支持的功能 1、可以设置默认值 2、可以加载多种格式的配置文件，如JSON，TOML，YAML，HCL和Java属性配置文件 3、应用程序运行过程中，保持监听和重新读取配置文件 4、可以从"><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta property="article:published_time" content="2021-01-02T11:36:55+08:00"><meta property="article:modified_time" content="2021-01-02T11:36:55+08:00"><style>@media(prefers-color-scheme:dark){body[data-theme=auto] img{filter:brightness(60%)}}body[data-theme=dark] img{filter:brightness(60%)}</style><link rel=stylesheet href=https://www.zhaohaiyu.com/assets/css/fuji.min.css></head><body data-theme=auto data-theme-auto=true><script data-cfasync=false>var fujiThemeData=localStorage.getItem('fuji_data-theme');fujiThemeData?fujiThemeData!=='auto'&&document.body.setAttribute('data-theme',fujiThemeData==='dark'?'dark':'light'):localStorage.setItem('fuji_data-theme','auto')</script><header><div class="container-lg clearfix"><div class="col-12 header"><a class=title-main href=https://www.zhaohaiyu.com>赵海宇的博客</a>
+<span class=title-sub>路漫漫其修远兮,吾将上下而求索。</span></div></div></header><main><div class="container-lg clearfix"><div class="col-12 col-md-9 float-left content"><article><h2 class="post-item post-title"><a href=https://www.zhaohaiyu.com/post/go-viper/>Go viper配置管理</a></h2><div class="post-item post-meta"><span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-01-02</span>
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;7088 字</span>
 <span><i class="iconfont icon-time-sharp"></i>&nbsp;15 分钟</span>
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
-
-    </div>
-    
-    <div class="post-content markdown-body">
-        <h2 id="安装">安装</h2>
-<pre><code class="language-bash">go get github.com/spf13/viper
-</code></pre>
-<h2 id="viper支持的功能">viper支持的功能</h2>
-<p>1、可以设置默认值
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href=/tags/golang>golang</a>&nbsp;</span></div><div class="post-content markdown-body"><h2 id=安装>安装</h2><pre><code class=language-bash>go get github.com/spf13/viper
+</code></pre><h2 id=viper支持的功能>viper支持的功能</h2><p>1、可以设置默认值
 2、可以加载多种格式的配置文件，如JSON，TOML，YAML，HCL和Java属性配置文件
 3、应用程序运行过程中，保持监听和重新读取配置文件
 4、可以从环境变量读取配置
 5、可以从远程配置系统读取配置
 6、可以读取命令行标志作为配置
 7、可以从缓冲区中读取
-8、设置显式的值</p>
-<ul>
-<li>在GitHub中，作者是这样描述viper对于开发人员的作用：在构建现代化应用程序的过程中，开发人员可以通过使用viper而不必考虑配置文件的格式问题。</li>
-</ul>
-<h2 id="viper具体的帮助">viper具体的帮助</h2>
-<p>1、可以查找、加载和反序列化多种格式的配置文件，如JSON, TOML, YAML, HCL, Java属性配置格式。
+8、设置显式的值</p><ul><li>在GitHub中，作者是这样描述viper对于开发人员的作用：在构建现代化应用程序的过程中，开发人员可以通过使用viper而不必考虑配置文件的格式问题。</li></ul><h2 id=viper具体的帮助>viper具体的帮助</h2><p>1、可以查找、加载和反序列化多种格式的配置文件，如JSON, TOML, YAML, HCL, Java属性配置格式。
 2、提供一种为不同配置选项设置默认值的机制
 3、提供一种通过命令行标志覆盖指定配置选项值的机制
 4、提供了一种别名系统，可以在避免破坏现有代码的前提下，轻松地重命名参数
-5、当用户提供的命令行或配置文件的配置选项与默认的配置选项相同时，可以很容易通过选项值结果看出优先级的差异。</p>
-<h2 id="viper提供的配置方式的优先级顺序如下由高到低">viper提供的配置方式的优先级顺序如下(由高到低)：</h2>
-<p>1.设置显示调用(explicit call to Set)
+5、当用户提供的命令行或配置文件的配置选项与默认的配置选项相同时，可以很容易通过选项值结果看出优先级的差异。</p><h2 id=viper提供的配置方式的优先级顺序如下由高到低>viper提供的配置方式的优先级顺序如下(由高到低)：</h2><p>1.设置显示调用(explicit call to Set)
 2.命令行标志(flag)
 3.环境变量(env)
 4.配置文件(config)
 5.远程键/值存储(key/value store)
-6.默认值(default)</p>
-<h2 id="viper的简单使用">viper的简单使用</h2>
-<h3 id="把值存入viper">把值存入Viper</h3>
-<h4 id="建立默认值">建立默认值</h4>
-<p>一个好的配置系统应该支持默认值。键不需要默认值，但如果没有通过配置文件、环境变量、远程配置或命令行标志（flag）设置键，则默认值非常有用。</p>
-<p>例如：</p>
-<pre><code class="language-go">viper.SetDefault(&quot;ContentDir&quot;, &quot;content&quot;)
+6.默认值(default)</p><h2 id=viper的简单使用>viper的简单使用</h2><h3 id=把值存入viper>把值存入Viper</h3><h4 id=建立默认值>建立默认值</h4><p>一个好的配置系统应该支持默认值。键不需要默认值，但如果没有通过配置文件、环境变量、远程配置或命令行标志（flag）设置键，则默认值非常有用。</p><p>例如：</p><pre><code class=language-go>viper.SetDefault(&quot;ContentDir&quot;, &quot;content&quot;)
 viper.SetDefault(&quot;LayoutDir&quot;, &quot;layouts&quot;)
 viper.SetDefault(&quot;Taxonomies&quot;, map[string]string{&quot;tag&quot;: &quot;tags&quot;, &quot;category&quot;: &quot;categories&quot;})
-</code></pre>
-<h4 id="读取配置文件">读取配置文件</h4>
-<p>Viper需要最少知道在哪里查找配置文件的配置。Viper支持JSON、TOML、YAML、HCL、envfile和Java properties格式的配置文件。Viper可以搜索多个路径，但目前单个Viper实例只支持单个配置文件。Viper不默认任何配置搜索路径，将默认决策留给应用程序。</p>
-<p>下面是一个如何使用Viper搜索和读取配置文件的示例。不需要任何特定的路径，但是至少应该提供一个配置文件预期出现的路径。</p>
-<pre><code class="language-go">viper.SetConfigFile(&quot;./config.yaml&quot;) // 指定配置文件路径
+</code></pre><h4 id=读取配置文件>读取配置文件</h4><p>Viper需要最少知道在哪里查找配置文件的配置。Viper支持JSON、TOML、YAML、HCL、envfile和Java properties格式的配置文件。Viper可以搜索多个路径，但目前单个Viper实例只支持单个配置文件。Viper不默认任何配置搜索路径，将默认决策留给应用程序。</p><p>下面是一个如何使用Viper搜索和读取配置文件的示例。不需要任何特定的路径，但是至少应该提供一个配置文件预期出现的路径。</p><pre><code class=language-go>viper.SetConfigFile(&quot;./config.yaml&quot;) // 指定配置文件路径
 viper.SetConfigName(&quot;config&quot;) // 配置文件名称(无扩展名)
 viper.SetConfigType(&quot;yaml&quot;) // 如果配置文件的名称中没有扩展名，则需要配置此项
 viper.AddConfigPath(&quot;/etc/appname/&quot;)   // 查找配置文件所在的路径
@@ -167,9 +32,7 @@ err := viper.ReadInConfig() // 查找并读取配置文件
 if err != nil { // 处理读取配置文件的错误
 	panic(fmt.Errorf(&quot;Fatal error config file: %s \n&quot;, err))
 }
-</code></pre>
-<p>在加载配置文件出错时，你可以像下面这样处理找不到配置文件的特定情况：</p>
-<pre><code class="language-go">if err := viper.ReadInConfig(); err != nil {
+</code></pre><p>在加载配置文件出错时，你可以像下面这样处理找不到配置文件的特定情况：</p><pre><code class=language-go>if err := viper.ReadInConfig(); err != nil {
     if _, ok := err.(viper.ConfigFileNotFoundError); ok {
         // 配置文件未找到错误；如果需要可以忽略
     } else {
@@ -177,44 +40,19 @@ if err != nil { // 处理读取配置文件的错误
     }
 }
 // 配置文件找到并成功解析
-</code></pre>
-<p><em>注意[自1.6起]：</em> 你也可以有不带扩展名的文件，并以编程方式指定其格式。对于位于用户$HOME目录中的配置文件没有任何扩展名，如.bashrc。</p>
-<p><strong>这里补充两个问题供读者解答并自行验证</strong></p>
-<p>当你使用如下方式读取配置时，viper会从./conf目录下查找任何以config为文件名的配置文件，如果同时存在./conf/config.json和./conf/config.yaml两个配置文件的话，viper会从哪个配置文件加载配置呢？</p>
-<pre><code class="language-go">viper.SetConfigName(&quot;config&quot;)
+</code></pre><p><em>注意[自1.6起]：</em> 你也可以有不带扩展名的文件，并以编程方式指定其格式。对于位于用户$HOME目录中的配置文件没有任何扩展名，如.bashrc。</p><p><strong>这里补充两个问题供读者解答并自行验证</strong></p><p>当你使用如下方式读取配置时，viper会从./conf目录下查找任何以config为文件名的配置文件，如果同时存在./conf/config.json和./conf/config.yaml两个配置文件的话，viper会从哪个配置文件加载配置呢？</p><pre><code class=language-go>viper.SetConfigName(&quot;config&quot;)
 viper.AddConfigPath(&quot;./conf&quot;)
-</code></pre>
-<p>在上面两个语句下搭配使用viper.SetConfigType(&ldquo;yaml&rdquo;)指定配置文件类型可以实现预期的效果吗？</p>
-<h4 id="写入配置文件">写入配置文件</h4>
-<p>从配置文件中读取配置文件是有用的，但是有时你想要存储在运行时所做的所有修改。为此，可以使用下面一组命令，每个命令都有自己的用途:</p>
-<ul>
-<li>WriteConfig - 将当前的viper配置写入预定义的路径并覆盖（如果存在的话）。如果没有预定义的路径，则报错。</li>
-<li>SafeWriteConfig - 将当前的viper配置写入预定义的路径。如果没有预定义的路径，则报错。如果存在，将不会覆盖当前的配置文件。</li>
-<li>WriteConfigAs - 将当前的viper配置写入给定的文件路径。将覆盖给定的文件(如果它存在的话)。</li>
-<li>SafeWriteConfigAs - 将当前的viper配置写入给定的文件路径。不会覆盖给定的文件(如果它存在的话)。</li>
-</ul>
-<p>根据经验，标记为safe的所有方法都不会覆盖任何文件，而是直接创建（如果不存在），而默认行为是创建或截断。</p>
-<p>一个小示例：</p>
-<pre><code class="language-go">viper.WriteConfig() // 将当前配置写入“viper.AddConfigPath()”和“viper.SetConfigName”设置的预定义路径
+</code></pre><p>在上面两个语句下搭配使用viper.SetConfigType(&ldquo;yaml&rdquo;)指定配置文件类型可以实现预期的效果吗？</p><h4 id=写入配置文件>写入配置文件</h4><p>从配置文件中读取配置文件是有用的，但是有时你想要存储在运行时所做的所有修改。为此，可以使用下面一组命令，每个命令都有自己的用途:</p><ul><li>WriteConfig - 将当前的viper配置写入预定义的路径并覆盖（如果存在的话）。如果没有预定义的路径，则报错。</li><li>SafeWriteConfig - 将当前的viper配置写入预定义的路径。如果没有预定义的路径，则报错。如果存在，将不会覆盖当前的配置文件。</li><li>WriteConfigAs - 将当前的viper配置写入给定的文件路径。将覆盖给定的文件(如果它存在的话)。</li><li>SafeWriteConfigAs - 将当前的viper配置写入给定的文件路径。不会覆盖给定的文件(如果它存在的话)。</li></ul><p>根据经验，标记为safe的所有方法都不会覆盖任何文件，而是直接创建（如果不存在），而默认行为是创建或截断。</p><p>一个小示例：</p><pre><code class=language-go>viper.WriteConfig() // 将当前配置写入“viper.AddConfigPath()”和“viper.SetConfigName”设置的预定义路径
 viper.SafeWriteConfig()
 viper.WriteConfigAs(&quot;/path/to/my/.config&quot;)
 viper.SafeWriteConfigAs(&quot;/path/to/my/.config&quot;) // 因为该配置文件写入过，所以会报错
 viper.SafeWriteConfigAs(&quot;/path/to/my/.other_config&quot;)
-</code></pre>
-<h4 id="监控并重新读取配置文件">监控并重新读取配置文件</h4>
-<p>Viper支持在运行时实时读取配置文件的功能。</p>
-<p>需要重新启动服务器以使配置生效的日子已经一去不复返了，viper驱动的应用程序可以在运行时读取配置文件的更新，而不会错过任何消息。</p>
-<p>只需告诉viper实例watchConfig。可选地，你可以为Viper提供一个回调函数，以便在每次发生更改时运行。</p>
-<h4 id="确保在调用watchconfig之前添加了所有的配置路径"><strong>确保在调用WatchConfig()之前添加了所有的配置路径。</strong></h4>
-<pre><code class="language-go">viper.WatchConfig()
+</code></pre><h4 id=监控并重新读取配置文件>监控并重新读取配置文件</h4><p>Viper支持在运行时实时读取配置文件的功能。</p><p>需要重新启动服务器以使配置生效的日子已经一去不复返了，viper驱动的应用程序可以在运行时读取配置文件的更新，而不会错过任何消息。</p><p>只需告诉viper实例watchConfig。可选地，你可以为Viper提供一个回调函数，以便在每次发生更改时运行。</p><h4 id=确保在调用watchconfig之前添加了所有的配置路径><strong>确保在调用WatchConfig()之前添加了所有的配置路径。</strong></h4><pre><code class=language-go>viper.WatchConfig()
 viper.OnConfigChange(func(e fsnotify.Event) {
   // 配置文件发生变更之后会调用的回调函数
 	fmt.Println(&quot;Config file changed:&quot;, e.Name)
 })
-</code></pre>
-<h4 id="从ioreader读取配置">从io.Reader读取配置</h4>
-<p>Viper预先定义了许多配置源，如文件、环境变量、标志和远程K/V存储，但你不受其约束。你还可以实现自己所需的配置源并将其提供给viper。</p>
-<pre><code class="language-go">viper.SetConfigType(&quot;yaml&quot;) // 或者 viper.SetConfigType(&quot;YAML&quot;)
+</code></pre><h4 id=从ioreader读取配置>从io.Reader读取配置</h4><p>Viper预先定义了许多配置源，如文件、环境变量、标志和远程K/V存储，但你不受其约束。你还可以实现自己所需的配置源并将其提供给viper。</p><pre><code class=language-go>viper.SetConfigType(&quot;yaml&quot;) // 或者 viper.SetConfigType(&quot;YAML&quot;)
 // 任何需要将此配置添加到程序中的方法。
 var yamlExample = []byte(`
 Hacker: true
@@ -232,61 +70,24 @@ beard: true
 `)
 viper.ReadConfig(bytes.NewBuffer(yamlExample))
 viper.Get(&quot;name&quot;) // 这里会得到 &quot;steve&quot;
-</code></pre>
-<h4 id="覆盖设置">覆盖设置</h4>
-<p>这些可能来自命令行标志，也可能来自你自己的应用程序逻辑。</p>
-<pre><code class="language-go">viper.Set(&quot;Verbose&quot;, true)
+</code></pre><h4 id=覆盖设置>覆盖设置</h4><p>这些可能来自命令行标志，也可能来自你自己的应用程序逻辑。</p><pre><code class=language-go>viper.Set(&quot;Verbose&quot;, true)
 viper.Set(&quot;LogFile&quot;, LogFile)
-</code></pre>
-<h4 id="注册和使用别名">注册和使用别名</h4>
-<p>别名允许多个键引用单个值</p>
-<pre><code class="language-go">viper.RegisterAlias(&quot;loud&quot;, &quot;Verbose&quot;)  // 注册别名（此处loud和Verbose建立了别名）
+</code></pre><h4 id=注册和使用别名>注册和使用别名</h4><p>别名允许多个键引用单个值</p><pre><code class=language-go>viper.RegisterAlias(&quot;loud&quot;, &quot;Verbose&quot;)  // 注册别名（此处loud和Verbose建立了别名）
 viper.Set(&quot;verbose&quot;, true) // 结果与下一行相同
 viper.Set(&quot;loud&quot;, true)   // 结果与前一行相同
 viper.GetBool(&quot;loud&quot;) // true
 viper.GetBool(&quot;verbose&quot;) // true
-</code></pre>
-<h4 id="使用环境变量">使用环境变量</h4>
-<p>Viper完全支持环境变量。这使Twelve-Factor App开箱即用。有五种方法可以帮助与ENV协作:</p>
-<ul>
-<li>AutomaticEnv()</li>
-<li>BindEnv(string&hellip;) : error</li>
-<li>SetEnvPrefix(string)</li>
-<li>SetEnvKeyReplacer(string&hellip;) *strings.Replacer</li>
-<li>AllowEmptyEnv(bool)</li>
-</ul>
-<p><em>使用ENV变量时，务必要意识到Viper将ENV变量视为区分大小写。</em></p>
-<p>Viper提供了一种机制来确保ENV变量是惟一的。通过使用SetEnvPrefix，你可以告诉Viper在读取环境变量时使用前缀。BindEnv和AutomaticEnv都将使用这个前缀。</p>
-<p>BindEnv使用一个或两个参数。第一个参数是键名称，第二个是环境变量的名称。环境变量的名称区分大小写。如果没有提供ENV变量名，那么Viper将自动假设ENV变量与以下格式匹配：前缀+ “_” +键名全部大写。当你显式提供ENV变量名（第二个参数）时，它 <strong>不会</strong> 自动添加前缀。例如，如果第二个参数是“id”，Viper将查找环境变量“ID”。</p>
-<p>在使用ENV变量时，需要注意的一件重要事情是，每次访问该值时都将读取它。Viper在调用BindEnv时不固定该值。</p>
-<p>AutomaticEnv是一个强大的助手，尤其是与SetEnvPrefix结合使用时。调用时，Viper会在发出viper.Get请求时随时检查环境变量。它将应用以下规则。它将检查环境变量的名称是否与键匹配（如果设置了EnvPrefix）。</p>
-<p>SetEnvKeyReplacer允许你使用strings.Replacer对象在一定程度上重写 Env 键。如果你希望在Get()调用中使用-或者其他什么符号，但是环境变量里使用_分隔符，那么这个功能是非常有用的。可以在viper_test.go中找到它的使用示例。</p>
-<p>或者，你可以使用带有NewWithOptions工厂函数的EnvKeyReplacer。与SetEnvKeyReplacer不同，它接受StringReplacer接口，允许你编写自定义字符串替换逻辑。</p>
-<p>默认情况下，空环境变量被认为是未设置的，并将返回到下一个配置源。若要将空环境变量视为已设置，请使用AllowEmptyEnv方法。</p>
-<h5 id="env-示例">Env 示例：</h5>
-<pre><code class="language-go">SetEnvPrefix(&quot;spf&quot;) // 将自动转为大写
+</code></pre><h4 id=使用环境变量>使用环境变量</h4><p>Viper完全支持环境变量。这使Twelve-Factor App开箱即用。有五种方法可以帮助与ENV协作:</p><ul><li>AutomaticEnv()</li><li>BindEnv(string&mldr;) : error</li><li>SetEnvPrefix(string)</li><li>SetEnvKeyReplacer(string&mldr;) *strings.Replacer</li><li>AllowEmptyEnv(bool)</li></ul><p><em>使用ENV变量时，务必要意识到Viper将ENV变量视为区分大小写。</em></p><p>Viper提供了一种机制来确保ENV变量是惟一的。通过使用SetEnvPrefix，你可以告诉Viper在读取环境变量时使用前缀。BindEnv和AutomaticEnv都将使用这个前缀。</p><p>BindEnv使用一个或两个参数。第一个参数是键名称，第二个是环境变量的名称。环境变量的名称区分大小写。如果没有提供ENV变量名，那么Viper将自动假设ENV变量与以下格式匹配：前缀+ “_” +键名全部大写。当你显式提供ENV变量名（第二个参数）时，它 <strong>不会</strong> 自动添加前缀。例如，如果第二个参数是“id”，Viper将查找环境变量“ID”。</p><p>在使用ENV变量时，需要注意的一件重要事情是，每次访问该值时都将读取它。Viper在调用BindEnv时不固定该值。</p><p>AutomaticEnv是一个强大的助手，尤其是与SetEnvPrefix结合使用时。调用时，Viper会在发出viper.Get请求时随时检查环境变量。它将应用以下规则。它将检查环境变量的名称是否与键匹配（如果设置了EnvPrefix）。</p><p>SetEnvKeyReplacer允许你使用strings.Replacer对象在一定程度上重写 Env 键。如果你希望在Get()调用中使用-或者其他什么符号，但是环境变量里使用_分隔符，那么这个功能是非常有用的。可以在viper_test.go中找到它的使用示例。</p><p>或者，你可以使用带有NewWithOptions工厂函数的EnvKeyReplacer。与SetEnvKeyReplacer不同，它接受StringReplacer接口，允许你编写自定义字符串替换逻辑。</p><p>默认情况下，空环境变量被认为是未设置的，并将返回到下一个配置源。若要将空环境变量视为已设置，请使用AllowEmptyEnv方法。</p><h5 id=env-示例>Env 示例：</h5><pre><code class=language-go>SetEnvPrefix(&quot;spf&quot;) // 将自动转为大写
 BindEnv(&quot;id&quot;)
 os.Setenv(&quot;SPF_ID&quot;, &quot;13&quot;) // 通常是在应用程序之外完成的
 id := Get(&quot;id&quot;) // 13
-</code></pre>
-<h5 id="使用flags">使用Flags</h5>
-<p>Viper 具有绑定到标志的能力。具体来说，Viper支持<a href="https://github.com/spf13/cobra" target="_blank">Cobra</a>库中使用的Pflag。</p>
-<p>与BindEnv类似，该值不是在调用绑定方法时设置的，而是在访问该方法时设置的。这意味着你可以根据需要尽早进行绑定，即使在init()函数中也是如此。</p>
-<p>对于单个标志，BindPFlag()方法提供此功能。</p>
-<p>例如：</p>
-<pre><code class="language-go">serverCmd.Flags().Int(&quot;port&quot;, 1138, &quot;Port to run Application server on&quot;)
+</code></pre><h5 id=使用flags>使用Flags</h5><p>Viper 具有绑定到标志的能力。具体来说，Viper支持<a href=https://github.com/spf13/cobra target=_blank>Cobra</a>库中使用的Pflag。</p><p>与BindEnv类似，该值不是在调用绑定方法时设置的，而是在访问该方法时设置的。这意味着你可以根据需要尽早进行绑定，即使在init()函数中也是如此。</p><p>对于单个标志，BindPFlag()方法提供此功能。</p><p>例如：</p><pre><code class=language-go>serverCmd.Flags().Int(&quot;port&quot;, 1138, &quot;Port to run Application server on&quot;)
 viper.BindPFlag(&quot;port&quot;, serverCmd.Flags().Lookup(&quot;port&quot;))
-</code></pre>
-<p>你还可以绑定一组现有的pflags （pflag.FlagSet）：</p>
-<p>举个例子：</p>
-<pre><code class="language-go">pflag.Int(&quot;flagname&quot;, 1234, &quot;help message for flagname&quot;)
+</code></pre><p>你还可以绑定一组现有的pflags （pflag.FlagSet）：</p><p>举个例子：</p><pre><code class=language-go>pflag.Int(&quot;flagname&quot;, 1234, &quot;help message for flagname&quot;)
 pflag.Parse()
 viper.BindPFlags(pflag.CommandLine)
 i := viper.GetInt(&quot;flagname&quot;) // 从viper而不是从pflag检索值
-</code></pre>
-<p>在 Viper 中使用 pflag 并不阻碍其他包中使用标准库中的 flag 包。pflag 包可以通过导入这些 flags 来处理flag包定义的flags。这是通过调用pflag包提供的便利函数AddGoFlagSet()来实现的。</p>
-<p>例如：</p>
-<pre><code class="language-go">package main
+</code></pre><p>在 Viper 中使用 pflag 并不阻碍其他包中使用标准库中的 flag 包。pflag 包可以通过导入这些 flags 来处理flag包定义的flags。这是通过调用pflag包提供的便利函数AddGoFlagSet()来实现的。</p><p>例如：</p><pre><code class=language-go>package main
 import (
 	&quot;flag&quot;
 	&quot;github.com/spf13/pflag&quot;
@@ -300,21 +101,13 @@ func main() {
 	i := viper.GetInt(&quot;flagname&quot;) // 从 viper 检索值
 	...
 }
-</code></pre>
-<h5 id="flag接口">flag接口</h5>
-<p>如果你不使用Pflag，Viper 提供了两个Go接口来绑定其他 flag 系统。</p>
-<p>FlagValue表示单个flag。这是一个关于如何实现这个接口的非常简单的例子：</p>
-<pre><code class="language-go">type myFlag struct {}
+</code></pre><h5 id=flag接口>flag接口</h5><p>如果你不使用Pflag，Viper 提供了两个Go接口来绑定其他 flag 系统。</p><p>FlagValue表示单个flag。这是一个关于如何实现这个接口的非常简单的例子：</p><pre><code class=language-go>type myFlag struct {}
 func (f myFlag) HasChanged() bool { return false }
 func (f myFlag) Name() string { return &quot;my-flag-name&quot; }
 func (f myFlag) ValueString() string { return &quot;my-flag-value&quot; }
 func (f myFlag) ValueType() string { return &quot;string&quot; }
-</code></pre>
-<p>一旦你的 flag 实现了这个接口，你可以很方便地告诉Viper绑定它：</p>
-<pre><code>viper.BindFlagValue(&quot;my-flag-name&quot;, myFlag{})
-</code></pre>
-<p>FlagValueSet代表一组 flags 。这是一个关于如何实现这个接口的非常简单的例子:</p>
-<pre><code class="language-go">type myFlagSet struct {
+</code></pre><p>一旦你的 flag 实现了这个接口，你可以很方便地告诉Viper绑定它：</p><pre><code>viper.BindFlagValue(&quot;my-flag-name&quot;, myFlag{})
+</code></pre><p>FlagValueSet代表一组 flags 。这是一个关于如何实现这个接口的非常简单的例子:</p><pre><code class=language-go>type myFlagSet struct {
 	flags []myFlag
 }
 func (f myFlagSet) VisitAll(fn func(FlagValue)) {
@@ -322,37 +115,18 @@ func (f myFlagSet) VisitAll(fn func(FlagValue)) {
 		fn(flag)
 	}
 }
-</code></pre>
-<p>一旦你的flag set实现了这个接口，你就可以很方便地告诉Viper绑定它：</p>
-<pre><code class="language-go">fSet := myFlagSet{
+</code></pre><p>一旦你的flag set实现了这个接口，你就可以很方便地告诉Viper绑定它：</p><pre><code class=language-go>fSet := myFlagSet{
 	flags: []myFlag{myFlag{}, myFlag{}},
 }
 viper.BindFlagValues(&quot;my-flags&quot;, fSet)
-</code></pre>
-<h4 id="远程keyvalue存储支持">远程Key/Value存储支持</h4>
-<p>在Viper中启用远程支持，需要在代码中匿名导入viper/remote这个包。</p>
-<pre><code class="language-go">import _ &quot;github.com/spf13/viper/remote&quot;
-</code></pre>
-<p>Viper将读取从Key/Value存储（例如etcd或Consul）中的路径检索到的配置字符串（如JSON、TOML、YAML、HCL、envfile和Java properties格式）。这些值的优先级高于默认值，但是会被从磁盘、flag或环境变量检索到的配置值覆盖。（译注：也就是说Viper加载配置值的优先级为：磁盘上的配置文件&gt;命令行标志位&gt;环境变量&gt;远程Key/Value存储&gt;默认值。）</p>
-<p>Viper使用<a href="https://github.com/bketelsen/crypt" target="_blank">crypt</a>从K/V存储中检索配置，这意味着如果你有正确的gpg密匙，你可以将配置值加密存储并自动解密。加密是可选的。</p>
-<p>你可以将远程配置与本地配置结合使用，也可以独立使用。</p>
-<p>crypt有一个命令行助手，你可以使用它将配置放入K/V存储中。crypt默认使用在<a href="http://127.0.0.1:4001/" target="_blank">http://127.0.0.1:4001</a>的etcd。</p>
-<pre><code class="language-bash">$ go get github.com/bketelsen/crypt/bin/crypt
+</code></pre><h4 id=远程keyvalue存储支持>远程Key/Value存储支持</h4><p>在Viper中启用远程支持，需要在代码中匿名导入viper/remote这个包。</p><pre><code class=language-go>import _ &quot;github.com/spf13/viper/remote&quot;
+</code></pre><p>Viper将读取从Key/Value存储（例如etcd或Consul）中的路径检索到的配置字符串（如JSON、TOML、YAML、HCL、envfile和Java properties格式）。这些值的优先级高于默认值，但是会被从磁盘、flag或环境变量检索到的配置值覆盖。（译注：也就是说Viper加载配置值的优先级为：磁盘上的配置文件>命令行标志位>环境变量>远程Key/Value存储>默认值。）</p><p>Viper使用<a href=https://github.com/bketelsen/crypt target=_blank>crypt</a>从K/V存储中检索配置，这意味着如果你有正确的gpg密匙，你可以将配置值加密存储并自动解密。加密是可选的。</p><p>你可以将远程配置与本地配置结合使用，也可以独立使用。</p><p>crypt有一个命令行助手，你可以使用它将配置放入K/V存储中。crypt默认使用在<a href=http://127.0.0.1:4001/ target=_blank>http://127.0.0.1:4001</a>的etcd。</p><pre><code class=language-bash>$ go get github.com/bketelsen/crypt/bin/crypt
 $ crypt set -plaintext /config/hugo.json /Users/hugo/settings/config.json
-</code></pre>
-<p>确认值已经设置：</p>
-<pre><code class="language-bash">$ crypt get -plaintext /config/hugo.json
-</code></pre>
-<p>有关如何设置加密值或如何使用Consul的示例，请参见crypt文档。</p>
-<h4 id="远程keyvalue存储示例-未加密">远程Key/Value存储示例-未加密</h4>
-<h5 id="etcd">etcd</h5>
-<pre><code class="language-go">viper.AddRemoteProvider(&quot;etcd&quot;, &quot;http://127.0.0.1:4001&quot;,&quot;/config/hugo.json&quot;)
+</code></pre><p>确认值已经设置：</p><pre><code class=language-bash>$ crypt get -plaintext /config/hugo.json
+</code></pre><p>有关如何设置加密值或如何使用Consul的示例，请参见crypt文档。</p><h4 id=远程keyvalue存储示例-未加密>远程Key/Value存储示例-未加密</h4><h5 id=etcd>etcd</h5><pre><code class=language-go>viper.AddRemoteProvider(&quot;etcd&quot;, &quot;http://127.0.0.1:4001&quot;,&quot;/config/hugo.json&quot;)
 viper.SetConfigType(&quot;json&quot;) // 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &quot;json&quot;, &quot;toml&quot;, &quot;yaml&quot;, &quot;yml&quot;, &quot;properties&quot;, &quot;props&quot;, &quot;prop&quot;, &quot;env&quot;, &quot;dotenv&quot;
 err := viper.ReadRemoteConfig()
-</code></pre>
-<h5 id="consul">Consul</h5>
-<p>你需要 Consul Key/Value存储中设置一个Key保存包含所需配置的JSON值。例如，创建一个keyMY_CONSUL_KEY将下面的值存入Consul key/value 存储：</p>
-<pre><code class="language-go">{
+</code></pre><h5 id=consul>Consul</h5><p>你需要 Consul Key/Value存储中设置一个Key保存包含所需配置的JSON值。例如，创建一个keyMY_CONSUL_KEY将下面的值存入Consul key/value 存储：</p><pre><code class=language-go>{
     &quot;port&quot;: 8080,
     &quot;hostname&quot;: &quot;liwenzhou.com&quot;
 }
@@ -361,20 +135,13 @@ viper.SetConfigType(&quot;json&quot;) // 需要显示设置成json
 err := viper.ReadRemoteConfig()
 fmt.Println(viper.Get(&quot;port&quot;)) // 8080
 fmt.Println(viper.Get(&quot;hostname&quot;)) // liwenzhou.com
-</code></pre>
-<h5 id="firestore">Firestore</h5>
-<pre><code class="language-go">viper.AddRemoteProvider(&quot;firestore&quot;, &quot;google-cloud-project-id&quot;, &quot;collection/document&quot;)
+</code></pre><h5 id=firestore>Firestore</h5><pre><code class=language-go>viper.AddRemoteProvider(&quot;firestore&quot;, &quot;google-cloud-project-id&quot;, &quot;collection/document&quot;)
 viper.SetConfigType(&quot;json&quot;) // 配置的格式: &quot;json&quot;, &quot;toml&quot;, &quot;yaml&quot;, &quot;yml&quot;
 err := viper.ReadRemoteConfig()
-</code></pre>
-<p>当然，你也可以使用SecureRemoteProvider。</p>
-<h4 id="远程keyvalue存储示例-加密">远程Key/Value存储示例-加密</h4>
-<pre><code class="language-go">viper.AddSecureRemoteProvider(&quot;etcd&quot;,&quot;http://127.0.0.1:4001&quot;,&quot;/config/hugo.json&quot;,&quot;/etc/secrets/mykeyring.gpg&quot;)
+</code></pre><p>当然，你也可以使用SecureRemoteProvider。</p><h4 id=远程keyvalue存储示例-加密>远程Key/Value存储示例-加密</h4><pre><code class=language-go>viper.AddSecureRemoteProvider(&quot;etcd&quot;,&quot;http://127.0.0.1:4001&quot;,&quot;/config/hugo.json&quot;,&quot;/etc/secrets/mykeyring.gpg&quot;)
 viper.SetConfigType(&quot;json&quot;) // 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &quot;json&quot;, &quot;toml&quot;, &quot;yaml&quot;, &quot;yml&quot;, &quot;properties&quot;, &quot;props&quot;, &quot;prop&quot;, &quot;env&quot;, &quot;dotenv&quot;
 err := viper.ReadRemoteConfig()
-</code></pre>
-<h4 id="监控etcd中的更改-未加密">监控etcd中的更改-未加密</h4>
-<pre><code class="language-go">// 或者你可以创建一个新的viper实例
+</code></pre><h4 id=监控etcd中的更改-未加密>监控etcd中的更改-未加密</h4><pre><code class=language-go>// 或者你可以创建一个新的viper实例
 var runtime_viper = viper.New()
 runtime_viper.AddRemoteProvider(&quot;etcd&quot;, &quot;http://127.0.0.1:4001&quot;, &quot;/config/hugo.yml&quot;)
 runtime_viper.SetConfigType(&quot;yaml&quot;) // 因为在字节流中没有文件扩展名，所以这里需要设置下类型。支持的扩展名有 &quot;json&quot;, &quot;toml&quot;, &quot;yaml&quot;, &quot;yml&quot;, &quot;properties&quot;, &quot;props&quot;, &quot;prop&quot;, &quot;env&quot;, &quot;dotenv&quot;
@@ -396,34 +163,11 @@ go func(){
 	    runtime_viper.Unmarshal(&amp;runtime_conf)
 	}
 }()
-</code></pre>
-<h3 id="从viper获取值">从Viper获取值</h3>
-<p>在Viper中，有几种方法可以根据值的类型获取值。存在以下功能和方法:</p>
-<ul>
-<li>Get(key string) : interface{}</li>
-<li>GetBool(key string) : bool</li>
-<li>GetFloat64(key string) : float64</li>
-<li>GetInt(key string) : int</li>
-<li>GetIntSlice(key string) : []int</li>
-<li>GetString(key string) : string</li>
-<li>GetStringMap(key string) : map[string]interface{}</li>
-<li>GetStringMapString(key string) : map[string]string</li>
-<li>GetStringSlice(key string) : []string</li>
-<li>GetTime(key string) : time.Time</li>
-<li>GetDuration(key string) : time.Duration</li>
-<li>IsSet(key string) : bool</li>
-<li>AllSettings() : map[string]interface{}</li>
-</ul>
-<p>需要认识到的一件重要事情是，每一个Get方法在找不到值的时候都会返回零值。为了检查给定的键是否存在，提供了IsSet()方法。</p>
-<p>例如：</p>
-<pre><code class="language-go">viper.GetString(&quot;logfile&quot;) // 不区分大小写的设置和获取
+</code></pre><h3 id=从viper获取值>从Viper获取值</h3><p>在Viper中，有几种方法可以根据值的类型获取值。存在以下功能和方法:</p><ul><li>Get(key string) : interface{}</li><li>GetBool(key string) : bool</li><li>GetFloat64(key string) : float64</li><li>GetInt(key string) : int</li><li>GetIntSlice(key string) : []int</li><li>GetString(key string) : string</li><li>GetStringMap(key string) : map[string]interface{}</li><li>GetStringMapString(key string) : map[string]string</li><li>GetStringSlice(key string) : []string</li><li>GetTime(key string) : time.Time</li><li>GetDuration(key string) : time.Duration</li><li>IsSet(key string) : bool</li><li>AllSettings() : map[string]interface{}</li></ul><p>需要认识到的一件重要事情是，每一个Get方法在找不到值的时候都会返回零值。为了检查给定的键是否存在，提供了IsSet()方法。</p><p>例如：</p><pre><code class=language-go>viper.GetString(&quot;logfile&quot;) // 不区分大小写的设置和获取
 if viper.GetBool(&quot;verbose&quot;) {
     fmt.Println(&quot;verbose enabled&quot;)
 }
-</code></pre>
-<h4 id="访问嵌套的键">访问嵌套的键</h4>
-<p>访问器方法也接受深度嵌套键的格式化路径。例如，如果加载下面的JSON文件：</p>
-<pre><code class="language-go">{
+</code></pre><h4 id=访问嵌套的键>访问嵌套的键</h4><p>访问器方法也接受深度嵌套键的格式化路径。例如，如果加载下面的JSON文件：</p><pre><code class=language-go>{
     &quot;host&quot;: {
         &quot;address&quot;: &quot;localhost&quot;,
         &quot;port&quot;: 5799
@@ -439,15 +183,8 @@ if viper.GetBool(&quot;verbose&quot;) {
         }
     }
 }
-</code></pre>
-<p>Viper可以通过传入.分隔的路径来访问嵌套字段：</p>
-<pre><code class="language-go">GetString(&quot;datastore.metric.host&quot;) // (返回 &quot;127.0.0.1&quot;)
-</code></pre>
-<p>这遵守上面建立的优先规则；搜索路径将遍历其余配置注册表，直到找到为止。(译注：因为Viper支持从多种配置来源，例如磁盘上的配置文件&gt;命令行标志位&gt;环境变量&gt;远程Key/Value存储&gt;默认值，我们在查找一个配置的时候如果在当前配置源中没找到，就会继续从后续的配置源查找，直到找到为止。)</p>
-<p>例如，在给定此配置文件的情况下，datastore.metric.host和datastore.metric.port均已定义（并且可以被覆盖）。如果另外在默认值中定义了datastore.metric.protocol，Viper也会找到它。</p>
-<p>然而，如果datastore.metric被直接赋值覆盖（被flag，环境变量，set()方法等等…），那么datastore.metric的所有子键都将变为未定义状态，它们被高优先级配置级别“遮蔽”（shadowed）了。</p>
-<p>最后，如果存在与分隔的键路径匹配的键，则返回其值。例如：</p>
-<pre><code class="language-go">{
+</code></pre><p>Viper可以通过传入.分隔的路径来访问嵌套字段：</p><pre><code class=language-go>GetString(&quot;datastore.metric.host&quot;) // (返回 &quot;127.0.0.1&quot;)
+</code></pre><p>这遵守上面建立的优先规则；搜索路径将遍历其余配置注册表，直到找到为止。(译注：因为Viper支持从多种配置来源，例如磁盘上的配置文件>命令行标志位>环境变量>远程Key/Value存储>默认值，我们在查找一个配置的时候如果在当前配置源中没找到，就会继续从后续的配置源查找，直到找到为止。)</p><p>例如，在给定此配置文件的情况下，datastore.metric.host和datastore.metric.port均已定义（并且可以被覆盖）。如果另外在默认值中定义了datastore.metric.protocol，Viper也会找到它。</p><p>然而，如果datastore.metric被直接赋值覆盖（被flag，环境变量，set()方法等等…），那么datastore.metric的所有子键都将变为未定义状态，它们被高优先级配置级别“遮蔽”（shadowed）了。</p><p>最后，如果存在与分隔的键路径匹配的键，则返回其值。例如：</p><pre><code class=language-go>{
     &quot;datastore.metric.host&quot;: &quot;0.0.0.0&quot;,
     &quot;host&quot;: {
         &quot;address&quot;: &quot;localhost&quot;,
@@ -465,43 +202,22 @@ if viper.GetBool(&quot;verbose&quot;) {
     }
 }
 GetString(&quot;datastore.metric.host&quot;) // 返回 &quot;0.0.0.0&quot;
-</code></pre>
-<h4 id="提取子树">提取子树</h4>
-<p>从Viper中提取子树。</p>
-<p>例如，viper实例现在代表了以下配置：</p>
-<pre><code class="language-yaml">app:
+</code></pre><h4 id=提取子树>提取子树</h4><p>从Viper中提取子树。</p><p>例如，viper实例现在代表了以下配置：</p><pre><code class=language-yaml>app:
   cache1:
     max-items: 100
     item-size: 64
   cache2:
     max-items: 200
     item-size: 80
-</code></pre>
-<p>执行后：</p>
-<pre><code class="language-go">subv := viper.Sub(&quot;app.cache1&quot;)
-</code></pre>
-<p>subv现在就代表：</p>
-<pre><code class="language-go">max-items: 100
+</code></pre><p>执行后：</p><pre><code class=language-go>subv := viper.Sub(&quot;app.cache1&quot;)
+</code></pre><p>subv现在就代表：</p><pre><code class=language-go>max-items: 100
 item-size: 64
-</code></pre>
-<p>假设我们现在有这么一个函数：</p>
-<pre><code class="language-go">func NewCache(cfg *Viper) *Cache {...}
-</code></pre>
-<p>它基于subv格式的配置信息创建缓存。现在，可以轻松地分别创建这两个缓存，如下所示：</p>
-<pre><code class="language-go">cfg1 := viper.Sub(&quot;app.cache1&quot;)
+</code></pre><p>假设我们现在有这么一个函数：</p><pre><code class=language-go>func NewCache(cfg *Viper) *Cache {...}
+</code></pre><p>它基于subv格式的配置信息创建缓存。现在，可以轻松地分别创建这两个缓存，如下所示：</p><pre><code class=language-go>cfg1 := viper.Sub(&quot;app.cache1&quot;)
 cache1 := NewCache(cfg1)
 cfg2 := viper.Sub(&quot;app.cache2&quot;)
 cache2 := NewCache(cfg2)
-</code></pre>
-<h4 id="反序列化">反序列化</h4>
-<p>你还可以选择将所有或特定的值解析到结构体、map等。</p>
-<p>有两种方法可以做到这一点：</p>
-<ul>
-<li>Unmarshal(rawVal interface{}) : error</li>
-<li>UnmarshalKey(key string, rawVal interface{}) : error</li>
-</ul>
-<p>举个例子：</p>
-<pre><code class="language-go">type config struct {
+</code></pre><h4 id=反序列化>反序列化</h4><p>你还可以选择将所有或特定的值解析到结构体、map等。</p><p>有两种方法可以做到这一点：</p><ul><li>Unmarshal(rawVal interface{}) : error</li><li>UnmarshalKey(key string, rawVal interface{}) : error</li></ul><p>举个例子：</p><pre><code class=language-go>type config struct {
 	Port int
 	Name string
 	PathMap string `mapstructure:&quot;path_map&quot;`
@@ -511,9 +227,7 @@ err := viper.Unmarshal(&amp;C)
 if err != nil {
 	t.Fatalf(&quot;unable to decode into struct, %v&quot;, err)
 }
-</code></pre>
-<p>如果你想要解析那些键本身就包含.(默认的键分隔符）的配置，你需要修改分隔符：</p>
-<pre><code class="language-go">v := viper.NewWithOptions(viper.KeyDelimiter(&quot;::&quot;))
+</code></pre><p>如果你想要解析那些键本身就包含.(默认的键分隔符）的配置，你需要修改分隔符：</p><pre><code class=language-go>v := viper.NewWithOptions(viper.KeyDelimiter(&quot;::&quot;))
 v.SetDefault(&quot;chart::values&quot;, map[string]interface{}{
     &quot;ingress&quot;: map[string]interface{}{
         &quot;annotations&quot;: map[string]interface{}{
@@ -529,9 +243,7 @@ type config struct {
 }
 var C config
 v.Unmarshal(&amp;C)
-</code></pre>
-<p>Viper还支持解析到嵌入的结构体：</p>
-<pre><code class="language-go">/*
+</code></pre><p>Viper还支持解析到嵌入的结构体：</p><pre><code class=language-go>/*
 Example config:
 module:
     enabled: true
@@ -552,12 +264,7 @@ err := viper.Unmarshal(&amp;C)
 if err != nil {
 	t.Fatalf(&quot;unable to decode into struct, %v&quot;, err)
 }
-</code></pre>
-<p>Viper在后台使用<a href="https://github.com/mitchellh/mapstructure" target="_blank">github.com/mitchellh/mapstructure</a>来解析值，其默认情况下使用mapstructuretag。</p>
-<p><strong>注意</strong> 当我们需要将viper读取的配置反序列到我们定义的结构体变量中时，一定要使用mapstructuretag哦！</p>
-<h4 id="序列化成字符串">序列化成字符串</h4>
-<p>你可能需要将viper中保存的所有设置序列化到一个字符串中，而不是将它们写入到一个文件中。你可以将自己喜欢的格式的序列化器与AllSettings()返回的配置一起使用。</p>
-<pre><code class="language-go">import (
+</code></pre><p>Viper在后台使用<a href=https://github.com/mitchellh/mapstructure target=_blank>github.com/mitchellh/mapstructure</a>来解析值，其默认情况下使用mapstructuretag。</p><p><strong>注意</strong> 当我们需要将viper读取的配置反序列到我们定义的结构体变量中时，一定要使用mapstructuretag哦！</p><h4 id=序列化成字符串>序列化成字符串</h4><p>你可能需要将viper中保存的所有设置序列化到一个字符串中，而不是将它们写入到一个文件中。你可以将自己喜欢的格式的序列化器与AllSettings()返回的配置一起使用。</p><pre><code class=language-go>import (
     yaml &quot;gopkg.in/yaml.v2&quot;
     // ...
 )
@@ -569,29 +276,14 @@ func yamlStringSettings() string {
     }
     return string(bs)
 }
-</code></pre>
-<h3 id="使用单个还是多个viper实例">使用单个还是多个Viper实例?</h3>
-<p>Viper是开箱即用的。你不需要配置或初始化即可开始使用Viper。由于大多数应用程序都希望使用单个中央存储库管理它们的配置信息，所以viper包提供了这个功能。它类似于单例模式。</p>
-<p>在上面的所有示例中，它们都以其单例风格的方法演示了如何使用viper。</p>
-<h4 id="使用多个viper实例">使用多个viper实例</h4>
-<p>你还可以在应用程序中创建许多不同的viper实例。每个都有自己独特的一组配置和值。每个人都可以从不同的配置文件，key value存储区等读取数据。每个都可以从不同的配置文件、键值存储等中读取。viper包支持的所有功能都被镜像为viper实例的方法。</p>
-<p>例如：</p>
-<pre><code class="language-go">x := viper.New()
+</code></pre><h3 id=使用单个还是多个viper实例>使用单个还是多个Viper实例?</h3><p>Viper是开箱即用的。你不需要配置或初始化即可开始使用Viper。由于大多数应用程序都希望使用单个中央存储库管理它们的配置信息，所以viper包提供了这个功能。它类似于单例模式。</p><p>在上面的所有示例中，它们都以其单例风格的方法演示了如何使用viper。</p><h4 id=使用多个viper实例>使用多个viper实例</h4><p>你还可以在应用程序中创建许多不同的viper实例。每个都有自己独特的一组配置和值。每个人都可以从不同的配置文件，key value存储区等读取数据。每个都可以从不同的配置文件、键值存储等中读取。viper包支持的所有功能都被镜像为viper实例的方法。</p><p>例如：</p><pre><code class=language-go>x := viper.New()
 y := viper.New()
 x.SetDefault(&quot;ContentDir&quot;, &quot;content&quot;)
 y.SetDefault(&quot;ContentDir&quot;, &quot;foobar&quot;)
 //...
-</code></pre>
-<p>当使用多个viper实例时，由用户来管理不同的viper实例。</p>
-<h4 id="使用viper示例">使用Viper示例</h4>
-<p>假设我们的项目现在有一个./conf/config.yaml配置文件，内容如下：</p>
-<pre><code class="language-go">port: 8123
+</code></pre><p>当使用多个viper实例时，由用户来管理不同的viper实例。</p><h4 id=使用viper示例>使用Viper示例</h4><p>假设我们的项目现在有一个./conf/config.yaml配置文件，内容如下：</p><pre><code class=language-go>port: 8123
 version: &quot;v1.2.3&quot;
-</code></pre>
-<p>接下来通过示例代码演示两种在项目中使用viper管理项目配置信息的方式。</p>
-<h4 id="直接使用viper管理配置">直接使用viper管理配置</h4>
-<p>这里用一个demo演示如何在gin框架搭建的web项目中使用viper，使用viper加载配置文件中的信息，并在代码中直接使用viper.GetXXX()方法获取对应的配置值。</p>
-<pre><code class="language-go">package main
+</code></pre><p>接下来通过示例代码演示两种在项目中使用viper管理项目配置信息的方式。</p><h4 id=直接使用viper管理配置>直接使用viper管理配置</h4><p>这里用一个demo演示如何在gin框架搭建的web项目中使用viper，使用viper加载配置文件中的信息，并在代码中直接使用viper.GetXXX()方法获取对应的配置值。</p><pre><code class=language-go>package main
 import (
 	&quot;fmt&quot;
 	&quot;net/http&quot;
@@ -617,10 +309,7 @@ func main() {
 		panic(err)
 	}
 }
-</code></pre>
-<h4 id="使用结构体变量保存配置信息">使用结构体变量保存配置信息</h4>
-<p>除了上面的用法外，我们还可以在项目中定义与配置文件对应的结构体，viper加载完配置信息后使用结构体变量保存配置信息。</p>
-<pre><code class="language-go">package main
+</code></pre><h4 id=使用结构体变量保存配置信息>使用结构体变量保存配置信息</h4><p>除了上面的用法外，我们还可以在项目中定义与配置文件对应的结构体，viper加载完配置信息后使用结构体变量保存配置信息。</p><pre><code class=language-go>package main
 import (
 	&quot;fmt&quot;
 	&quot;net/http&quot;
@@ -661,409 +350,50 @@ func main() {
 		panic(err)
 	}
 }
-</code></pre>
-<h2 id="参考文章">参考文章</h2>
-<ul>
-<li><a href="https://www.liwenzhou.com/posts/Go/viper_tutorial" target="_blank">https://www.liwenzhou.com/posts/Go/viper_tutorial</a></li>
-<li><a href="https://www.jianshu.com/p/7bb4f7f69280" target="_blank">https://www.jianshu.com/p/7bb4f7f69280</a></li>
-</ul>
-
-    </div>
-</article>
-
-
-<div class="license markdown-body">
-    <blockquote>
-        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
-    </blockquote>
-</div>
-
-
-<div class="post-comment" data-comment="utterances">
-    <span class="post-comment-notloaded">
-        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
-    </span>
-    <script>
-        function loadComment() {
-            var commentArea = document.querySelector('.post-comment');
-            var utterancesTheme = document.body.getAttribute('data-theme');
-            if (utterancesTheme === 'auto') {
-                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
-                    'github-light';
-            } else {
-                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
-            }
-            var s = document.createElement('script');
-            s.src = 'https://utteranc.es/client.js';
-            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
-            s.setAttribute('issue-term', 'pathname');
-            s.setAttribute('theme', utterancesTheme);
-            s.setAttribute('crossorigin', 'anonymous');
-            s.setAttribute('async', '');
-            document.querySelector('.post-comment').appendChild(s);
-            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
-        }
-    </script>
-</div>
-
-
-            </div>
-            <aside class="col-12 col-md-3 float-left sidebar">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3><nav id="TableOfContents">
-  <ul>
-    <li><a href="#安装">安装</a></li>
-    <li><a href="#viper支持的功能">viper支持的功能</a></li>
-    <li><a href="#viper具体的帮助">viper具体的帮助</a></li>
-    <li><a href="#viper提供的配置方式的优先级顺序如下由高到低">viper提供的配置方式的优先级顺序如下(由高到低)：</a></li>
-    <li><a href="#viper的简单使用">viper的简单使用</a>
-      <ul>
-        <li><a href="#把值存入viper">把值存入Viper</a></li>
-        <li><a href="#从viper获取值">从Viper获取值</a></li>
-        <li><a href="#使用单个还是多个viper实例">使用单个还是多个Viper实例?</a></li>
-      </ul>
-    </li>
-    <li><a href="#参考文章">参考文章</a></li>
-  </ul>
-</nav></div>
-</aside>
-
-        </div>
-        <div class="btn">
-    <div class="btn-menu" id="btn-menu">
-        <i class="iconfont icon-grid-sharp"></i>
-    </div>
-    <div class="btn-toggle-mode">
-        <i class="iconfont icon-contrast-sharp"></i>
-    </div>
-    <div class="btn-scroll-top">
-        <i class="iconfont icon-chevron-up-circle-sharp"></i>
-    </div>
-</div>
-<aside class="sidebar-mobile" style="display: none;">
-  <div class="sidebar-wrapper">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    
-    
-    
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3>
-        <nav id="TableOfContents">
-  <ul>
-    <li><a href="#安装">安装</a></li>
-    <li><a href="#viper支持的功能">viper支持的功能</a></li>
-    <li><a href="#viper具体的帮助">viper具体的帮助</a></li>
-    <li><a href="#viper提供的配置方式的优先级顺序如下由高到低">viper提供的配置方式的优先级顺序如下(由高到低)：</a></li>
-    <li><a href="#viper的简单使用">viper的简单使用</a>
-      <ul>
-        <li><a href="#把值存入viper">把值存入Viper</a></li>
-        <li><a href="#从viper获取值">从Viper获取值</a></li>
-        <li><a href="#使用单个还是多个viper实例">使用单个还是多个Viper实例?</a></li>
-      </ul>
-    </li>
-    <li><a href="#参考文章">参考文章</a></li>
-  </ul>
-</nav>
-    </div>
-    
-    
-  </div>
-</aside>
-    </main>
-
-    <footer>
-    <div class="container-lg clearfix">
-        <div class="col-12 footer">
-            
-            <span>&copy; 2019-2022
-                <a href="https://www.zhaohaiyu.com">haiyux</a>
-                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
-                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
-                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
-                                                    target="_blank">Hugo</a> 构建
-            </span>
-        </div>
-    </div>
-</footer>
-
-    
-<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
-
-
-
-<script defer src="/assets/js/fuji.min.js"></script>
-
-
-
-</body>
-
-</html>
+</code></pre><h2 id=参考文章>参考文章</h2><ul><li><a href=https://www.liwenzhou.com/posts/Go/viper_tutorial target=_blank>https://www.liwenzhou.com/posts/Go/viper_tutorial</a></li><li><a href=https://www.jianshu.com/p/7bb4f7f69280 target=_blank>https://www.jianshu.com/p/7bb4f7f69280</a></li></ul></div></article><div class="license markdown-body"><blockquote><p>除特殊注明部分，本站内容采用 <a rel=license href=http://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a> 进行许可。</p></blockquote></div><div class=post-comment data-comment=utterances><span class=post-comment-notloaded><i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论</span>
+<script>function loadComment(){var e,n=document.querySelector('.post-comment'),t=document.body.getAttribute('data-theme');t==='auto'?t=window.matchMedia('(prefers-color-scheme: dark)').matches?'photon-dark':'github-light':t=t==='dark'?'photon-dark':'github-light',e=document.createElement('script'),e.src='https://utteranc.es/client.js',e.setAttribute('repo','haiyux/haiyux.github.io'),e.setAttribute('issue-term','pathname'),e.setAttribute('theme',t),e.setAttribute('crossorigin','anonymous'),e.setAttribute('async',''),document.querySelector('.post-comment').appendChild(e),document.querySelector('span.post-comment-notloaded').setAttribute('style','display: none;')}</script></div></div><aside class="col-12 col-md-3 float-left sidebar"><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#安装>安装</a></li><li><a href=#viper支持的功能>viper支持的功能</a></li><li><a href=#viper具体的帮助>viper具体的帮助</a></li><li><a href=#viper提供的配置方式的优先级顺序如下由高到低>viper提供的配置方式的优先级顺序如下(由高到低)：</a></li><li><a href=#viper的简单使用>viper的简单使用</a><ul><li><a href=#把值存入viper>把值存入Viper</a></li><li><a href=#从viper获取值>从Viper获取值</a></li><li><a href=#使用单个还是多个viper实例>使用单个还是多个Viper实例?</a></li></ul></li><li><a href=#参考文章>参考文章</a></li></ul></nav></div></aside></div><div class=btn><div class=btn-menu id=btn-menu><i class="iconfont icon-grid-sharp"></i></div><div class=btn-toggle-mode><i class="iconfont icon-contrast-sharp"></i></div><div class=btn-scroll-top><i class="iconfont icon-chevron-up-circle-sharp"></i></div></div><aside class=sidebar-mobile style=display:none><div class=sidebar-wrapper><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#安装>安装</a></li><li><a href=#viper支持的功能>viper支持的功能</a></li><li><a href=#viper具体的帮助>viper具体的帮助</a></li><li><a href=#viper提供的配置方式的优先级顺序如下由高到低>viper提供的配置方式的优先级顺序如下(由高到低)：</a></li><li><a href=#viper的简单使用>viper的简单使用</a><ul><li><a href=#把值存入viper>把值存入Viper</a></li><li><a href=#从viper获取值>从Viper获取值</a></li><li><a href=#使用单个还是多个viper实例>使用单个还是多个Viper实例?</a></li></ul></li><li><a href=#参考文章>参考文章</a></li></ul></nav></div></div></aside></main><footer><div class="container-lg clearfix"><div class="col-12 footer"><span>&copy; 2019-2022
+<a href=https://www.zhaohaiyu.com>haiyux</a>
+| <a href=https://www.zhaohaiyu.com>Source code</a>
+| 基于 <a href=https://github.com/dsrkafuu/hugo-theme-fuji/ target=_blank>Fuji-v2</a> & <a href=https://gohugo.io/ target=_blank>Hugo</a> 构建</span></div></div></footer><script defer src=https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js></script>
+<script defer src=/assets/js/fuji.min.js></script></body></html>

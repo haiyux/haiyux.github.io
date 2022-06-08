@@ -1,237 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-hans">
-
-<head>
-    
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="HandheldFriendly" content="True" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-<meta name="generator" content="Hugo 0.100.1" />
-
-
-<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-<link rel="manifest" href="/img/site.webmanifest">
-<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-
-
-<title>grpc服务发现与负载均衡 - 赵海宇的博客</title>
-
-
-<meta name="author" content="haiyux" />
-
-
-<meta name="description" content="欢迎来到haiyux的博客" />
-
-
-<meta name="keywords" content="微服务, protobuf, grpc" />
-
-
-<meta property="og:title" content="grpc服务发现与负载均衡" />
-<meta name="twitter:title" content="grpc服务发现与负载均衡" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/" /><meta property="og:description" content="前言 在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。" />
-<meta name="twitter:description" content="前言 在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2021-05-23T15:13:11+08:00" /><meta property="article:modified_time" content="2021-05-23T15:13:11+08:00" />
-
-
-<style>
-    @media (prefers-color-scheme: dark) {
-        body[data-theme='auto'] img {
-            filter: brightness(60%);
-        }
-    }
-
-    body[data-theme='dark'] img {
-        filter: brightness(60%);
-    }
-</style>
-
-
-
-
-<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
-
-
-
-
-
-
-
-
-</head>
-
-<body
-  data-theme="auto"
-  data-theme-auto='true'
-  >
-    <script data-cfasync="false">
-  
-  var fujiThemeData = localStorage.getItem('fuji_data-theme');
-  
-  if (!fujiThemeData) {
-    localStorage.setItem('fuji_data-theme', 'auto');
-  } else {
-    
-    if (fujiThemeData !== 'auto') {
-      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
-    }
-  }
-</script>
-
-    <header>
-    <div class="container-lg clearfix">
-        <div class="col-12 header">
-            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
-            
-            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
-            
-        </div>
-    </div>
-</header>
-
-    <main>
-        <div class="container-lg clearfix">
-            
-            <div class="col-12 col-md-9 float-left content">
-                
-<article>
-    
-    <h2 class="post-item post-title">
-        <a href="https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/">grpc服务发现与负载均衡</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-05-23</span>
-
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=HandheldFriendly content="True"><meta http-equiv=x-ua-compatible content="IE=edge"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=generator content="Hugo 0.100.1"><link rel=apple-touch-icon sizes=180x180 href=/img/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/img/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/img/favicon-16x16.png><link rel=manifest href=/img/site.webmanifest><link rel=mask-icon href=/img/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>grpc服务发现与负载均衡 - 赵海宇的博客</title><meta name=author content="haiyux"><meta name=description content="欢迎来到haiyux的博客"><meta name=keywords content="微服务,protobuf,grpc"><meta property="og:title" content="grpc服务发现与负载均衡"><meta name=twitter:title content="grpc服务发现与负载均衡"><meta property="og:type" content="article"><meta property="og:url" content="https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/"><meta property="og:description" content="前言 在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。"><meta name=twitter:description content="前言 在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。"><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta property="article:published_time" content="2021-05-23T15:13:11+08:00"><meta property="article:modified_time" content="2021-05-23T15:13:11+08:00"><style>@media(prefers-color-scheme:dark){body[data-theme=auto] img{filter:brightness(60%)}}body[data-theme=dark] img{filter:brightness(60%)}</style><link rel=stylesheet href=https://www.zhaohaiyu.com/assets/css/fuji.min.css></head><body data-theme=auto data-theme-auto=true><script data-cfasync=false>var fujiThemeData=localStorage.getItem('fuji_data-theme');fujiThemeData?fujiThemeData!=='auto'&&document.body.setAttribute('data-theme',fujiThemeData==='dark'?'dark':'light'):localStorage.setItem('fuji_data-theme','auto')</script><header><div class="container-lg clearfix"><div class="col-12 header"><a class=title-main href=https://www.zhaohaiyu.com>赵海宇的博客</a>
+<span class=title-sub>路漫漫其修远兮,吾将上下而求索。</span></div></div></header><main><div class="container-lg clearfix"><div class="col-12 col-md-9 float-left content"><article><h2 class="post-item post-title"><a href=https://www.zhaohaiyu.com/post/grpc-servicediscovery-loadbalancing/>grpc服务发现与负载均衡</a></h2><div class="post-item post-meta"><span><i class="iconfont icon-today-sharp"></i>&nbsp;2021-05-23</span>
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4524 字</span>
 <span><i class="iconfont icon-time-sharp"></i>&nbsp;10 分钟</span>
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1">微服务</a>&nbsp;<a href="/tags/protobuf">protobuf</a>&nbsp;<a href="/tags/grpc">grpc</a>&nbsp;</span>
-
-    </div>
-    
-    <div class="post-content markdown-body">
-        <h2 id="前言">前言</h2>
-<p>   在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。</p>
-<h2 id="负载均衡--服务发现">负载均衡 &amp;&amp; 服务发现</h2>
-<h4 id="基础">基础</h4>
-<p>   负载均衡 ，顾名思义，是通过某种手段将流量 / 请求分配到不通的服务器上去，保证后台的每个服务收到的请求都尽可能保持平衡
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1>微服务</a>&nbsp;<a href=/tags/protobuf>protobuf</a>&nbsp;<a href=/tags/grpc>grpc</a>&nbsp;</span></div><div class="post-content markdown-body"><h2 id=前言>前言</h2><p>   在后台服务开发中，高可用性是构建中核心且重要的一环。服务发现（Service discovery）和负载均衡（Load Balance）一直都是我关注的话题。今天来谈一下我在实际中是如何理解及落地的。</p><h2 id=负载均衡--服务发现>负载均衡 && 服务发现</h2><h4 id=基础>基础</h4><p>   负载均衡 ，顾名思义，是通过某种手段将流量 / 请求分配到不通的服务器上去，保证后台的每个服务收到的请求都尽可能保持平衡
    服务发现 ，就是指客户端按照某种约定的方式主动去（注册中心）寻找服务，然后再连接相应的服务
-   关于负载均衡的构建与实现，可以看下这几篇文章：</p>
-<ul>
-<li><a href="https://segmentfault.com/a/1190000008672912" target="_blank">gRPC 服务发现 &amp; 负载均衡</a></li>
-<li><a href="https://grpc.io/blog/loadbalancing/" target="_blank">gRPC Load Balancing</a></li>
-<li><a href="https://github.com/grpc/grpc/blob/master/doc/load-balancing.md" target="_blank">Load Balancing in gRPC</a></li>
-</ul>
-<h4 id="服务发现概念">服务发现概念</h4>
-<p>   我们说的服务发现，一般理解为客户端如何发现 (并连接到) 服务，这里一般包含三个组件：</p>
-<ol>
-<li>服务消费者：一般指客户端（可以是简单的 TCP-Client 或者是 RPC-Client ）</li>
-<li>服务提供者：一般指服务提供方，如传统服务，微服务等</li>
-<li>服务注册中心：用来存储（Key-Value）服务提供者的服务，一般以 DNS/HTTP/RPC 等方式对外暴露接口</li>
-</ol>
-<h4 id="负载均衡概念">负载均衡概念</h4>
-<p>我们把 LB 看作一个组件，根据组件位置的不同，大致上分为三种：</p>
-<h4 id="集中式-lbproxy-model">集中式 LB（Proxy Model）</h4>
-<p>   独立的 LB, 可以是硬件实现，如 F5，或者是 nginx 这种内置 Proxy-pass 或者 upstream 功能的网关，亦或是 LVS/HAPROXY，之前也使用 <a href="http://core.dpdk.org/doc/quick-start/" target="_blank">DPDK</a> 开发过类似的专用网关。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210823145642439-214576130.png" alt="" />
-</p>
-<h4 id="进程内-lbbalancing-aware-client">进程内 LB（Balancing-aware Client）</h4>
-<p>   进程内 LB（集成到客户端），此方案将 LB 的功能集成到服务消费方进程里，也被称为软负载或者客户端负载方案。服务提供方启动时，首先将服务地址注册到服务注册表，同时定期报心跳到服务注册表以表明服务的存活状态，相当于健康检查，服务消费方要访问某个服务时，它通过内置的 LB 组件向服务注册表查询，同时缓存并定期刷新目标服务地址列表，然后以某种负载均衡策略选择一个目标服务地址，最后向目标服务发起请求。LB 和服务发现能力被分散到每一个服务消费者的进程内部，同时服务消费方和服务提供方之间是直接调用，没有额外开销，性能比较好。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210823145656926-9574896.png" alt="" />
-</p>
-<h4 id="独立-lb-进程external-load-balancing-service">独立 LB 进程（External Load Balancing Service）</h4>
-<p>   该方案是针对上一种方案的不足而提出的一种折中方案，原理和第二种方案基本类似。不同之处是将 LB 和服务发现功能从进程内移出来，变成主机上的一个独立进程。主机上的一个或者多个服务要访问目标服务时，他们都通过同一主机上的独立 LB 进程做服务发现和负载均衡。该方案也是一种分布式方案没有单点问题，一个 LB 进程挂了只影响该主机上的服务调用方，服务调用方和 LB 之间是进程内调用性能好，同时该方案还简化了服务调用方，不需要为不同语言开发客户库，LB 的升级不需要服务调用方改代码。 公司的 L5 是这种方式，每台机器上都安装了 L5 的 agent，供其他服务调用。该方案主要问题：部署较复杂，环节多，出错调试排查问题不方便。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210823145723217-284699775.png" alt="" />
-</p>
-<h3 id="grpc-内置的方案">gRPC 内置的方案</h3>
-<p>  gRPC 的内置方案如下图所示：</p>
-<p><img class="img-zoomable" src="/images/2344773-20210823145734432-349821484.png" alt="" />
-</p>
-<p>gRPC 在官网文档中提供了实现 LB 的思路，并在不同语言的 gRPC 代码 API 中已提供了命名解析和负载均衡接口供扩展。默认提供了 DNS-resolver 的实现，接口相当规范，实现起来也不复杂，只需要实现服务注册（Registry）和服务监听 + 解析（Watcher+Resolver）的逻辑就行了，这里简单介绍其基本实现过程：</p>
-<ol>
-<li>构建注册中心，这里注册中心一般要求具备分布式一致性（满足 CAP 定理的 AP 或 CP）的高可用的组件集群，如 Zookeeper、Consul、Etcd 等</li>
-<li>构建 gRPC 服务端的注册逻辑，服务启动后定时向注册中心注册自身的关键信息（一般开启新的 groutine 来完成），至少包含 IP 和端口，其他可选信息，如自身的负载信息（CPU 和 Memory）、当前实时连接数等，这些辅助信息有助于帮助系统更好的执行 LB 算法</li>
-<li>gRPC 客户端向注册中心发出服务解析请求，注册中心将请求中关联的所有服务的信息返回给 gRPC 客户端，客户端与所有在线的服务建立起 HTTP2 长连接</li>
-<li>gRPC 客户端发起 RPC 调用，根据 LB 均衡器中实现的负载均衡策略（gRPC 中默认提供的算法是 RoundRobin），选择其中一 HTTP2 长连接进行通信，即 LB 策略决定哪个子通道 - 即哪个 gRPC 服务器将接收请求</li>
-</ol>
-<h2 id="grpc-负载均衡的运行机制">gRPC 负载均衡的运行机制</h2>
-<p>gRPC 提供了负载均衡实现的用户侧接口，我们可以非常方便的定制化业务的负载均衡策略，为了理解 gRPC 的负载均衡的实现机制，后续博客中我会分析下 <code>gRPC</code> 实现负载均衡的代码。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210823145800184-646304152.png" alt="" />
-</p>
-<ol>
-<li>Resolver
-<ul>
-<li>解析器，用于从注册中心实时获取当前服务端的列表，同步发送给 Balancer</li>
-</ul>
-</li>
-<li>Balancer
-<ul>
-<li>平衡器，一是接收从 Resolver 发送的服务端列表，建立并维护（长）连接状态；二是每次当 Client 发起 Rpc 调用时，按照一定算法从连接池中选择一个连接进行 Rpc 调用</li>
-</ul>
-</li>
-<li>Register
-<ul>
-<li>注册，用于服务端初始化和在线时，将自己信息上报到注册中心，主要信息有 Ip，端口等</li>
-</ul>
-</li>
-</ol>
-<h2 id="负载均衡的算法及实现">负载均衡的算法及实现</h2>
-<p>在实践中，如何选取负载均衡策略是一个很有趣的话题，例如 Nginx 的 <code>upstream</code> 机制中就有很多经典的 LB 策略，如带权重的轮询 <a href="https://github.com/nginx/nginx/blob/master/src/http/ngx_http_upstream_round_robin.c" target="_blank">Weight-RoundRobin</a>，一般常用的负载均衡方法有如下几种：</p>
-<ol>
-<li>RoundRobin（轮询）</li>
-<li>Weight-RoundRobin（加权轮询）
-<ul>
-<li>不同的后端服务器可能机器的配置和当前系统的负载并不相同，因此它们的抗压能力也不相同。给配置高、负载低的机器配置更高的权重，而配置低、负载高的机器，给其分配较低的权重，降低其系统负载，加权轮询能很好地处理这一问题，并将请求顺序且按照权重分配到后端。</li>
-</ul>
-</li>
-<li>Random（随机）</li>
-<li>Weight-Random（加权随机）
-<ul>
-<li>通过系统的随机算法，根据后端服务器的列表随机选取其中的一台服务器进行访问</li>
-</ul>
-</li>
-<li>源地址哈希法
-<ul>
-<li>源地址哈希的思想是根据获取客户端的 IP 地址，通过哈希函数计算得到的一个数值，用该数值对服务器列表的大小进行取模运算，得到的结果便是客服端要访问服务器的序号。采用源地址哈希法进行负载均衡，同一 IP 地址的客户端，当后端服务器列表不变时，它每次都会映射到同一台后端服务器进行访问</li>
-</ul>
-</li>
-<li>最小连接数法
-<ul>
-<li>最小连接数算法比较灵活和智能，由于后端服务器的配置不尽相同，对于请求的处理有快有慢，它是根据后端服务器当前的连接情况，动态地选取其中当前积压连接数最少的一台服务器来处理当前的请求，尽可能地提高后端服务的利用效率，将负责合理地分流到每一台服务器</li>
-</ul>
-</li>
-<li>一致性哈希算法
-<ul>
-<li>常见的是 <code>Ketama</code> 算法，该算法是用来解决 <code>cache</code> 失效导致的缓存穿透的问题的，当然也可以适用于 gRPC 长连接的场景</li>
-</ul>
-</li>
-</ol>
-<h2 id="grpc-服务治理的优势">gRPC 服务治理的优势</h2>
-<p>   在现网环境中，后端服务就是采用了 gRPC 与 Etcd 的服务治理方案，总结下有这么几个优点；</p>
-<ul>
-<li>采用了 gRPC 实现负载均衡策略，模块之间通信采用长连接方式，避免每次 RPC 调用时新建连接的开销，充分发挥 <code>HTTP2</code> 的优势</li>
-<li>扩容和缩容都及其方便，例如扩容，只要部署上服务，运行后，服务成功注册到 Etcd 便大功告成</li>
-<li>灵活的自定义的 LB 算法，使得后端压力更为均衡</li>
-<li>客户端加入重试逻辑，使得网络抖动情况下，可以通过重试连接上另外一台服务</li>
-</ul>
-<h2 id="resolver-暴露的三个接口">Resolver 暴露的三个接口</h2>
-<p>前文说过，gRPC 内置的服务治理功能，对开发者暴露了服务发现的 <code>interface{}</code>，<code>resolver.Builder</code> 和 <code>resolver.ClientConn</code> 和 <code>resolver.Resolver</code>，<a href="https://github.com/grpc/grpc-go/blob/master/resolver/resolver.go" target="_blank">相关代码</a>。开发者在实例化这三个接口之后，就可以实现从指定的 scheme 中获取服务列表，通知 balancer 并与这些服务端建立 RPC 长连接。</p>
-<ol>
-<li>resolver.Builder</li>
-<li>resolver.ClientConn</li>
-<li>resolver.Resolver</li>
-</ol>
-<ul>
-<li>resolver.Builder <code>Builder</code> 用于 gRPC 内部创建 <code>Resolver</code> 接口的实现，但注意内部声明的 <code>Build()</code> 方法将接口 <code>ClientConn</code> 作为参数传入了，在前文的分析中，我们了解到 <code>ClientConn</code><a href="https://github.com/grpc/grpc-go/blob/master/clientconn.go#L459" target="_blank">结库</a> 是非常重要的结构，其成员 <code>conns map[*addrConn]struct{}</code> 中维护了所有从注册中心获取到的服务端列表。</li>
-</ul>
-<pre><code class="language-go">// Builder creates a resolver that will be used to watch name resolution updates.
+   关于负载均衡的构建与实现，可以看下这几篇文章：</p><ul><li><a href=https://segmentfault.com/a/1190000008672912 target=_blank>gRPC 服务发现 & 负载均衡</a></li><li><a href=https://grpc.io/blog/loadbalancing/ target=_blank>gRPC Load Balancing</a></li><li><a href=https://github.com/grpc/grpc/blob/master/doc/load-balancing.md target=_blank>Load Balancing in gRPC</a></li></ul><h4 id=服务发现概念>服务发现概念</h4><p>   我们说的服务发现，一般理解为客户端如何发现 (并连接到) 服务，这里一般包含三个组件：</p><ol><li>服务消费者：一般指客户端（可以是简单的 TCP-Client 或者是 RPC-Client ）</li><li>服务提供者：一般指服务提供方，如传统服务，微服务等</li><li>服务注册中心：用来存储（Key-Value）服务提供者的服务，一般以 DNS/HTTP/RPC 等方式对外暴露接口</li></ol><h4 id=负载均衡概念>负载均衡概念</h4><p>我们把 LB 看作一个组件，根据组件位置的不同，大致上分为三种：</p><h4 id=集中式-lbproxy-model>集中式 LB（Proxy Model）</h4><p>   独立的 LB, 可以是硬件实现，如 F5，或者是 nginx 这种内置 Proxy-pass 或者 upstream 功能的网关，亦或是 LVS/HAPROXY，之前也使用 <a href=http://core.dpdk.org/doc/quick-start/ target=_blank>DPDK</a> 开发过类似的专用网关。</p><p><img class=img-zoomable src=/images/2344773-20210823145642439-214576130.png alt></p><h4 id=进程内-lbbalancing-aware-client>进程内 LB（Balancing-aware Client）</h4><p>   进程内 LB（集成到客户端），此方案将 LB 的功能集成到服务消费方进程里，也被称为软负载或者客户端负载方案。服务提供方启动时，首先将服务地址注册到服务注册表，同时定期报心跳到服务注册表以表明服务的存活状态，相当于健康检查，服务消费方要访问某个服务时，它通过内置的 LB 组件向服务注册表查询，同时缓存并定期刷新目标服务地址列表，然后以某种负载均衡策略选择一个目标服务地址，最后向目标服务发起请求。LB 和服务发现能力被分散到每一个服务消费者的进程内部，同时服务消费方和服务提供方之间是直接调用，没有额外开销，性能比较好。</p><p><img class=img-zoomable src=/images/2344773-20210823145656926-9574896.png alt></p><h4 id=独立-lb-进程external-load-balancing-service>独立 LB 进程（External Load Balancing Service）</h4><p>   该方案是针对上一种方案的不足而提出的一种折中方案，原理和第二种方案基本类似。不同之处是将 LB 和服务发现功能从进程内移出来，变成主机上的一个独立进程。主机上的一个或者多个服务要访问目标服务时，他们都通过同一主机上的独立 LB 进程做服务发现和负载均衡。该方案也是一种分布式方案没有单点问题，一个 LB 进程挂了只影响该主机上的服务调用方，服务调用方和 LB 之间是进程内调用性能好，同时该方案还简化了服务调用方，不需要为不同语言开发客户库，LB 的升级不需要服务调用方改代码。 公司的 L5 是这种方式，每台机器上都安装了 L5 的 agent，供其他服务调用。该方案主要问题：部署较复杂，环节多，出错调试排查问题不方便。</p><p><img class=img-zoomable src=/images/2344773-20210823145723217-284699775.png alt></p><h3 id=grpc-内置的方案>gRPC 内置的方案</h3><p>  gRPC 的内置方案如下图所示：</p><p><img class=img-zoomable src=/images/2344773-20210823145734432-349821484.png alt></p><p>gRPC 在官网文档中提供了实现 LB 的思路，并在不同语言的 gRPC 代码 API 中已提供了命名解析和负载均衡接口供扩展。默认提供了 DNS-resolver 的实现，接口相当规范，实现起来也不复杂，只需要实现服务注册（Registry）和服务监听 + 解析（Watcher+Resolver）的逻辑就行了，这里简单介绍其基本实现过程：</p><ol><li>构建注册中心，这里注册中心一般要求具备分布式一致性（满足 CAP 定理的 AP 或 CP）的高可用的组件集群，如 Zookeeper、Consul、Etcd 等</li><li>构建 gRPC 服务端的注册逻辑，服务启动后定时向注册中心注册自身的关键信息（一般开启新的 groutine 来完成），至少包含 IP 和端口，其他可选信息，如自身的负载信息（CPU 和 Memory）、当前实时连接数等，这些辅助信息有助于帮助系统更好的执行 LB 算法</li><li>gRPC 客户端向注册中心发出服务解析请求，注册中心将请求中关联的所有服务的信息返回给 gRPC 客户端，客户端与所有在线的服务建立起 HTTP2 长连接</li><li>gRPC 客户端发起 RPC 调用，根据 LB 均衡器中实现的负载均衡策略（gRPC 中默认提供的算法是 RoundRobin），选择其中一 HTTP2 长连接进行通信，即 LB 策略决定哪个子通道 - 即哪个 gRPC 服务器将接收请求</li></ol><h2 id=grpc-负载均衡的运行机制>gRPC 负载均衡的运行机制</h2><p>gRPC 提供了负载均衡实现的用户侧接口，我们可以非常方便的定制化业务的负载均衡策略，为了理解 gRPC 的负载均衡的实现机制，后续博客中我会分析下 <code>gRPC</code> 实现负载均衡的代码。</p><p><img class=img-zoomable src=/images/2344773-20210823145800184-646304152.png alt></p><ol><li>Resolver<ul><li>解析器，用于从注册中心实时获取当前服务端的列表，同步发送给 Balancer</li></ul></li><li>Balancer<ul><li>平衡器，一是接收从 Resolver 发送的服务端列表，建立并维护（长）连接状态；二是每次当 Client 发起 Rpc 调用时，按照一定算法从连接池中选择一个连接进行 Rpc 调用</li></ul></li><li>Register<ul><li>注册，用于服务端初始化和在线时，将自己信息上报到注册中心，主要信息有 Ip，端口等</li></ul></li></ol><h2 id=负载均衡的算法及实现>负载均衡的算法及实现</h2><p>在实践中，如何选取负载均衡策略是一个很有趣的话题，例如 Nginx 的 <code>upstream</code> 机制中就有很多经典的 LB 策略，如带权重的轮询 <a href=https://github.com/nginx/nginx/blob/master/src/http/ngx_http_upstream_round_robin.c target=_blank>Weight-RoundRobin</a>，一般常用的负载均衡方法有如下几种：</p><ol><li>RoundRobin（轮询）</li><li>Weight-RoundRobin（加权轮询）<ul><li>不同的后端服务器可能机器的配置和当前系统的负载并不相同，因此它们的抗压能力也不相同。给配置高、负载低的机器配置更高的权重，而配置低、负载高的机器，给其分配较低的权重，降低其系统负载，加权轮询能很好地处理这一问题，并将请求顺序且按照权重分配到后端。</li></ul></li><li>Random（随机）</li><li>Weight-Random（加权随机）<ul><li>通过系统的随机算法，根据后端服务器的列表随机选取其中的一台服务器进行访问</li></ul></li><li>源地址哈希法<ul><li>源地址哈希的思想是根据获取客户端的 IP 地址，通过哈希函数计算得到的一个数值，用该数值对服务器列表的大小进行取模运算，得到的结果便是客服端要访问服务器的序号。采用源地址哈希法进行负载均衡，同一 IP 地址的客户端，当后端服务器列表不变时，它每次都会映射到同一台后端服务器进行访问</li></ul></li><li>最小连接数法<ul><li>最小连接数算法比较灵活和智能，由于后端服务器的配置不尽相同，对于请求的处理有快有慢，它是根据后端服务器当前的连接情况，动态地选取其中当前积压连接数最少的一台服务器来处理当前的请求，尽可能地提高后端服务的利用效率，将负责合理地分流到每一台服务器</li></ul></li><li>一致性哈希算法<ul><li>常见的是 <code>Ketama</code> 算法，该算法是用来解决 <code>cache</code> 失效导致的缓存穿透的问题的，当然也可以适用于 gRPC 长连接的场景</li></ul></li></ol><h2 id=grpc-服务治理的优势>gRPC 服务治理的优势</h2><p>   在现网环境中，后端服务就是采用了 gRPC 与 Etcd 的服务治理方案，总结下有这么几个优点；</p><ul><li>采用了 gRPC 实现负载均衡策略，模块之间通信采用长连接方式，避免每次 RPC 调用时新建连接的开销，充分发挥 <code>HTTP2</code> 的优势</li><li>扩容和缩容都及其方便，例如扩容，只要部署上服务，运行后，服务成功注册到 Etcd 便大功告成</li><li>灵活的自定义的 LB 算法，使得后端压力更为均衡</li><li>客户端加入重试逻辑，使得网络抖动情况下，可以通过重试连接上另外一台服务</li></ul><h2 id=resolver-暴露的三个接口>Resolver 暴露的三个接口</h2><p>前文说过，gRPC 内置的服务治理功能，对开发者暴露了服务发现的 <code>interface{}</code>，<code>resolver.Builder</code> 和 <code>resolver.ClientConn</code> 和 <code>resolver.Resolver</code>，<a href=https://github.com/grpc/grpc-go/blob/master/resolver/resolver.go target=_blank>相关代码</a>。开发者在实例化这三个接口之后，就可以实现从指定的 scheme 中获取服务列表，通知 balancer 并与这些服务端建立 RPC 长连接。</p><ol><li>resolver.Builder</li><li>resolver.ClientConn</li><li>resolver.Resolver</li></ol><ul><li>resolver.Builder <code>Builder</code> 用于 gRPC 内部创建 <code>Resolver</code> 接口的实现，但注意内部声明的 <code>Build()</code> 方法将接口 <code>ClientConn</code> 作为参数传入了，在前文的分析中，我们了解到 <code>ClientConn</code><a href=https://github.com/grpc/grpc-go/blob/master/clientconn.go#L459 target=_blank>结库</a> 是非常重要的结构，其成员 <code>conns map[*addrConn]struct{}</code> 中维护了所有从注册中心获取到的服务端列表。</li></ul><pre><code class=language-go>// Builder creates a resolver that will be used to watch name resolution updates.
 type Builder interface {
 // Build creates a new resolver for the given target.
 //
@@ -242,11 +15,7 @@ Build(target Target, cc ClientConn, opts BuildOption) (Resolver, error)
 // Scheme is defined at https://github.com/grpc/grpc/blob/master/doc/naming.md.
 Scheme() string
 }
-</code></pre>
-<ul>
-<li><a href="https://github.com/grpc/grpc-go/blob/master/clientconn.go#L459" target="_blank">resolver.ClientConn</a> <code>ClientConn</code> 接口中，<code>UpdateState</code> 方法需要传入 <code>State</code> 结构，<code>NewAddress</code> 方法需要传入 <code>Address</code> 结构，看代码可以发现其中包含了 <code>Addresses []Address // Resolved addresses for the target</code>，可以看出是需要将服务发现得到的 <code>Address</code> 对象列表告诉 <code>ClientConn</code> 的对象。</li>
-</ul>
-<pre><code class="language-go">// ClientConn contains the callbacks for resolver to notify any updates
+</code></pre><ul><li><a href=https://github.com/grpc/grpc-go/blob/master/clientconn.go#L459 target=_blank>resolver.ClientConn</a> <code>ClientConn</code> 接口中，<code>UpdateState</code> 方法需要传入 <code>State</code> 结构，<code>NewAddress</code> 方法需要传入 <code>Address</code> 结构，看代码可以发现其中包含了 <code>Addresses []Address // Resolved addresses for the target</code>，可以看出是需要将服务发现得到的 <code>Address</code> 对象列表告诉 <code>ClientConn</code> 的对象。</li></ul><pre><code class=language-go>// ClientConn contains the callbacks for resolver to notify any updates
 // to the gRPC ClientConn.
 //
 // This interface is to be implemented by gRPC. Users should not need a
@@ -268,11 +37,7 @@ NewAddress(addresses []Address)
 // Deprecated: Use UpdateState instead.
 NewServiceConfig(serviceConfig string)
 }
-</code></pre>
-<ul>
-<li>resolver.Resolver <code>Resolver</code> 提供了 <code>ResolveNow</code> 用于被 gRPC 尝试重新进行服务发现</li>
-</ul>
-<pre><code class="language-go">// Resolver watches for the updates on the specified target.
+</code></pre><ul><li>resolver.Resolver <code>Resolver</code> 提供了 <code>ResolveNow</code> 用于被 gRPC 尝试重新进行服务发现</li></ul><pre><code class=language-go>// Resolver watches for the updates on the specified target.
 // Updates include address updates and service config updates.
 type Resolver interface {
 // ResolveNow will be called by gRPC to try to resolve the target name
@@ -283,14 +48,7 @@ ResolveNow(ResolveNowOption)
 // Close closes the resolver.
 Close()
 }
-</code></pre>
-<h2 id="梳理-resolver-过程">梳理 Resolver 过程</h2>
-<p>通过这三个接口，再次梳理下 gRPC 的服务发现实现逻辑</p>
-<ol>
-<li>通过 <code>Builder.Build()</code> 进行 <code>Reslover</code> 的创建，在 <code>Build()</code> 的过程中将服务发现的地址信息丢给 <code>ClientConn</code> 用于内部连接创建（通过 <code>ClientConn.UpdateState()</code> 实现）等逻辑；</li>
-<li>当 <code>client</code> 在 <code>Dial</code> 时会根据 <code>target</code> 解析的 <code>scheme</code> 获取对应的 <code>Builder</code>，<a href="https://github.com/grpc/grpc-go/blob/master/clientconn.go#L242" target="_blank">代码位置</a></li>
-</ol>
-<pre><code class="language-go">func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *ClientConn, err error) {
+</code></pre><h2 id=梳理-resolver-过程>梳理 Resolver 过程</h2><p>通过这三个接口，再次梳理下 gRPC 的服务发现实现逻辑</p><ol><li>通过 <code>Builder.Build()</code> 进行 <code>Reslover</code> 的创建，在 <code>Build()</code> 的过程中将服务发现的地址信息丢给 <code>ClientConn</code> 用于内部连接创建（通过 <code>ClientConn.UpdateState()</code> 实现）等逻辑；</li><li>当 <code>client</code> 在 <code>Dial</code> 时会根据 <code>target</code> 解析的 <code>scheme</code> 获取对应的 <code>Builder</code>，<a href=https://github.com/grpc/grpc-go/blob/master/clientconn.go#L242 target=_blank>代码位置</a></li></ol><pre><code class=language-go>func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *ClientConn, err error) {
 ...
 ...
 // Determine the resolver to use.
@@ -324,11 +82,7 @@ cc.mu.Unlock()
 ...
 ...
 }
-</code></pre>
-<ol start="3">
-<li>当 <code>Dial</code> 成功会创建出结构体 <code>ClientConn</code> 的对象 <a href="https://github.com/grpc/grpc-go/blob/master/clientconn.go#L447" target="_blank">官方代码位置</a>(注意不是上面的 <code>ClientConn</code> 接口)，可以看到结构体 <code>ClientConn</code> 内的成员 <code>resolverWrapper</code> 又实现了接口 <code>ClientConn</code> 的方法 <a href="https://github.com/grpc/grpc-go/blob/master/resolver_conn_wrapper.go" target="_blank">官方代码位置</a></li>
-</ol>
-<pre><code class="language-go">func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *ClientConn, err error) {
+</code></pre><ol start=3><li>当 <code>Dial</code> 成功会创建出结构体 <code>ClientConn</code> 的对象 <a href=https://github.com/grpc/grpc-go/blob/master/clientconn.go#L447 target=_blank>官方代码位置</a>(注意不是上面的 <code>ClientConn</code> 接口)，可以看到结构体 <code>ClientConn</code> 内的成员 <code>resolverWrapper</code> 又实现了接口 <code>ClientConn</code> 的方法 <a href=https://github.com/grpc/grpc-go/blob/master/resolver_conn_wrapper.go target=_blank>官方代码位置</a></li></ol><pre><code class=language-go>func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *ClientConn, err error) {
 // 初始化 CC
 cc := &amp;ClientConn{
     target:            target,
@@ -346,11 +100,7 @@ cc := &amp;ClientConn{
 ...
 return cc, nil
 }
-</code></pre>
-<ol start="4">
-<li>当 <code>resolverWrapper</code> 被初始化时就会调用 <code>Build</code> 方法 <a href="https://github.com/grpc/grpc-go/blob/master/resolver_conn_wrapper.go#L89" target="_blank">官方代码位置</a>，其中参数为接口 <code>ClientConn</code> 传入的是 <code>ccResolverWrapper</code></li>
-</ol>
-<pre><code class="language-go">// newCCResolverWrapper uses the resolver.Builder to build a Resolver and
+</code></pre><ol start=4><li>当 <code>resolverWrapper</code> 被初始化时就会调用 <code>Build</code> 方法 <a href=https://github.com/grpc/grpc-go/blob/master/resolver_conn_wrapper.go#L89 target=_blank>官方代码位置</a>，其中参数为接口 <code>ClientConn</code> 传入的是 <code>ccResolverWrapper</code></li></ol><pre><code class=language-go>// newCCResolverWrapper uses the resolver.Builder to build a Resolver and
 // returns a ccResolverWrapper object which wraps the newly built resolver.
 func newCCResolverWrapper(cc *ClientConn, rb resolver.Builder) (*ccResolverWrapper, error) {
 ccr := &amp;ccResolverWrapper{
@@ -382,11 +132,7 @@ if err != nil {
 }
 return ccr, nil
 }
-</code></pre>
-<ol start="5">
-<li>当用户基于 <code>Builder</code> 的实现进行 <code>UpdateState</code> 调用时，则会触发结构体 <code>ClientConn</code> 的 <code>updateResolverState</code> 方法 <a href="https://github.com/grpc/grpc-go/blob/master/resolver_conn_wrapper.go#L109" target="_blank">官方代码位置</a>，<code>updateResolverState</code> 则会对传入的 <code>Address</code> 进行初始化等逻辑 <a href="https://github.com/grpc/grpc-go/blob/master/clientconn.go#L553" target="_blank">官方代码位置</a></li>
-</ol>
-<pre><code class="language-go">func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
+</code></pre><ol start=5><li>当用户基于 <code>Builder</code> 的实现进行 <code>UpdateState</code> 调用时，则会触发结构体 <code>ClientConn</code> 的 <code>updateResolverState</code> 方法 <a href=https://github.com/grpc/grpc-go/blob/master/resolver_conn_wrapper.go#L109 target=_blank>官方代码位置</a>，<code>updateResolverState</code> 则会对传入的 <code>Address</code> 进行初始化等逻辑 <a href=https://github.com/grpc/grpc-go/blob/master/clientconn.go#L553 target=_blank>官方代码位置</a></li></ol><pre><code class=language-go>func (cc *ClientConn) updateResolverState(s resolver.State, err error) error {
 defer cc.firstResolveEvent.Fire()
 cc.mu.Lock()
 // Check if the ClientConn is already closed. Some fields (e.g.
@@ -463,419 +209,50 @@ if ret == nil {
 }
 return ret
 }
-</code></pre>
-<ol start="6">
-<li>至此整个服务发现过程就结束了。从中也可以看出 gRPC 官方提供的三个接口还是很灵活的，但也正因为灵活要实现稍微麻烦一些，而 <code>Address</code><a href="https://github.com/grpc/grpc-go/blob/master/resolver/resolver.go#L79" target="_blank">官方代码位置</a> 如果直接被业务拿来用于服务节点信息的描述结构则显得有些过于简单。</li>
-</ol>
-<p>所以 <code>warden</code> 包装了 gRPC 的整个服务发现实现逻辑，代码分别位于 <code>pkg/naming/naming.go</code> 和 <code>warden/resolver/resolver.go</code>，其中：</p>
-<ul>
-<li><code>naming.go</code> 内定义了用于描述业务实例的 <code>Instance</code> 结构、用于服务注册的 <code>Registry</code> 接口、用于服务发现的 <code>Resolver</code> 接口</li>
-<li><code>resolver.go</code> 内实现了 gRPC 官方的 <code>resolver.Builder</code> 和 <code>resolver.Resolver</code> 接口，但也暴露了 <code>naming.go</code> 内的 <code>naming.Builder</code> 和 <code>naming.Resolver</code> 接口</li>
-</ul>
-<h2 id="文章转自">文章转自：</h2>
-<ul>
-<li><a href="https://pandaychen.github.io/2019/07/11/GRPC-SERVICE-DISCOVERY/" target="_blank">基于 gRPC 的服务发现与负载均衡（基础篇） - 熊喵君的博客 | PANDAYCHEN</a></li>
-<li><a href="https://pandaychen.github.io/2020/01/03/GRPC-RESOLVER-DEEP-ANALYSIS2-IN-KRATOS/" target="_blank">gRPC 应用篇之 Resolver 接口封装 - 熊喵君的博客 | PANDAYCHEN</a></li>
-</ul>
-
-    </div>
-</article>
-
-
-<div class="license markdown-body">
-    <blockquote>
-        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
-    </blockquote>
-</div>
-
-
-<div class="post-comment" data-comment="utterances">
-    <span class="post-comment-notloaded">
-        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
-    </span>
-    <script>
-        function loadComment() {
-            var commentArea = document.querySelector('.post-comment');
-            var utterancesTheme = document.body.getAttribute('data-theme');
-            if (utterancesTheme === 'auto') {
-                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
-                    'github-light';
-            } else {
-                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
-            }
-            var s = document.createElement('script');
-            s.src = 'https://utteranc.es/client.js';
-            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
-            s.setAttribute('issue-term', 'pathname');
-            s.setAttribute('theme', utterancesTheme);
-            s.setAttribute('crossorigin', 'anonymous');
-            s.setAttribute('async', '');
-            document.querySelector('.post-comment').appendChild(s);
-            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
-        }
-    </script>
-</div>
-
-
-            </div>
-            <aside class="col-12 col-md-3 float-left sidebar">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3><nav id="TableOfContents">
-  <ul>
-    <li><a href="#前言">前言</a></li>
-    <li><a href="#负载均衡--服务发现">负载均衡 &amp;&amp; 服务发现</a>
-      <ul>
-        <li></li>
-        <li><a href="#grpc-内置的方案">gRPC 内置的方案</a></li>
-      </ul>
-    </li>
-    <li><a href="#grpc-负载均衡的运行机制">gRPC 负载均衡的运行机制</a></li>
-    <li><a href="#负载均衡的算法及实现">负载均衡的算法及实现</a></li>
-    <li><a href="#grpc-服务治理的优势">gRPC 服务治理的优势</a></li>
-    <li><a href="#resolver-暴露的三个接口">Resolver 暴露的三个接口</a></li>
-    <li><a href="#梳理-resolver-过程">梳理 Resolver 过程</a></li>
-    <li><a href="#文章转自">文章转自：</a></li>
-  </ul>
-</nav></div>
-</aside>
-
-        </div>
-        <div class="btn">
-    <div class="btn-menu" id="btn-menu">
-        <i class="iconfont icon-grid-sharp"></i>
-    </div>
-    <div class="btn-toggle-mode">
-        <i class="iconfont icon-contrast-sharp"></i>
-    </div>
-    <div class="btn-scroll-top">
-        <i class="iconfont icon-chevron-up-circle-sharp"></i>
-    </div>
-</div>
-<aside class="sidebar-mobile" style="display: none;">
-  <div class="sidebar-wrapper">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    
-    
-    
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3>
-        <nav id="TableOfContents">
-  <ul>
-    <li><a href="#前言">前言</a></li>
-    <li><a href="#负载均衡--服务发现">负载均衡 &amp;&amp; 服务发现</a>
-      <ul>
-        <li></li>
-        <li><a href="#grpc-内置的方案">gRPC 内置的方案</a></li>
-      </ul>
-    </li>
-    <li><a href="#grpc-负载均衡的运行机制">gRPC 负载均衡的运行机制</a></li>
-    <li><a href="#负载均衡的算法及实现">负载均衡的算法及实现</a></li>
-    <li><a href="#grpc-服务治理的优势">gRPC 服务治理的优势</a></li>
-    <li><a href="#resolver-暴露的三个接口">Resolver 暴露的三个接口</a></li>
-    <li><a href="#梳理-resolver-过程">梳理 Resolver 过程</a></li>
-    <li><a href="#文章转自">文章转自：</a></li>
-  </ul>
-</nav>
-    </div>
-    
-    
-  </div>
-</aside>
-    </main>
-
-    <footer>
-    <div class="container-lg clearfix">
-        <div class="col-12 footer">
-            
-            <span>&copy; 2019-2022
-                <a href="https://www.zhaohaiyu.com">haiyux</a>
-                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
-                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
-                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
-                                                    target="_blank">Hugo</a> 构建
-            </span>
-        </div>
-    </div>
-</footer>
-
-    
-<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
-
-
-
-<script defer src="/assets/js/fuji.min.js"></script>
-
-
-
-</body>
-
-</html>
+</code></pre><ol start=6><li>至此整个服务发现过程就结束了。从中也可以看出 gRPC 官方提供的三个接口还是很灵活的，但也正因为灵活要实现稍微麻烦一些，而 <code>Address</code><a href=https://github.com/grpc/grpc-go/blob/master/resolver/resolver.go#L79 target=_blank>官方代码位置</a> 如果直接被业务拿来用于服务节点信息的描述结构则显得有些过于简单。</li></ol><p>所以 <code>warden</code> 包装了 gRPC 的整个服务发现实现逻辑，代码分别位于 <code>pkg/naming/naming.go</code> 和 <code>warden/resolver/resolver.go</code>，其中：</p><ul><li><code>naming.go</code> 内定义了用于描述业务实例的 <code>Instance</code> 结构、用于服务注册的 <code>Registry</code> 接口、用于服务发现的 <code>Resolver</code> 接口</li><li><code>resolver.go</code> 内实现了 gRPC 官方的 <code>resolver.Builder</code> 和 <code>resolver.Resolver</code> 接口，但也暴露了 <code>naming.go</code> 内的 <code>naming.Builder</code> 和 <code>naming.Resolver</code> 接口</li></ul><h2 id=文章转自>文章转自：</h2><ul><li><a href=https://pandaychen.github.io/2019/07/11/GRPC-SERVICE-DISCOVERY/ target=_blank>基于 gRPC 的服务发现与负载均衡（基础篇） - 熊喵君的博客 | PANDAYCHEN</a></li><li><a href=https://pandaychen.github.io/2020/01/03/GRPC-RESOLVER-DEEP-ANALYSIS2-IN-KRATOS/ target=_blank>gRPC 应用篇之 Resolver 接口封装 - 熊喵君的博客 | PANDAYCHEN</a></li></ul></div></article><div class="license markdown-body"><blockquote><p>除特殊注明部分，本站内容采用 <a rel=license href=http://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a> 进行许可。</p></blockquote></div><div class=post-comment data-comment=utterances><span class=post-comment-notloaded><i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论</span>
+<script>function loadComment(){var e,n=document.querySelector('.post-comment'),t=document.body.getAttribute('data-theme');t==='auto'?t=window.matchMedia('(prefers-color-scheme: dark)').matches?'photon-dark':'github-light':t=t==='dark'?'photon-dark':'github-light',e=document.createElement('script'),e.src='https://utteranc.es/client.js',e.setAttribute('repo','haiyux/haiyux.github.io'),e.setAttribute('issue-term','pathname'),e.setAttribute('theme',t),e.setAttribute('crossorigin','anonymous'),e.setAttribute('async',''),document.querySelector('.post-comment').appendChild(e),document.querySelector('span.post-comment-notloaded').setAttribute('style','display: none;')}</script></div></div><aside class="col-12 col-md-3 float-left sidebar"><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#前言>前言</a></li><li><a href=#负载均衡--服务发现>负载均衡 && 服务发现</a><ul><li></li><li><a href=#grpc-内置的方案>gRPC 内置的方案</a></li></ul></li><li><a href=#grpc-负载均衡的运行机制>gRPC 负载均衡的运行机制</a></li><li><a href=#负载均衡的算法及实现>负载均衡的算法及实现</a></li><li><a href=#grpc-服务治理的优势>gRPC 服务治理的优势</a></li><li><a href=#resolver-暴露的三个接口>Resolver 暴露的三个接口</a></li><li><a href=#梳理-resolver-过程>梳理 Resolver 过程</a></li><li><a href=#文章转自>文章转自：</a></li></ul></nav></div></aside></div><div class=btn><div class=btn-menu id=btn-menu><i class="iconfont icon-grid-sharp"></i></div><div class=btn-toggle-mode><i class="iconfont icon-contrast-sharp"></i></div><div class=btn-scroll-top><i class="iconfont icon-chevron-up-circle-sharp"></i></div></div><aside class=sidebar-mobile style=display:none><div class=sidebar-wrapper><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#前言>前言</a></li><li><a href=#负载均衡--服务发现>负载均衡 && 服务发现</a><ul><li></li><li><a href=#grpc-内置的方案>gRPC 内置的方案</a></li></ul></li><li><a href=#grpc-负载均衡的运行机制>gRPC 负载均衡的运行机制</a></li><li><a href=#负载均衡的算法及实现>负载均衡的算法及实现</a></li><li><a href=#grpc-服务治理的优势>gRPC 服务治理的优势</a></li><li><a href=#resolver-暴露的三个接口>Resolver 暴露的三个接口</a></li><li><a href=#梳理-resolver-过程>梳理 Resolver 过程</a></li><li><a href=#文章转自>文章转自：</a></li></ul></nav></div></div></aside></main><footer><div class="container-lg clearfix"><div class="col-12 footer"><span>&copy; 2019-2022
+<a href=https://www.zhaohaiyu.com>haiyux</a>
+| <a href=https://www.zhaohaiyu.com>Source code</a>
+| 基于 <a href=https://github.com/dsrkafuu/hugo-theme-fuji/ target=_blank>Fuji-v2</a> & <a href=https://gohugo.io/ target=_blank>Hugo</a> 构建</span></div></div></footer><script defer src=https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js></script>
+<script defer src=/assets/js/fuji.min.js></script></body></html>

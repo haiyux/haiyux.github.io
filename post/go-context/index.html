@@ -1,216 +1,9 @@
-<!DOCTYPE html>
-<html lang="zh-hans">
-
-<head>
-    
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="HandheldFriendly" content="True" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-<meta name="generator" content="Hugo 0.100.1" />
-
-
-<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-<link rel="manifest" href="/img/site.webmanifest">
-<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-
-
-<title>Go context包 - 赵海宇的博客</title>
-
-
-<meta name="author" content="haiyux" />
-
-
-<meta name="description" content="欢迎来到haiyux的博客" />
-
-
-<meta name="keywords" content="golang" />
-
-
-<meta property="og:title" content="Go context包" />
-<meta name="twitter:title" content="Go context包" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.zhaohaiyu.com/post/go-context/" /><meta property="og:description" content="go context标准库 context包在Go1.7版本时加入到标准库中。其设计目标是给Golang提供一个标准接口来给其他任务发送取消信号和传递数据。其具体作用为： 可以通过context发送取消信号。" />
-<meta name="twitter:description" content="go context标准库 context包在Go1.7版本时加入到标准库中。其设计目标是给Golang提供一个标准接口来给其他任务发送取消信号和传递数据。其具体作用为： 可以通过context发送取消信号。" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2020-10-24T12:26:32+08:00" /><meta property="article:modified_time" content="2020-10-24T12:26:32+08:00" />
-
-
-<style>
-    @media (prefers-color-scheme: dark) {
-        body[data-theme='auto'] img {
-            filter: brightness(60%);
-        }
-    }
-
-    body[data-theme='dark'] img {
-        filter: brightness(60%);
-    }
-</style>
-
-
-
-
-<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
-
-
-
-
-
-
-
-
-</head>
-
-<body
-  data-theme="auto"
-  data-theme-auto='true'
-  >
-    <script data-cfasync="false">
-  
-  var fujiThemeData = localStorage.getItem('fuji_data-theme');
-  
-  if (!fujiThemeData) {
-    localStorage.setItem('fuji_data-theme', 'auto');
-  } else {
-    
-    if (fujiThemeData !== 'auto') {
-      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
-    }
-  }
-</script>
-
-    <header>
-    <div class="container-lg clearfix">
-        <div class="col-12 header">
-            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
-            
-            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
-            
-        </div>
-    </div>
-</header>
-
-    <main>
-        <div class="container-lg clearfix">
-            
-            <div class="col-12 col-md-9 float-left content">
-                
-<article>
-    
-    <h2 class="post-item post-title">
-        <a href="https://www.zhaohaiyu.com/post/go-context/">Go context包</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-24</span>
-
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=HandheldFriendly content="True"><meta http-equiv=x-ua-compatible content="IE=edge"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=generator content="Hugo 0.100.1"><link rel=apple-touch-icon sizes=180x180 href=/img/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/img/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/img/favicon-16x16.png><link rel=manifest href=/img/site.webmanifest><link rel=mask-icon href=/img/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Go context包 - 赵海宇的博客</title><meta name=author content="haiyux"><meta name=description content="欢迎来到haiyux的博客"><meta name=keywords content="golang"><meta property="og:title" content="Go context包"><meta name=twitter:title content="Go context包"><meta property="og:type" content="article"><meta property="og:url" content="https://www.zhaohaiyu.com/post/go-context/"><meta property="og:description" content="go context标准库 context包在Go1.7版本时加入到标准库中。其设计目标是给Golang提供一个标准接口来给其他任务发送取消信号和传递数据。其具体作用为： 可以通过context发送取消信号。"><meta name=twitter:description content="go context标准库 context包在Go1.7版本时加入到标准库中。其设计目标是给Golang提供一个标准接口来给其他任务发送取消信号和传递数据。其具体作用为： 可以通过context发送取消信号。"><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta property="article:published_time" content="2020-10-24T12:26:32+08:00"><meta property="article:modified_time" content="2020-10-24T12:26:32+08:00"><style>@media(prefers-color-scheme:dark){body[data-theme=auto] img{filter:brightness(60%)}}body[data-theme=dark] img{filter:brightness(60%)}</style><link rel=stylesheet href=https://www.zhaohaiyu.com/assets/css/fuji.min.css></head><body data-theme=auto data-theme-auto=true><script data-cfasync=false>var fujiThemeData=localStorage.getItem('fuji_data-theme');fujiThemeData?fujiThemeData!=='auto'&&document.body.setAttribute('data-theme',fujiThemeData==='dark'?'dark':'light'):localStorage.setItem('fuji_data-theme','auto')</script><header><div class="container-lg clearfix"><div class="col-12 header"><a class=title-main href=https://www.zhaohaiyu.com>赵海宇的博客</a>
+<span class=title-sub>路漫漫其修远兮,吾将上下而求索。</span></div></div></header><main><div class="container-lg clearfix"><div class="col-12 col-md-9 float-left content"><article><h2 class="post-item post-title"><a href=https://www.zhaohaiyu.com/post/go-context/>Go context包</a></h2><div class="post-item post-meta"><span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-24</span>
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;4440 字</span>
 <span><i class="iconfont icon-time-sharp"></i>&nbsp;9 分钟</span>
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
-
-    </div>
-    
-    <div class="post-content markdown-body">
-        <h2 id="go-context标准库">go context标准库</h2>
-<p>context包在Go1.7版本时加入到标准库中。其设计目标是给Golang提供一个标准接口来给其他任务发送取消信号和传递数据。其具体作用为：</p>
-<ul>
-<li>
-<p>可以通过context发送取消信号。</p>
-</li>
-<li>
-<p>可以指定截止时间（Deadline)，context在截止时间到期后自动发送取消信号。</p>
-</li>
-<li>
-<p>可以通过context传输一些数据。</p>
-</li>
-</ul>
-<p><strong>context在Golang中最主要的用途是控制协程任务的取消</strong>，但是context除了协程以外也可以用在线程控制等非协程的情况。</p>
-<h2 id="基本概念">基本概念</h2>
-<p>context的核心是其定义的Context接口类型。围绕着Context接口类型存在两种角色：</p>
-<ul>
-<li>
-<p>父任务：创建Context，将Context对象传递给子任务，并且根据需要发送取消信号来结束子任务。</p>
-</li>
-<li>
-<p>子任务：使用Context类型对象，当收到父任务发来的取消信号，结束当前任务并退出。</p>
-</li>
-</ul>
-<p>接下来我们从这两个角色的视角分别看一下Context对象。</p>
-<h2 id="context接口">context接口</h2>
-<pre><code class="language-golang">type Context interface {  Deadline() (deadline time.Time, ok bool)  Done() chan struct{}  Err() error  Value(key interface{}) interface{} }
-</code></pre>
-<ul>
-<li>
-<p>Deadline方法需要返回当前Context被取消的时间，也就是完成工作的截止时间（deadline）；</p>
-</li>
-<li>
-<p>Done方法需要返回一个Channel，这个Channel会在当前工作完成或者上下文被取消之后关闭，多次调用Done方***返回同一个Channel；</p>
-</li>
-<li>
-<p>Err方***返回当前Context结束的原因，它只会在Done返回的Channel被关闭时才会返回非空的值；</p>
-<ul>
-<li>
-<p>如果当前Context被取消就会返回Canceled错误；</p>
-</li>
-<li>
-<p>如果当前Context超时就会返回DeadlineExceeded错误；</p>
-</li>
-</ul>
-</li>
-<li>
-<p>Value方***从Context中返回键对应的值，对于同一个上下文来说，多次调用Value 并传入相同的Key会返回相同的结果，该方法仅用于传递跨API和进程间跟请求域的数据；</p>
-</li>
-</ul>
-<h2 id="background和todo">Background()和TODO()</h2>
-<p>Go内置两个函数：Background()和TODO()，这两个函数分别返回一个实现了Context接口的background和todo。我们代码中最开始都是以这两个内置的上下文对象作为最顶层的partent context，衍生出更多的子上下文对象。</p>
-<ul>
-<li>
-<p>Background()主要用于main函数、初始化以及测试代码中，作为Context这个树结构的最顶层的Context，也就是根Context。</p>
-</li>
-<li>
-<p>TODO()，它目前还不知道具体的使用场景，如果我们不知道该使用什么Context的时候，可以使用这个。</p>
-</li>
-<li>
-<p>background和todo本质上都是emptyCtx结构体类型，是一个不可取消，没有设置截止时间，没有携带任何值的Context。</p>
-</li>
-</ul>
-<h2 id="with函数">With函数</h2>
-<ul>
-<li>
-<p>WithCancel函数，传递一个父Context作为参数，返回子Context，以及一个取消函数用来取消Context</p>
-</li>
-<li>
-<p>WithDeadline函数，和WithCancel差不多，它会多传递一个截止时间参数，意味着到了这个时间点，会自动取消Context，当然我们也可以不等到这个时候，可以提前通过取消函数进行取消</p>
-</li>
-<li>
-<p>WithTimeout和WithDeadline基本上一样，这个表示是超时自动取消，是多少时间后自动取消Context的意思</p>
-</li>
-<li>
-<p>WithValue函数和取消Context无关，它是为了生成一个绑定了一个键值对数据的Context，这个绑定的数据可以通过Context.Value方法访问到</p>
-</li>
-</ul>
-<h2 id="context使用原则">Context使用原则</h2>
-<ul>
-<li>
-<p>不要把Context放在结构体中，要以参数的方式进行传递</p>
-</li>
-<li>
-<p>以Context作为参数的函数方法，应该把Context作为第一个参数，放在第一位]</p>
-</li>
-<li>
-<p>给一个函数方法传递Context的时候，不要传递nil，如果不知道传递什么，就使用context.TODO</p>
-</li>
-<li>
-<p>Context的Value相关方法应该传递必须的数据，不要什么数据都使用这个传递</p>
-</li>
-</ul>
-<pre><code class="language-go">package main  
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href=/tags/golang>golang</a>&nbsp;</span></div><div class="post-content markdown-body"><h2 id=go-context标准库>go context标准库</h2><p>context包在Go1.7版本时加入到标准库中。其设计目标是给Golang提供一个标准接口来给其他任务发送取消信号和传递数据。其具体作用为：</p><ul><li><p>可以通过context发送取消信号。</p></li><li><p>可以指定截止时间（Deadline)，context在截止时间到期后自动发送取消信号。</p></li><li><p>可以通过context传输一些数据。</p></li></ul><p><strong>context在Golang中最主要的用途是控制协程任务的取消</strong>，但是context除了协程以外也可以用在线程控制等非协程的情况。</p><h2 id=基本概念>基本概念</h2><p>context的核心是其定义的Context接口类型。围绕着Context接口类型存在两种角色：</p><ul><li><p>父任务：创建Context，将Context对象传递给子任务，并且根据需要发送取消信号来结束子任务。</p></li><li><p>子任务：使用Context类型对象，当收到父任务发来的取消信号，结束当前任务并退出。</p></li></ul><p>接下来我们从这两个角色的视角分别看一下Context对象。</p><h2 id=context接口>context接口</h2><pre><code class=language-golang>type Context interface {  Deadline() (deadline time.Time, ok bool)  Done() chan struct{}  Err() error  Value(key interface{}) interface{} }
+</code></pre><ul><li><p>Deadline方法需要返回当前Context被取消的时间，也就是完成工作的截止时间（deadline）；</p></li><li><p>Done方法需要返回一个Channel，这个Channel会在当前工作完成或者上下文被取消之后关闭，多次调用Done方***返回同一个Channel；</p></li><li><p>Err方***返回当前Context结束的原因，它只会在Done返回的Channel被关闭时才会返回非空的值；</p><ul><li><p>如果当前Context被取消就会返回Canceled错误；</p></li><li><p>如果当前Context超时就会返回DeadlineExceeded错误；</p></li></ul></li><li><p>Value方***从Context中返回键对应的值，对于同一个上下文来说，多次调用Value 并传入相同的Key会返回相同的结果，该方法仅用于传递跨API和进程间跟请求域的数据；</p></li></ul><h2 id=background和todo>Background()和TODO()</h2><p>Go内置两个函数：Background()和TODO()，这两个函数分别返回一个实现了Context接口的background和todo。我们代码中最开始都是以这两个内置的上下文对象作为最顶层的partent context，衍生出更多的子上下文对象。</p><ul><li><p>Background()主要用于main函数、初始化以及测试代码中，作为Context这个树结构的最顶层的Context，也就是根Context。</p></li><li><p>TODO()，它目前还不知道具体的使用场景，如果我们不知道该使用什么Context的时候，可以使用这个。</p></li><li><p>background和todo本质上都是emptyCtx结构体类型，是一个不可取消，没有设置截止时间，没有携带任何值的Context。</p></li></ul><h2 id=with函数>With函数</h2><ul><li><p>WithCancel函数，传递一个父Context作为参数，返回子Context，以及一个取消函数用来取消Context</p></li><li><p>WithDeadline函数，和WithCancel差不多，它会多传递一个截止时间参数，意味着到了这个时间点，会自动取消Context，当然我们也可以不等到这个时候，可以提前通过取消函数进行取消</p></li><li><p>WithTimeout和WithDeadline基本上一样，这个表示是超时自动取消，是多少时间后自动取消Context的意思</p></li><li><p>WithValue函数和取消Context无关，它是为了生成一个绑定了一个键值对数据的Context，这个绑定的数据可以通过Context.Value方法访问到</p></li></ul><h2 id=context使用原则>Context使用原则</h2><ul><li><p>不要把Context放在结构体中，要以参数的方式进行传递</p></li><li><p>以Context作为参数的函数方法，应该把Context作为第一个参数，放在第一位]</p></li><li><p>给一个函数方法传递Context的时候，不要传递nil，如果不知道传递什么，就使用context.TODO</p></li><li><p>Context的Value相关方法应该传递必须的数据，不要什么数据都使用这个传递</p></li></ul><pre><code class=language-go>package main  
 import (  
     &quot;context&quot;  
     &quot;fmt&quot;  
@@ -244,12 +37,8 @@ func server2(ctx context.Context) {
 				fmt.Println(&quot;name=&quot;,name)  
 				} 
 }
-</code></pre>
-<h2 id="请求作用域上下文">请求作用域上下文</h2>
-<p>在 Go 服务中，每个传入的请求都在其自己的goroutine 中处理。请求处理程序通常启动额外的 goroutine 来访问其他后端，如数据库和 RPC服务。处理请求的 goroutine 通常需要访问特定于请求(request-specific context)的值，例如最终用户的身份、授权令牌和请求的截止日期(deadline)。当一个请求被取消或超时时，处理该请求的所有 goroutine 都应该快速退出(fail fast)，这样系统就可以回收它们正在使用的任何资源。
-Go 1.7 引入一个 context 包，它使得跨 API 边界的请求范围元数据、取消信号和截止日期很容易传递给处理请求所涉及的所有 goroutine(显示传递)。</p>
-<p><strong>其他语言: Thread Local Storage(TLS)，XXXContext</strong></p>
-<pre><code class="language-go">type Context interface {
+</code></pre><h2 id=请求作用域上下文>请求作用域上下文</h2><p>在 Go 服务中，每个传入的请求都在其自己的goroutine 中处理。请求处理程序通常启动额外的 goroutine 来访问其他后端，如数据库和 RPC服务。处理请求的 goroutine 通常需要访问特定于请求(request-specific context)的值，例如最终用户的身份、授权令牌和请求的截止日期(deadline)。当一个请求被取消或超时时，处理该请求的所有 goroutine 都应该快速退出(fail fast)，这样系统就可以回收它们正在使用的任何资源。
+Go 1.7 引入一个 context 包，它使得跨 API 边界的请求范围元数据、取消信号和截止日期很容易传递给处理请求所涉及的所有 goroutine(显示传递)。</p><p><strong>其他语言: Thread Local Storage(TLS)，XXXContext</strong></p><pre><code class=language-go>type Context interface {
 	// Deadline returns the time when work done on behalf of this context
 	// should be canceled. Deadline returns ok==false when no deadline is
 	// set. Successive calls to Deadline return the same results.
@@ -348,67 +137,31 @@ Go 1.7 引入一个 context 包，它使得跨 API 边界的请求范围元数�
          userObject := auth.AuthenticateToken(x)
          return userObject.IsAdmin || userObject.IsRoot()
  }
-</code></pre>
-<p>如何将 context 集成到 API 中？
-在将 context 集成到 API 中时，要记住的最重要的一点是，它的作用域是请求级别	的。例如，沿单个数据库查询存在是有意义的，但沿数据库对象存在则没有意义。
-目前有两种方法可以将 context 对象集成到 API 中：</p>
-<ul>
-<li>
-<p>The first parameter of a function call</p>
-<p>首参数传递 context 对象，比如，参考  net 包 Dialer.DialContext。此函数执行正常的 Dial 操作，但可以通过 context 对象取消函数调用。</p>
-<p><code>func (d *Dialer) DialContext(ctx context.Context,network,address string) (Conn,error)</code></p>
-</li>
-<li>
-<p>Optional config on a request structure
-在第一个 request 对象中携带一个可选的 context 对象。例如 net/http 库的 Request.WithContext，通过携带给定的 context 对象，返回一个新的 Request 对象。</p>
-<p><code>func (r *Request) WithContext(ctx context.Context) *Request</code></p>
-</li>
-</ul>
-<p><img class="img-zoomable" src="/images/2344773-20210819165156921-1630633742.png" alt="" />
-</p>
-<h3 id="不要在stuct类型中存储上下文">不要在stuct类型中存储上下文</h3>
-<p>不要在结构题类型中存储上下文；相反，应该显式地将上下文传递给每个需要它的函数。上下文应该是第一个参数，通常命名为ctx:</p>
-<pre><code class="language-go">  func DoSomething(ctx context.Context,arg Arg) error {
+</code></pre><p>如何将 context 集成到 API 中？
+在将 context 集成到 API 中时，要记住的最重要的一点是，它的作用域是请求级别 的。例如，沿单个数据库查询存在是有意义的，但沿数据库对象存在则没有意义。
+目前有两种方法可以将 context 对象集成到 API 中：</p><ul><li><p>The first parameter of a function call</p><p>首参数传递 context 对象，比如，参考 net 包 Dialer.DialContext。此函数执行正常的 Dial 操作，但可以通过 context 对象取消函数调用。</p><p><code>func (d *Dialer) DialContext(ctx context.Context,network,address string) (Conn,error)</code></p></li><li><p>Optional config on a request structure
+在第一个 request 对象中携带一个可选的 context 对象。例如 net/http 库的 Request.WithContext，通过携带给定的 context 对象，返回一个新的 Request 对象。</p><p><code>func (r *Request) WithContext(ctx context.Context) *Request</code></p></li></ul><p><img class=img-zoomable src=/images/2344773-20210819165156921-1630633742.png alt></p><h3 id=不要在stuct类型中存储上下文>不要在stuct类型中存储上下文</h3><p>不要在结构题类型中存储上下文；相反，应该显式地将上下文传递给每个需要它的函数。上下文应该是第一个参数，通常命名为ctx:</p><pre><code class=language-go>  func DoSomething(ctx context.Context,arg Arg) error {
           // .. use ctx
   }
-</code></pre>
-<p>对服务器的传入请求应创建上下文。
+</code></pre><p>对服务器的传入请求应创建上下文。
 使用 context 的一个很好的心智模型是它应该在程序中流动，应该贯穿你的代码。这通常意味着您不希望将其存储在结构体之中。它从一个函数传递到另一个函数，并根据需要进行扩展。理想情况下，每个请求都会创建一个 context 对象，并在请求结束时过期。
-不存储上下文的一个例外是，当您需要将它放入一个结构中时，该结构纯粹用作通过通道传递的消息。如下例所示。</p>
-<pre><code class="language-go">type message struct {
+不存储上下文的一个例外是，当您需要将它放入一个结构中时，该结构纯粹用作通过通道传递的消息。如下例所示。</p><pre><code class=language-go>type message struct {
         responseChan chan&lt;- int
         parameter string
         ctx context.Context
 }
-</code></pre>
-<h2 id="contextwithvalue">context.WithValue</h2>
-<p>比如我们新建了一个基于 context.Background() 的 ctx1，携带了一个 map 的数据，map 中包含了 “k1”: “v1” 的一个键值对，ctx1 被两个 goroutine 同时使用作为函数签名传入，如果我们修改了 这个map，会导致另外进行读 context.Value 的 goroutine 和修改 map 的 goroutine，在 map 对象上产生 data race。因此我们要使用 copy-on-write 的思路，解决跨多个 goroutine 使用数据、修改数据的场景。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210819165219664-351851684.png" alt="" />
-</p>
-<p>context.WithValue 内部基于 valueCtx 实现:</p>
-<pre><code class="language-go">type valueCtx struct {
+</code></pre><h2 id=contextwithvalue>context.WithValue</h2><p>比如我们新建了一个基于 context.Background() 的 ctx1，携带了一个 map 的数据，map 中包含了 “k1”: “v1” 的一个键值对，ctx1 被两个 goroutine 同时使用作为函数签名传入，如果我们修改了 这个map，会导致另外进行读 context.Value 的 goroutine 和修改 map 的 goroutine，在 map 对象上产生 data race。因此我们要使用 copy-on-write 的思路，解决跨多个 goroutine 使用数据、修改数据的场景。</p><p><img class=img-zoomable src=/images/2344773-20210819165219664-351851684.png alt></p><p>context.WithValue 内部基于 valueCtx 实现:</p><pre><code class=language-go>type valueCtx struct {
         Context
         key,val interface{}
 }
-</code></pre>
-<p>为了实现不断的 WithValue，构建新的 context，内部在查找 key 时候，使用递归方式不断从当前，从父节点寻找匹配的 key，直到 root context(Backgrond 和 TODO Value 函数会返回 nil)。</p>
-<pre><code class="language-go">func (c *valueCtx) Value(key interface{}( interface{} {
+</code></pre><p>为了实现不断的 WithValue，构建新的 context，内部在查找 key 时候，使用递归方式不断从当前，从父节点寻找匹配的 key，直到 root context(Backgrond 和 TODO Value 函数会返回 nil)。</p><pre><code class=language-go>func (c *valueCtx) Value(key interface{}( interface{} {
         if c.key == key {
                 return c.val
         }
         return c.Context.Value(key)
 }
-</code></pre>
-<p><img class="img-zoomable" src="/images/2344773-20210819165231515-1238192665.png" alt="" />
-</p>
-<h2 id="调试或跟踪数据在上下文中传递是安全的">调试或跟踪数据在上下文中传递是安全的</h2>
-<p>context.WithValue 方法允许上下文携带请求范围的数据。这些数据必须是安全的，以便多个 goroutine 同时使用。这里的数据，更多是面向请求的元数据，不应该作为函数的可选参数来使用(比如 context 里面挂了一个sql.Tx 对象，传递到 Dao 层使用)，因为元数据相对函数参数更加是隐含的，面向请求的。而参数是更加显示的。</p>
-<ul>
-<li>同一个 context 对象可以传递给在不同 goroutine 中运行的函数；上下文对于多个 goroutine 同时使用是安全的。对于值类型最容易犯错的地方，在于 context value 应该是 immutable 的，每次重新赋值应该是新的 context，即: context.WithValue(ctx, oldvalue)</li>
-</ul>
-<p><a href="https://pkg.go.dev/google.golang.org/grpc/metadata" target="_blank">https://pkg.go.dev/google.golang.org/grpc/metadata</a>
-Context.Value should inform, not control</p>
-<pre><code class="language-go">func WithValue(parent Context,key val interface{}) Context {
+</code></pre><p><img class=img-zoomable src=/images/2344773-20210819165231515-1238192665.png alt></p><h2 id=调试或跟踪数据在上下文中传递是安全的>调试或跟踪数据在上下文中传递是安全的</h2><p>context.WithValue 方法允许上下文携带请求范围的数据。这些数据必须是安全的，以便多个 goroutine 同时使用。这里的数据，更多是面向请求的元数据，不应该作为函数的可选参数来使用(比如 context 里面挂了一个sql.Tx 对象，传递到 Dao 层使用)，因为元数据相对函数参数更加是隐含的，面向请求的。而参数是更加显示的。</p><ul><li>同一个 context 对象可以传递给在不同 goroutine 中运行的函数；上下文对于多个 goroutine 同时使用是安全的。对于值类型最容易犯错的地方，在于 context value 应该是 immutable 的，每次重新赋值应该是新的 context，即: context.WithValue(ctx, oldvalue)</li></ul><p><a href=https://pkg.go.dev/google.golang.org/grpc/metadata target=_blank>https://pkg.go.dev/google.golang.org/grpc/metadata</a>
+Context.Value should inform, not control</p><pre><code class=language-go>func WithValue(parent Context,key val interface{}) Context {
 	if parent == nil {
 		panic(&quot;connot creat context from nil parent&quot;)
 	}
@@ -425,19 +178,7 @@ type valueCtx struct {
 	Context
 	key,val interface{}
 }
-</code></pre>
-<p>用于传递作用域的参数的可选api和用于传递作用域的参数的可选api。比如 染色，API 重要性，Trace</p>
-<p>比如我们新建了一个基于 context.Background() 的 ctx1，携带了一个 map 的数据，map 中包含了 “k1”: “v1” 的一个键值对，ctx1 被两个 goroutine 同时使用作为函数签名传入，如果我们修改了 这个map，会导致另外进行读 context.Value 的 goroutine 和修改 map 的 goroutine，在 map 对象上产生 data race。因此我们要使用 copy-on-write 的思路，解决跨多个 goroutine 使用数据、修改数据的场景。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210819165256515-1747864330.png" alt="" />
-</p>
-<p>COW: 从 ctx1 中获取 map1(可以理解为 v1 版本的 map 数据)。构建一个新的 map 对象 map2，复制所有 map1 数据，同时追加新的数据 “k2”: “v2” 键值对，使用 context.WithValue 创建新的 ctx2，ctx2 会传递到其他的 goroutine 中。这样各自读取的副本都是自己的数据，写行为追加的数据，在 ctx2 中也能完整读取到，同时也不会污染 ctx1 中的数据。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210819165312384-60868291.png" alt="" />
-</p>
-<p><strong>当上下文被取消时，从它派生的所有上下文也被取消</strong></p>
-<p>当一个 context 被取消时，从它派生的所有 context 也将被取消。WithCancel(ctx) 参数 ctx 认为是 parent ctx，在内部会进行一个传播关系链的关联。Done() 返回 一个 chan，当我们取消某个parent context, 实际上上会递归层层 cancel 掉自己的 child context 的 done chan 从而让整个调用链中所有监听 cancel 的 goroutine退出。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210819165327597-1159333262.png" alt="" />
-</p>
-<pre><code class="language-go">package main
+</code></pre><p>用于传递作用域的参数的可选api和用于传递作用域的参数的可选api。比如 染色，API 重要性，Trace</p><p>比如我们新建了一个基于 context.Background() 的 ctx1，携带了一个 map 的数据，map 中包含了 “k1”: “v1” 的一个键值对，ctx1 被两个 goroutine 同时使用作为函数签名传入，如果我们修改了 这个map，会导致另外进行读 context.Value 的 goroutine 和修改 map 的 goroutine，在 map 对象上产生 data race。因此我们要使用 copy-on-write 的思路，解决跨多个 goroutine 使用数据、修改数据的场景。</p><p><img class=img-zoomable src=/images/2344773-20210819165256515-1747864330.png alt></p><p>COW: 从 ctx1 中获取 map1(可以理解为 v1 版本的 map 数据)。构建一个新的 map 对象 map2，复制所有 map1 数据，同时追加新的数据 “k2”: “v2” 键值对，使用 context.WithValue 创建新的 ctx2，ctx2 会传递到其他的 goroutine 中。这样各自读取的副本都是自己的数据，写行为追加的数据，在 ctx2 中也能完整读取到，同时也不会污染 ctx1 中的数据。</p><p><img class=img-zoomable src=/images/2344773-20210819165312384-60868291.png alt></p><p><strong>当上下文被取消时，从它派生的所有上下文也被取消</strong></p><p>当一个 context 被取消时，从它派生的所有 context 也将被取消。WithCancel(ctx) 参数 ctx 认为是 parent ctx，在内部会进行一个传播关系链的关联。Done() 返回 一个 chan，当我们取消某个parent context, 实际上上会递归层层 cancel 掉自己的 child context 的 done chan 从而让整个调用链中所有监听 cancel 的 goroutine退出。</p><p><img class=img-zoomable src=/images/2344773-20210819165327597-1159333262.png alt></p><pre><code class=language-go>package main
 
 import (
 	&quot;context&quot;
@@ -469,12 +210,7 @@ func main() {
 			break
 		}
 	}
-</code></pre>
-<p><strong>所有阻塞/长操作都应可取消</strong></p>
-<p>如果要实现一个超时控制，通过上面的context 的parent/child 机制，其实我们只需要启动一个定时器，然后在超时的时候，直接将当前的 context 给 cancel 掉，就可以实现监听在当前和下层的额context.Done() 的 goroutine 的退出。</p>
-<p><img class="img-zoomable" src="/images/2344773-20210819165341680-872807308.png" alt="" />
-</p>
-<pre><code class="language-go">package main
+</code></pre><p><strong>所有阻塞/长操作都应可取消</strong></p><p>如果要实现一个超时控制，通过上面的context 的parent/child 机制，其实我们只需要启动一个定时器，然后在超时的时候，直接将当前的 context 给 cancel 掉，就可以实现监听在当前和下层的额context.Done() 的 goroutine 的退出。</p><p><img class=img-zoomable src=/images/2344773-20210819165341680-872807308.png alt></p><pre><code class=language-go>package main
 
 import (
 	&quot;context&quot;
@@ -498,406 +234,50 @@ func main() {
 		fmt.Println(ctx.Err())
 	}
 }
-</code></pre>
-
-    </div>
-</article>
-
-
-<div class="license markdown-body">
-    <blockquote>
-        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
-    </blockquote>
-</div>
-
-
-<div class="post-comment" data-comment="utterances">
-    <span class="post-comment-notloaded">
-        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
-    </span>
-    <script>
-        function loadComment() {
-            var commentArea = document.querySelector('.post-comment');
-            var utterancesTheme = document.body.getAttribute('data-theme');
-            if (utterancesTheme === 'auto') {
-                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
-                    'github-light';
-            } else {
-                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
-            }
-            var s = document.createElement('script');
-            s.src = 'https://utteranc.es/client.js';
-            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
-            s.setAttribute('issue-term', 'pathname');
-            s.setAttribute('theme', utterancesTheme);
-            s.setAttribute('crossorigin', 'anonymous');
-            s.setAttribute('async', '');
-            document.querySelector('.post-comment').appendChild(s);
-            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
-        }
-    </script>
-</div>
-
-
-            </div>
-            <aside class="col-12 col-md-3 float-left sidebar">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3><nav id="TableOfContents">
-  <ul>
-    <li><a href="#go-context标准库">go context标准库</a></li>
-    <li><a href="#基本概念">基本概念</a></li>
-    <li><a href="#context接口">context接口</a></li>
-    <li><a href="#background和todo">Background()和TODO()</a></li>
-    <li><a href="#with函数">With函数</a></li>
-    <li><a href="#context使用原则">Context使用原则</a></li>
-    <li><a href="#请求作用域上下文">请求作用域上下文</a>
-      <ul>
-        <li><a href="#不要在stuct类型中存储上下文">不要在stuct类型中存储上下文</a></li>
-      </ul>
-    </li>
-    <li><a href="#contextwithvalue">context.WithValue</a></li>
-    <li><a href="#调试或跟踪数据在上下文中传递是安全的">调试或跟踪数据在上下文中传递是安全的</a></li>
-  </ul>
-</nav></div>
-</aside>
-
-        </div>
-        <div class="btn">
-    <div class="btn-menu" id="btn-menu">
-        <i class="iconfont icon-grid-sharp"></i>
-    </div>
-    <div class="btn-toggle-mode">
-        <i class="iconfont icon-contrast-sharp"></i>
-    </div>
-    <div class="btn-scroll-top">
-        <i class="iconfont icon-chevron-up-circle-sharp"></i>
-    </div>
-</div>
-<aside class="sidebar-mobile" style="display: none;">
-  <div class="sidebar-wrapper">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    
-    
-    
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3>
-        <nav id="TableOfContents">
-  <ul>
-    <li><a href="#go-context标准库">go context标准库</a></li>
-    <li><a href="#基本概念">基本概念</a></li>
-    <li><a href="#context接口">context接口</a></li>
-    <li><a href="#background和todo">Background()和TODO()</a></li>
-    <li><a href="#with函数">With函数</a></li>
-    <li><a href="#context使用原则">Context使用原则</a></li>
-    <li><a href="#请求作用域上下文">请求作用域上下文</a>
-      <ul>
-        <li><a href="#不要在stuct类型中存储上下文">不要在stuct类型中存储上下文</a></li>
-      </ul>
-    </li>
-    <li><a href="#contextwithvalue">context.WithValue</a></li>
-    <li><a href="#调试或跟踪数据在上下文中传递是安全的">调试或跟踪数据在上下文中传递是安全的</a></li>
-  </ul>
-</nav>
-    </div>
-    
-    
-  </div>
-</aside>
-    </main>
-
-    <footer>
-    <div class="container-lg clearfix">
-        <div class="col-12 footer">
-            
-            <span>&copy; 2019-2022
-                <a href="https://www.zhaohaiyu.com">haiyux</a>
-                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
-                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
-                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
-                                                    target="_blank">Hugo</a> 构建
-            </span>
-        </div>
-    </div>
-</footer>
-
-    
-<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
-
-
-
-<script defer src="/assets/js/fuji.min.js"></script>
-
-
-
-</body>
-
-</html>
+</code></pre></div></article><div class="license markdown-body"><blockquote><p>除特殊注明部分，本站内容采用 <a rel=license href=http://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a> 进行许可。</p></blockquote></div><div class=post-comment data-comment=utterances><span class=post-comment-notloaded><i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论</span>
+<script>function loadComment(){var e,n=document.querySelector('.post-comment'),t=document.body.getAttribute('data-theme');t==='auto'?t=window.matchMedia('(prefers-color-scheme: dark)').matches?'photon-dark':'github-light':t=t==='dark'?'photon-dark':'github-light',e=document.createElement('script'),e.src='https://utteranc.es/client.js',e.setAttribute('repo','haiyux/haiyux.github.io'),e.setAttribute('issue-term','pathname'),e.setAttribute('theme',t),e.setAttribute('crossorigin','anonymous'),e.setAttribute('async',''),document.querySelector('.post-comment').appendChild(e),document.querySelector('span.post-comment-notloaded').setAttribute('style','display: none;')}</script></div></div><aside class="col-12 col-md-3 float-left sidebar"><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#go-context标准库>go context标准库</a></li><li><a href=#基本概念>基本概念</a></li><li><a href=#context接口>context接口</a></li><li><a href=#background和todo>Background()和TODO()</a></li><li><a href=#with函数>With函数</a></li><li><a href=#context使用原则>Context使用原则</a></li><li><a href=#请求作用域上下文>请求作用域上下文</a><ul><li><a href=#不要在stuct类型中存储上下文>不要在stuct类型中存储上下文</a></li></ul></li><li><a href=#contextwithvalue>context.WithValue</a></li><li><a href=#调试或跟踪数据在上下文中传递是安全的>调试或跟踪数据在上下文中传递是安全的</a></li></ul></nav></div></aside></div><div class=btn><div class=btn-menu id=btn-menu><i class="iconfont icon-grid-sharp"></i></div><div class=btn-toggle-mode><i class="iconfont icon-contrast-sharp"></i></div><div class=btn-scroll-top><i class="iconfont icon-chevron-up-circle-sharp"></i></div></div><aside class=sidebar-mobile style=display:none><div class=sidebar-wrapper><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#go-context标准库>go context标准库</a></li><li><a href=#基本概念>基本概念</a></li><li><a href=#context接口>context接口</a></li><li><a href=#background和todo>Background()和TODO()</a></li><li><a href=#with函数>With函数</a></li><li><a href=#context使用原则>Context使用原则</a></li><li><a href=#请求作用域上下文>请求作用域上下文</a><ul><li><a href=#不要在stuct类型中存储上下文>不要在stuct类型中存储上下文</a></li></ul></li><li><a href=#contextwithvalue>context.WithValue</a></li><li><a href=#调试或跟踪数据在上下文中传递是安全的>调试或跟踪数据在上下文中传递是安全的</a></li></ul></nav></div></div></aside></main><footer><div class="container-lg clearfix"><div class="col-12 footer"><span>&copy; 2019-2022
+<a href=https://www.zhaohaiyu.com>haiyux</a>
+| <a href=https://www.zhaohaiyu.com>Source code</a>
+| 基于 <a href=https://github.com/dsrkafuu/hugo-theme-fuji/ target=_blank>Fuji-v2</a> & <a href=https://gohugo.io/ target=_blank>Hugo</a> 构建</span></div></div></footer><script defer src=https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js></script>
+<script defer src=/assets/js/fuji.min.js></script></body></html>

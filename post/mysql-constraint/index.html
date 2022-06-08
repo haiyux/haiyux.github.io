@@ -1,182 +1,38 @@
-<!DOCTYPE html>
-<html lang="zh-hans">
-
-<head>
-    
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="HandheldFriendly" content="True" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-<meta name="generator" content="Hugo 0.100.1" />
-
-
-<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-<link rel="manifest" href="/img/site.webmanifest">
-<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-
-
-<title>MySQL数据完整性约束 - 赵海宇的博客</title>
-
-
-<meta name="author" content="haiyux" />
-
-
-<meta name="description" content="欢迎来到haiyux的博客" />
-
-
-<meta name="keywords" content="mysql" />
-
-
-<meta property="og:title" content="MySQL数据完整性约束" />
-<meta name="twitter:title" content="MySQL数据完整性约束" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.zhaohaiyu.com/post/mysql-constraint/" /><meta property="og:description" content="主键约束 主键可以是表中的某一列，也可以是表中的多个列所构成的一个组合；其中，由多个列组合而成的主键也称为复合主键。在MySQL中，主键列必须遵守以下规则。 （1）每一个表只能定义一个主键。 （2）唯一性原" />
-<meta name="twitter:description" content="主键约束 主键可以是表中的某一列，也可以是表中的多个列所构成的一个组合；其中，由多个列组合而成的主键也称为复合主键。在MySQL中，主键列必须遵守以下规则。 （1）每一个表只能定义一个主键。 （2）唯一性原" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2020-01-15T10:33:45+08:00" /><meta property="article:modified_time" content="2020-01-15T10:33:45+08:00" />
-
-
-<style>
-    @media (prefers-color-scheme: dark) {
-        body[data-theme='auto'] img {
-            filter: brightness(60%);
-        }
-    }
-
-    body[data-theme='dark'] img {
-        filter: brightness(60%);
-    }
-</style>
-
-
-
-
-<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
-
-
-
-
-
-
-
-
-</head>
-
-<body
-  data-theme="auto"
-  data-theme-auto='true'
-  >
-    <script data-cfasync="false">
-  
-  var fujiThemeData = localStorage.getItem('fuji_data-theme');
-  
-  if (!fujiThemeData) {
-    localStorage.setItem('fuji_data-theme', 'auto');
-  } else {
-    
-    if (fujiThemeData !== 'auto') {
-      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
-    }
-  }
-</script>
-
-    <header>
-    <div class="container-lg clearfix">
-        <div class="col-12 header">
-            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
-            
-            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
-            
-        </div>
-    </div>
-</header>
-
-    <main>
-        <div class="container-lg clearfix">
-            
-            <div class="col-12 col-md-9 float-left content">
-                
-<article>
-    
-    <h2 class="post-item post-title">
-        <a href="https://www.zhaohaiyu.com/post/mysql-constraint/">MySQL数据完整性约束</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-01-15</span>
-
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=HandheldFriendly content="True"><meta http-equiv=x-ua-compatible content="IE=edge"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=generator content="Hugo 0.100.1"><link rel=apple-touch-icon sizes=180x180 href=/img/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/img/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/img/favicon-16x16.png><link rel=manifest href=/img/site.webmanifest><link rel=mask-icon href=/img/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>MySQL数据完整性约束 - 赵海宇的博客</title><meta name=author content="haiyux"><meta name=description content="欢迎来到haiyux的博客"><meta name=keywords content="mysql"><meta property="og:title" content="MySQL数据完整性约束"><meta name=twitter:title content="MySQL数据完整性约束"><meta property="og:type" content="article"><meta property="og:url" content="https://www.zhaohaiyu.com/post/mysql-constraint/"><meta property="og:description" content="主键约束 主键可以是表中的某一列，也可以是表中的多个列所构成的一个组合；其中，由多个列组合而成的主键也称为复合主键。在MySQL中，主键列必须遵守以下规则。 （1）每一个表只能定义一个主键。 （2）唯一性原"><meta name=twitter:description content="主键约束 主键可以是表中的某一列，也可以是表中的多个列所构成的一个组合；其中，由多个列组合而成的主键也称为复合主键。在MySQL中，主键列必须遵守以下规则。 （1）每一个表只能定义一个主键。 （2）唯一性原"><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta property="article:published_time" content="2020-01-15T10:33:45+08:00"><meta property="article:modified_time" content="2020-01-15T10:33:45+08:00"><style>@media(prefers-color-scheme:dark){body[data-theme=auto] img{filter:brightness(60%)}}body[data-theme=dark] img{filter:brightness(60%)}</style><link rel=stylesheet href=https://www.zhaohaiyu.com/assets/css/fuji.min.css></head><body data-theme=auto data-theme-auto=true><script data-cfasync=false>var fujiThemeData=localStorage.getItem('fuji_data-theme');fujiThemeData?fujiThemeData!=='auto'&&document.body.setAttribute('data-theme',fujiThemeData==='dark'?'dark':'light'):localStorage.setItem('fuji_data-theme','auto')</script><header><div class="container-lg clearfix"><div class="col-12 header"><a class=title-main href=https://www.zhaohaiyu.com>赵海宇的博客</a>
+<span class=title-sub>路漫漫其修远兮,吾将上下而求索。</span></div></div></header><main><div class="container-lg clearfix"><div class="col-12 col-md-9 float-left content"><article><h2 class="post-item post-title"><a href=https://www.zhaohaiyu.com/post/mysql-constraint/>MySQL数据完整性约束</a></h2><div class="post-item post-meta"><span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-01-15</span>
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;1381 字</span>
 <span><i class="iconfont icon-time-sharp"></i>&nbsp;3 分钟</span>
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/mysql">mysql</a>&nbsp;</span>
-
-    </div>
-    
-    <div class="post-content markdown-body">
-        <h2 id="主键约束">主键约束</h2>
-<p>主键可以是表中的某一列，也可以是表中的多个列所构成的一个组合；其中，由多个列组合而成的主键也称为复合主键。在MySQL中，主键列必须遵守以下规则。</p>
-<p>（1）每一个表只能定义一个主键。</p>
-<p>（2）唯一性原则。主键的值，也称键值，必须能够唯一表示表中的每一条记录，且不能为NULL。</p>
-<p>（3）最小化规则。复合主键不能包含不必要的多余列。也就是说，当从一个复合主键中删除一列后，如果剩下的列构成的主键仍能满足唯一性原则，那么这个复合主键是不正确的。</p>
-<p>（4）一个列名在复合主键的列表中只能出现一次。</p>
-<p>示例：创建学生信息表tb_student时，将学号（stu_id）字段设置为主键。</p>
-<pre><code class="language-sql">CREATE TABLE tb_student
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href=/tags/mysql>mysql</a>&nbsp;</span></div><div class="post-content markdown-body"><h2 id=主键约束>主键约束</h2><p>主键可以是表中的某一列，也可以是表中的多个列所构成的一个组合；其中，由多个列组合而成的主键也称为复合主键。在MySQL中，主键列必须遵守以下规则。</p><p>（1）每一个表只能定义一个主键。</p><p>（2）唯一性原则。主键的值，也称键值，必须能够唯一表示表中的每一条记录，且不能为NULL。</p><p>（3）最小化规则。复合主键不能包含不必要的多余列。也就是说，当从一个复合主键中删除一列后，如果剩下的列构成的主键仍能满足唯一性原则，那么这个复合主键是不正确的。</p><p>（4）一个列名在复合主键的列表中只能出现一次。</p><p>示例：创建学生信息表tb_student时，将学号（stu_id）字段设置为主键。</p><pre><code class=language-sql>CREATE TABLE tb_student
 (
 	stu_id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(30)
 );
-</code></pre>
-<p>示例：创建用户信息表tb_student时，将学号（stu_id）和所在班级号（class_id）字段设置为复合主键。</p>
-<pre><code class="language-sql">CREATE TABLE tb_student
+</code></pre><p>示例：创建用户信息表tb_student时，将学号（stu_id）和所在班级号（class_id）字段设置为复合主键。</p><pre><code class=language-sql>CREATE TABLE tb_student
 (
 	stu_id INT AUTO_INCREMENT,
 	name VARCHAR(30),
 	class_id INT NOT NULL,
 	PRIMARY KEY (stu_id,class_id)
 );
-</code></pre>
-<p>示例：通过修改数据表结构，添加主键约束。</p>
-<pre><code class="language-sql">ALTER TABLE tb_student ADD CONSTRAINT PRIMARY KEY(stu_id);
-</code></pre>
-<h2 id="唯一约束">唯一约束</h2>
-<p>唯一约束使用UNIQUE关键字来定义。唯一约束的值必须是唯一的，且不能为空（NULL）。</p>
-<p>在MySQL中，唯一约束与主键之间存在以下两点区别。</p>
-<p>（1）一个表只能创建一个主键，但可以定义多个唯一约束。</p>
-<p>（2）定义主键约束时，系统会自动创建PRIMARY KEY索引，而定义候选键约束时，系统会自动创建UNIQUE索引。</p>
-<p>示例：创建用户信息表tb_student时，将学号（stu_id）和姓名（name）设置为唯一约束。</p>
-<pre><code class="language-sql">CREATE TABLE tb_student
+</code></pre><p>示例：通过修改数据表结构，添加主键约束。</p><pre><code class=language-sql>ALTER TABLE tb_student ADD CONSTRAINT PRIMARY KEY(stu_id);
+</code></pre><h2 id=唯一约束>唯一约束</h2><p>唯一约束使用UNIQUE关键字来定义。唯一约束的值必须是唯一的，且不能为空（NULL）。</p><p>在MySQL中，唯一约束与主键之间存在以下两点区别。</p><p>（1）一个表只能创建一个主键，但可以定义多个唯一约束。</p><p>（2）定义主键约束时，系统会自动创建PRIMARY KEY索引，而定义候选键约束时，系统会自动创建UNIQUE索引。</p><p>示例：创建用户信息表tb_student时，将学号（stu_id）和姓名（name）设置为唯一约束。</p><pre><code class=language-sql>CREATE TABLE tb_student
 (
 	stu_id INT UNIQUE,
 	name VARCHAR(30) UNIQUE
 );
-</code></pre>
-<p>示例：创建用户信息表tb_student时，将学号（stu_id）和姓名（name）字段设置为复合唯一约束。</p>
-<pre><code class="language-sql">CREATE TABLE tb_student
+</code></pre><p>示例：创建用户信息表tb_student时，将学号（stu_id）和姓名（name）字段设置为复合唯一约束。</p><pre><code class=language-sql>CREATE TABLE tb_student
 (
 	stu_id INT,
 	name VARCHAR(30),
 	UNIQUE uniq_id_name (stu_id,name)
 );
-</code></pre>
-<p>示例：通过修改数据表结构，添加唯一约束。</p>
-<pre><code class="language-sql">ALTER TABLE tb_student ADD CONSTRAINT uniq_id_name UNIQUE(stu_id,name);
-</code></pre>
-<h2 id="外键约束">外键约束</h2>
-<p>MySQL有两种常用的引擎类型（MyISAM和InnoDB），目前，只用InnoDB引擎类型支持外键约束。</p>
-<p>示例：创建班级信息表（tb_class）和学生信息表（tb_student），并设置学生信息表中班级编号（class_id）字段的外键约束。</p>
-<p>&ndash; 创建班级信息表</p>
-<pre><code class="language-sql">CREATE TABLE tb_class
+</code></pre><p>示例：通过修改数据表结构，添加唯一约束。</p><pre><code class=language-sql>ALTER TABLE tb_student ADD CONSTRAINT uniq_id_name UNIQUE(stu_id,name);
+</code></pre><h2 id=外键约束>外键约束</h2><p>MySQL有两种常用的引擎类型（MyISAM和InnoDB），目前，只用InnoDB引擎类型支持外键约束。</p><p>示例：创建班级信息表（tb_class）和学生信息表（tb_student），并设置学生信息表中班级编号（class_id）字段的外键约束。</p><p>&ndash; 创建班级信息表</p><pre><code class=language-sql>CREATE TABLE tb_class
 (
 	class_id INT AUTO_INCREMENT PRIMARY KEY,
 	class_name VARCHAR(30) NOT NULL
 );
-</code></pre>
-<p>&ndash; 创建学生信息表，并设置班级ID的外键约束</p>
-<pre><code class="language-sql">CREATE TABLE tb_student
+</code></pre><p>&ndash; 创建学生信息表，并设置班级ID的外键约束</p><pre><code class=language-sql>CREATE TABLE tb_student
 (
 	stu_id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(30),
@@ -184,39 +40,21 @@
 	FOREIGN KEY fk_class_id (class_id)
 	REFERENCES tb_class(class_id)
 );
-</code></pre>
-<p>示例：通过修改数据表结构，添加外键约束。</p>
-<pre><code class="language-sql">ALTER TABLE tb_student ADD CONSTRAINT FOREIGN KEY fk_class_id (class_id) REFERENCES tb_class(class_id);
-</code></pre>
-<h2 id="非空约束">非空约束</h2>
-<p>非空约约束就是限制必须为某个列提供值。空值（NULL）是不存在值，它既不是数字0，也不是空字符串，而是不存在、未知的情况。</p>
-<p>示例：创建学生信息表tb_student时，将姓名（name）字段添加为非空约束。</p>
-<pre><code class="language-sql">CREATE TABLE tb_student
+</code></pre><p>示例：通过修改数据表结构，添加外键约束。</p><pre><code class=language-sql>ALTER TABLE tb_student ADD CONSTRAINT FOREIGN KEY fk_class_id (class_id) REFERENCES tb_class(class_id);
+</code></pre><h2 id=非空约束>非空约束</h2><p>非空约约束就是限制必须为某个列提供值。空值（NULL）是不存在值，它既不是数字0，也不是空字符串，而是不存在、未知的情况。</p><p>示例：创建学生信息表tb_student时，将姓名（name）字段添加为非空约束。</p><pre><code class=language-sql>CREATE TABLE tb_student
 (
 	stu_id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(30) NOT NULL
 );
-</code></pre>
-<p>示例：通过修改数据表结构，将姓名（name）字段修改为非空。</p>
-<pre><code class="language-sql">ALTER TABLE tb_student MODIFY COLUMN name VARCHAR(30) NOT NULL;
-</code></pre>
-<h2 id="检查约束">检查约束</h2>
-<p>检查约束用来指定某列的可取值的范围，它通过限制输入到列中的值来强制域的完整性。</p>
-<p>示例：创建学生信息表tb_student时，将年龄（age）的值设置在7至18之间（不包括18）的数值。</p>
-<pre><code class="language-sql">CREATE TABLE tb_student
+</code></pre><p>示例：通过修改数据表结构，将姓名（name）字段修改为非空。</p><pre><code class=language-sql>ALTER TABLE tb_student MODIFY COLUMN name VARCHAR(30) NOT NULL;
+</code></pre><h2 id=检查约束>检查约束</h2><p>检查约束用来指定某列的可取值的范围，它通过限制输入到列中的值来强制域的完整性。</p><p>示例：创建学生信息表tb_student时，将年龄（age）的值设置在7至18之间（不包括18）的数值。</p><pre><code class=language-sql>CREATE TABLE tb_student
 (
 	stu_id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(30),
 	age INT NOT NULL CHECK(age&gt;=7 AND age&lt;18)
 );
-</code></pre>
-<p>注意：目前的MySQL版本只是对CHECK约束进行了分析处理，但会被直接忽略，并不会报错。</p>
-<h2 id="约束的删除">约束的删除</h2>
-<p>删除约束语法：</p>
-<pre><code class="language-sql">ALTER TABLE 表名 DROP [FOREIGN KEY| INDEX 约束名称]|[PRIMARY KEY]
-</code></pre>
-<p>示例：删除约束。</p>
-<pre><code class="language-sql">CREATE TABLE tb_student
+</code></pre><p>注意：目前的MySQL版本只是对CHECK约束进行了分析处理，但会被直接忽略，并不会报错。</p><h2 id=约束的删除>约束的删除</h2><p>删除约束语法：</p><pre><code class=language-sql>ALTER TABLE 表名 DROP [FOREIGN KEY| INDEX 约束名称]|[PRIMARY KEY]
+</code></pre><p>示例：删除约束。</p><pre><code class=language-sql>CREATE TABLE tb_student
 (
 	stu_id INT,
 	name VARCHAR(30) ,
@@ -241,396 +79,50 @@ ALTER TABLE tb_student DROP FOREIGN KEY fk_class_id;
 
 -- 删除唯一性约束
 ALTER TABLE tb_student DROP INDEX uniq_name;
-</code></pre>
-<h2 id="文章转自">文章转自：</h2>
-<p><a href="https://blog.csdn.net/pan_junbiao/article/details/86158117" target="_blank">https://blog.csdn.net/pan_junbiao/article/details/86158117</a></p>
-
-    </div>
-</article>
-
-
-<div class="license markdown-body">
-    <blockquote>
-        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
-    </blockquote>
-</div>
-
-
-<div class="post-comment" data-comment="utterances">
-    <span class="post-comment-notloaded">
-        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
-    </span>
-    <script>
-        function loadComment() {
-            var commentArea = document.querySelector('.post-comment');
-            var utterancesTheme = document.body.getAttribute('data-theme');
-            if (utterancesTheme === 'auto') {
-                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
-                    'github-light';
-            } else {
-                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
-            }
-            var s = document.createElement('script');
-            s.src = 'https://utteranc.es/client.js';
-            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
-            s.setAttribute('issue-term', 'pathname');
-            s.setAttribute('theme', utterancesTheme);
-            s.setAttribute('crossorigin', 'anonymous');
-            s.setAttribute('async', '');
-            document.querySelector('.post-comment').appendChild(s);
-            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
-        }
-    </script>
-</div>
-
-
-            </div>
-            <aside class="col-12 col-md-3 float-left sidebar">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3><nav id="TableOfContents">
-  <ul>
-    <li><a href="#主键约束">主键约束</a></li>
-    <li><a href="#唯一约束">唯一约束</a></li>
-    <li><a href="#外键约束">外键约束</a></li>
-    <li><a href="#非空约束">非空约束</a></li>
-    <li><a href="#检查约束">检查约束</a></li>
-    <li><a href="#约束的删除">约束的删除</a></li>
-    <li><a href="#文章转自">文章转自：</a></li>
-  </ul>
-</nav></div>
-</aside>
-
-        </div>
-        <div class="btn">
-    <div class="btn-menu" id="btn-menu">
-        <i class="iconfont icon-grid-sharp"></i>
-    </div>
-    <div class="btn-toggle-mode">
-        <i class="iconfont icon-contrast-sharp"></i>
-    </div>
-    <div class="btn-scroll-top">
-        <i class="iconfont icon-chevron-up-circle-sharp"></i>
-    </div>
-</div>
-<aside class="sidebar-mobile" style="display: none;">
-  <div class="sidebar-wrapper">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    
-    
-    
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3>
-        <nav id="TableOfContents">
-  <ul>
-    <li><a href="#主键约束">主键约束</a></li>
-    <li><a href="#唯一约束">唯一约束</a></li>
-    <li><a href="#外键约束">外键约束</a></li>
-    <li><a href="#非空约束">非空约束</a></li>
-    <li><a href="#检查约束">检查约束</a></li>
-    <li><a href="#约束的删除">约束的删除</a></li>
-    <li><a href="#文章转自">文章转自：</a></li>
-  </ul>
-</nav>
-    </div>
-    
-    
-  </div>
-</aside>
-    </main>
-
-    <footer>
-    <div class="container-lg clearfix">
-        <div class="col-12 footer">
-            
-            <span>&copy; 2019-2022
-                <a href="https://www.zhaohaiyu.com">haiyux</a>
-                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
-                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
-                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
-                                                    target="_blank">Hugo</a> 构建
-            </span>
-        </div>
-    </div>
-</footer>
-
-    
-<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
-
-
-
-<script defer src="/assets/js/fuji.min.js"></script>
-
-
-
-</body>
-
-</html>
+</code></pre><h2 id=文章转自>文章转自：</h2><p><a href=https://blog.csdn.net/pan_junbiao/article/details/86158117 target=_blank>https://blog.csdn.net/pan_junbiao/article/details/86158117</a></p></div></article><div class="license markdown-body"><blockquote><p>除特殊注明部分，本站内容采用 <a rel=license href=http://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a> 进行许可。</p></blockquote></div><div class=post-comment data-comment=utterances><span class=post-comment-notloaded><i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论</span>
+<script>function loadComment(){var e,n=document.querySelector('.post-comment'),t=document.body.getAttribute('data-theme');t==='auto'?t=window.matchMedia('(prefers-color-scheme: dark)').matches?'photon-dark':'github-light':t=t==='dark'?'photon-dark':'github-light',e=document.createElement('script'),e.src='https://utteranc.es/client.js',e.setAttribute('repo','haiyux/haiyux.github.io'),e.setAttribute('issue-term','pathname'),e.setAttribute('theme',t),e.setAttribute('crossorigin','anonymous'),e.setAttribute('async',''),document.querySelector('.post-comment').appendChild(e),document.querySelector('span.post-comment-notloaded').setAttribute('style','display: none;')}</script></div></div><aside class="col-12 col-md-3 float-left sidebar"><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#主键约束>主键约束</a></li><li><a href=#唯一约束>唯一约束</a></li><li><a href=#外键约束>外键约束</a></li><li><a href=#非空约束>非空约束</a></li><li><a href=#检查约束>检查约束</a></li><li><a href=#约束的删除>约束的删除</a></li><li><a href=#文章转自>文章转自：</a></li></ul></nav></div></aside></div><div class=btn><div class=btn-menu id=btn-menu><i class="iconfont icon-grid-sharp"></i></div><div class=btn-toggle-mode><i class="iconfont icon-contrast-sharp"></i></div><div class=btn-scroll-top><i class="iconfont icon-chevron-up-circle-sharp"></i></div></div><aside class=sidebar-mobile style=display:none><div class=sidebar-wrapper><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#主键约束>主键约束</a></li><li><a href=#唯一约束>唯一约束</a></li><li><a href=#外键约束>外键约束</a></li><li><a href=#非空约束>非空约束</a></li><li><a href=#检查约束>检查约束</a></li><li><a href=#约束的删除>约束的删除</a></li><li><a href=#文章转自>文章转自：</a></li></ul></nav></div></div></aside></main><footer><div class="container-lg clearfix"><div class="col-12 footer"><span>&copy; 2019-2022
+<a href=https://www.zhaohaiyu.com>haiyux</a>
+| <a href=https://www.zhaohaiyu.com>Source code</a>
+| 基于 <a href=https://github.com/dsrkafuu/hugo-theme-fuji/ target=_blank>Fuji-v2</a> & <a href=https://gohugo.io/ target=_blank>Hugo</a> 构建</span></div></div></footer><script defer src=https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js></script>
+<script defer src=/assets/js/fuji.min.js></script></body></html>

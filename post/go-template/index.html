@@ -1,137 +1,8 @@
-<!DOCTYPE html>
-<html lang="zh-hans">
-
-<head>
-    
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-<meta name="HandheldFriendly" content="True" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-<meta name="generator" content="Hugo 0.100.1" />
-
-
-<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-<link rel="manifest" href="/img/site.webmanifest">
-<link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
-
-
-<title>Go Template - 赵海宇的博客</title>
-
-
-<meta name="author" content="haiyux" />
-
-
-<meta name="description" content="欢迎来到haiyux的博客" />
-
-
-<meta name="keywords" content="golang" />
-
-
-<meta property="og:title" content="Go Template" />
-<meta name="twitter:title" content="Go Template" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://www.zhaohaiyu.com/post/go-template/" /><meta property="og:description" content="html模板生成: html/template包实现了数据驱动的模板，用于生成可对抗代码注入的安全HTML输出。它提供了和text/template包相同的接口，Go语言中输出HTML的场景都应使用te" />
-<meta name="twitter:description" content="html模板生成: html/template包实现了数据驱动的模板，用于生成可对抗代码注入的安全HTML输出。它提供了和text/template包相同的接口，Go语言中输出HTML的场景都应使用te" /><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png" /><meta property="article:published_time" content="2020-10-21T17:26:32+08:00" /><meta property="article:modified_time" content="2020-10-21T17:26:32+08:00" />
-
-
-<style>
-    @media (prefers-color-scheme: dark) {
-        body[data-theme='auto'] img {
-            filter: brightness(60%);
-        }
-    }
-
-    body[data-theme='dark'] img {
-        filter: brightness(60%);
-    }
-</style>
-
-
-
-
-<link rel="stylesheet" href="https://www.zhaohaiyu.com/assets/css/fuji.min.css" />
-
-
-
-
-
-
-
-
-</head>
-
-<body
-  data-theme="auto"
-  data-theme-auto='true'
-  >
-    <script data-cfasync="false">
-  
-  var fujiThemeData = localStorage.getItem('fuji_data-theme');
-  
-  if (!fujiThemeData) {
-    localStorage.setItem('fuji_data-theme', 'auto');
-  } else {
-    
-    if (fujiThemeData !== 'auto') {
-      document.body.setAttribute('data-theme', fujiThemeData === 'dark' ? 'dark' : 'light');
-    }
-  }
-</script>
-
-    <header>
-    <div class="container-lg clearfix">
-        <div class="col-12 header">
-            <a class="title-main" href="https://www.zhaohaiyu.com">赵海宇的博客</a>
-            
-            <span class="title-sub">路漫漫其修远兮,吾将上下而求索。</span>
-            
-        </div>
-    </div>
-</header>
-
-    <main>
-        <div class="container-lg clearfix">
-            
-            <div class="col-12 col-md-9 float-left content">
-                
-<article>
-    
-    <h2 class="post-item post-title">
-        <a href="https://www.zhaohaiyu.com/post/go-template/">Go Template</a>
-    </h2>
-    <div class="post-item post-meta">
-        <span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-21</span>
-
+<!doctype html><html lang=zh-hans><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=HandheldFriendly content="True"><meta http-equiv=x-ua-compatible content="IE=edge"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=generator content="Hugo 0.100.1"><link rel=apple-touch-icon sizes=180x180 href=/img/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/img/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/img/favicon-16x16.png><link rel=manifest href=/img/site.webmanifest><link rel=mask-icon href=/img/safari-pinned-tab.svg color=#5bbad5><meta name=msapplication-TileColor content="#da532c"><meta name=theme-color content="#ffffff"><title>Go Template - 赵海宇的博客</title><meta name=author content="haiyux"><meta name=description content="欢迎来到haiyux的博客"><meta name=keywords content="golang"><meta property="og:title" content="Go Template"><meta name=twitter:title content="Go Template"><meta property="og:type" content="article"><meta property="og:url" content="https://www.zhaohaiyu.com/post/go-template/"><meta property="og:description" content="html模板生成: html/template包实现了数据驱动的模板，用于生成可对抗代码注入的安全HTML输出。它提供了和text/template包相同的接口，Go语言中输出HTML的场景都应使用te"><meta name=twitter:description content="html模板生成: html/template包实现了数据驱动的模板，用于生成可对抗代码注入的安全HTML输出。它提供了和text/template包相同的接口，Go语言中输出HTML的场景都应使用te"><meta property="og:image" content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://www.zhaohaiyu.com/img/favicon-32x32.png"><meta property="article:published_time" content="2020-10-21T17:26:32+08:00"><meta property="article:modified_time" content="2020-10-21T17:26:32+08:00"><style>@media(prefers-color-scheme:dark){body[data-theme=auto] img{filter:brightness(60%)}}body[data-theme=dark] img{filter:brightness(60%)}</style><link rel=stylesheet href=https://www.zhaohaiyu.com/assets/css/fuji.min.css></head><body data-theme=auto data-theme-auto=true><script data-cfasync=false>var fujiThemeData=localStorage.getItem('fuji_data-theme');fujiThemeData?fujiThemeData!=='auto'&&document.body.setAttribute('data-theme',fujiThemeData==='dark'?'dark':'light'):localStorage.setItem('fuji_data-theme','auto')</script><header><div class="container-lg clearfix"><div class="col-12 header"><a class=title-main href=https://www.zhaohaiyu.com>赵海宇的博客</a>
+<span class=title-sub>路漫漫其修远兮,吾将上下而求索。</span></div></div></header><main><div class="container-lg clearfix"><div class="col-12 col-md-9 float-left content"><article><h2 class="post-item post-title"><a href=https://www.zhaohaiyu.com/post/go-template/>Go Template</a></h2><div class="post-item post-meta"><span><i class="iconfont icon-today-sharp"></i>&nbsp;2020-10-21</span>
 <span><i class="iconfont icon-file-tray-sharp"></i>&nbsp;3671 字</span>
 <span><i class="iconfont icon-time-sharp"></i>&nbsp;8 分钟</span>
-<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href="/tags/golang">golang</a>&nbsp;</span>
-
-    </div>
-    
-    <div class="post-content markdown-body">
-        <h2 id="html模板生成">html模板生成:</h2>
-<ul>
-<li>html/template包实现了数据驱动的模板，用于生成可对抗代码注入的安全HTML输出。它提供了和text/template包相同的接口，Go语言中输出HTML的场景都应使用text/template包。</li>
-</ul>
-<h2 id="模板语法">模板语法</h2>
-<h3 id="heading">{{.}}</h3>
-<ul>
-<li>
-<p>模板语法都包含在{{和}}中间，其中{{.}}中的点表示当前对象。</p>
-</li>
-<li>
-<p>当我们传入一个结构体对象时，我们可以根据.来访问结构体的对应字段。例如：</p>
-</li>
-</ul>
-<pre><code class="language-go">// main.go
+<span><i class="iconfont icon-pricetags-sharp"></i>&nbsp;<a href=/tags/golang>golang</a>&nbsp;</span></div><div class="post-content markdown-body"><h2 id=html模板生成>html模板生成:</h2><ul><li>html/template包实现了数据驱动的模板，用于生成可对抗代码注入的安全HTML输出。它提供了和text/template包相同的接口，Go语言中输出HTML的场景都应使用text/template包。</li></ul><h2 id=模板语法>模板语法</h2><h3 id=heading>{{.}}</h3><ul><li><p>模板语法都包含在{{和}}中间，其中{{.}}中的点表示当前对象。</p></li><li><p>当我们传入一个结构体对象时，我们可以根据.来访问结构体的对应字段。例如：</p></li></ul><pre><code class=language-go>// main.go
 func sayHello(w http.ResponseWriter, r *http.Request) {
     // 解析指定文件生成模板对象
     tmpl, err := template.ParseFiles(&quot;./hello.html&quot;)
@@ -157,147 +28,32 @@ func main() {
         return
     }
 }
-</code></pre>
-<pre><code>Hello
+</code></pre><pre><code>Hello
 姓名 {{.Name}}
 年龄：{{.Age}}
 同理，当我们传入的变量是map时，也可以在模板文件中通过.根据key来取值。
-</code></pre>
-<h3 id="注释">注释</h3>
-<p>{{/* a comment */}}</p>
-<h3 id="pipeline">pipeline</h3>
-<ul>
-<li>pipeline是指产生数据的操作。比如{{.}}、{{.Name}}等。Go的模板语法中支持使用管道符号|链接多个命令，用法和unix下的管道类似：|前面的命令会将运算结果(或返回值)传递给后一个命令的最后一个位置。</li>
-</ul>
-<p>**注意：**并不是只有使用了|才是pipeline。Go的模板语法中，pipeline的概念是传递数据，只要能产生数据的，都是pipeline。</p>
-<h3 id="变量">变量</h3>
-<ul>
-<li>我们还可以在模板中声明变量，用来保存传入模板的数据或其他语句生成的结果。具体语法如下：</li>
-</ul>
-<pre><code class="language-go">$obj := {{.}}
+</code></pre><h3 id=注释>注释</h3><p>{{/* a comment */}}</p><h3 id=pipeline>pipeline</h3><ul><li>pipeline是指产生数据的操作。比如{{.}}、{{.Name}}等。Go的模板语法中支持使用管道符号|链接多个命令，用法和unix下的管道类似：|前面的命令会将运算结果(或返回值)传递给后一个命令的最后一个位置。</li></ul><p>**注意：**并不是只有使用了|才是pipeline。Go的模板语法中，pipeline的概念是传递数据，只要能产生数据的，都是pipeline。</p><h3 id=变量>变量</h3><ul><li>我们还可以在模板中声明变量，用来保存传入模板的数据或其他语句生成的结果。具体语法如下：</li></ul><pre><code class=language-go>$obj := {{.}}
 
 其中$obj是变量的名字，在后续的代码中就可以使用该变量了。
-</code></pre>
-<h3 id="移除空格">移除空格</h3>
-<ul>
-<li>有时候我们在使用模板语法的时候会不可避免的引入一下空格或者换行符，这样模板最终渲染出来的内容可能就和我们想的不一样，这个时候可以使用{{-语法去除模板内容左侧的所有空白符号， 使用-}}去除模板内容右侧的所有空白符号。</li>
-</ul>
-<p>例如：{{- .Name -}}</p>
-<p><strong>注意：</strong>-要紧挨{{和}}，同时与模板值之间需要使用空格分隔。</p>
-<h3 id="条件判断">条件判断</h3>
-<ul>
-<li>Go模板语法中的条件判断有以下几种:</li>
-</ul>
-<pre><code class="language-go">{{if pipeline}} T1 {{end}}
+</code></pre><h3 id=移除空格>移除空格</h3><ul><li>有时候我们在使用模板语法的时候会不可避免的引入一下空格或者换行符，这样模板最终渲染出来的内容可能就和我们想的不一样，这个时候可以使用{{-语法去除模板内容左侧的所有空白符号， 使用-}}去除模板内容右侧的所有空白符号。</li></ul><p>例如：{{- .Name -}}</p><p><strong>注意：</strong>-要紧挨{{和}}，同时与模板值之间需要使用空格分隔。</p><h3 id=条件判断>条件判断</h3><ul><li>Go模板语法中的条件判断有以下几种:</li></ul><pre><code class=language-go>{{if pipeline}} T1 {{end}}
 {{if pipeline}} T1 {{else}} T0 {{end}}
 {{if pipeline}} T1 {{else if pipeline}} T0 {{end}}
-</code></pre>
-<h3 id="range">range</h3>
-<p>Go的模板语法中使用range关键字进行遍历，有以下两种写法，其中pipeline的值必须是数组、切片、字典或者通道。</p>
-<pre><code class="language-go">{{range pipeline}} T1 {{end}}
+</code></pre><h3 id=range>range</h3><p>Go的模板语法中使用range关键字进行遍历，有以下两种写法，其中pipeline的值必须是数组、切片、字典或者通道。</p><pre><code class=language-go>{{range pipeline}} T1 {{end}}
 
 {{range pipeline}} T1 {{else}} T0 {{end}}
-</code></pre>
-<h3 id="with">with</h3>
-<pre><code class="language-go">{{with pipeline}} T1 {{end}}
+</code></pre><h3 id=with>with</h3><pre><code class=language-go>{{with pipeline}} T1 {{end}}
 
 {{with pipeline}} T1 {{else}} T0 {{end}}
-</code></pre>
-<h3 id="预定义函数">预定义函数</h3>
-<p>执行模板时，函数从两个函数字典中查找：首先是模板函数字典，然后是全局函数字典。一般不在模板内定义函数，而是使用Funcs方法添加函数到模板里。</p>
-<p>预定义的全局函数如下：</p>
-<ol>
-<li>and
-<ul>
-<li>函数返回它的第一个empty参数或者最后一个参数；</li>
-<li>就是说&quot;and x y&quot;等价于&quot;if x then y else x&quot;；所有参数都会执行；</li>
-</ul>
-</li>
-<li>or
-<ul>
-<li>返回第一个非empty参数或者最后一个参数；</li>
-<li>亦即&quot;or x y&quot;等价于&quot;if x then x else y&quot;；所有参数都会执行；</li>
-</ul>
-</li>
-<li>not
-<ul>
-<li>返回它的单个参数的布尔值的否定</li>
-</ul>
-</li>
-<li>len
-<ul>
-<li>返回它的参数的整数类型长度</li>
-</ul>
-</li>
-<li>index
-<ul>
-<li>执行结果为第一个参数以剩下的参数为索引/键指向的值；</li>
-<li>如&quot;index x 1 2 3&quot;返回x[1][2][3]的值；每个被索引的主体必须是数组、切片或者字典。</li>
-</ul>
-</li>
-<li>print
-<ul>
-<li>即fmt.Sprint</li>
-</ul>
-</li>
-<li>printf
-<ul>
-<li>即fmt.Sprintf</li>
-</ul>
-</li>
-<li>println
-<ul>
-<li>即fmt.Sprintln</li>
-</ul>
-</li>
-<li>html
-<ul>
-<li>返回与其参数的文本表示形式等效的转义HTML。</li>
-<li>这个函数在html/template中不可用。</li>
-</ul>
-</li>
-<li>urlquery</li>
-</ol>
-<ul>
-<li>以适合嵌入到网址查询中的形式返回其参数的文本表示的转义值。</li>
-<li>这个函数在html/template中不可用。</li>
-</ul>
-<ol>
-<li>js</li>
-</ol>
-<ul>
-<li>返回与其参数的文本表示形式等效的转义JavaScript。</li>
-</ul>
-<ol>
-<li>call</li>
-</ol>
-<ul>
-<li>
-<p>执行结果是调用第一个参数的返回值，该参数必须是函数类型，其余参数作为调用该函数的参数；</p>
-<p>如&quot;call .X.Y 1 2&quot;等价于go语言里的dot.X.Y(1, 2)；
+</code></pre><h3 id=预定义函数>预定义函数</h3><p>执行模板时，函数从两个函数字典中查找：首先是模板函数字典，然后是全局函数字典。一般不在模板内定义函数，而是使用Funcs方法添加函数到模板里。</p><p>预定义的全局函数如下：</p><ol><li>and<ul><li>函数返回它的第一个empty参数或者最后一个参数；</li><li>就是说"and x y"等价于"if x then y else x"；所有参数都会执行；</li></ul></li><li>or<ul><li>返回第一个非empty参数或者最后一个参数；</li><li>亦即"or x y"等价于"if x then x else y"；所有参数都会执行；</li></ul></li><li>not<ul><li>返回它的单个参数的布尔值的否定</li></ul></li><li>len<ul><li>返回它的参数的整数类型长度</li></ul></li><li>index<ul><li>执行结果为第一个参数以剩下的参数为索引/键指向的值；</li><li>如"index x 1 2 3"返回x[1][2][3]的值；每个被索引的主体必须是数组、切片或者字典。</li></ul></li><li>print<ul><li>即fmt.Sprint</li></ul></li><li>printf<ul><li>即fmt.Sprintf</li></ul></li><li>println<ul><li>即fmt.Sprintln</li></ul></li><li>html<ul><li>返回与其参数的文本表示形式等效的转义HTML。</li><li>这个函数在html/template中不可用。</li></ul></li><li>urlquery</li></ol><ul><li>以适合嵌入到网址查询中的形式返回其参数的文本表示的转义值。</li><li>这个函数在html/template中不可用。</li></ul><ol><li>js</li></ol><ul><li>返回与其参数的文本表示形式等效的转义JavaScript。</li></ul><ol><li>call</li></ol><ul><li><p>执行结果是调用第一个参数的返回值，该参数必须是函数类型，其余参数作为调用该函数的参数；</p><p>如"call .X.Y 1 2"等价于go语言里的dot.X.Y(1, 2)；
 其中Y是函数类型的字段或者字典的值，或者其他类似情况；
 call的第一个参数的执行结果必须是函数类型的值（和预定义函数如print明显不同）；
 该函数类型值必须有1到2个返回值，如果有2个则后一个必须是error接口类型；
-如果有2个返回值的方法返回的error非nil，模板执行会中断并返回给调用模板执行者该错误；</p>
-</li>
-</ul>
-<h3 id="比较函数">比较函数</h3>
-<ul>
-<li>布尔函数会将任何类型的零值视为假，其余视为真。</li>
-</ul>
-<p>下面是定义为函数的二元比较运算的集合：</p>
-<p>eq      如果arg1 == arg2则返回真
-ne      如果arg1 != arg2则返回真
-lt      如果arg1 &lt; arg2则返回真
-le      如果arg1 &lt;= arg2则返回真
-gt      如果arg1 &gt; arg2则返回真
-ge      如果arg1 &gt;= arg2则返回真</p>
-<p>为了简化多参数相等检测，eq（只有eq）可以接受2个或更多个参数，它会将第一个参数和其余参数依次比较，返回下式的结果：</p>
-<p>{{eq arg1 arg2 arg3}}</p>
-<p>比较函数只适用于基本类型（或重定义的基本类型，如”type Celsius float32”）。但是，整数和浮点数不能互相比较。</p>
-<h3 id="自定义函数">自定义函数</h3>
-<p>Go的模板支持自定义函数。</p>
-<pre><code class="language-go">func sayHello(w http.ResponseWriter, r *http.Request) {
+如果有2个返回值的方法返回的error非nil，模板执行会中断并返回给调用模板执行者该错误；</p></li></ul><h3 id=比较函数>比较函数</h3><ul><li>布尔函数会将任何类型的零值视为假，其余视为真。</li></ul><p>下面是定义为函数的二元比较运算的集合：</p><p>eq 如果arg1 == arg2则返回真
+ne 如果arg1 != arg2则返回真
+lt 如果arg1 &lt; arg2则返回真
+le 如果arg1 &lt;= arg2则返回真
+gt 如果arg1 > arg2则返回真
+ge 如果arg1 >= arg2则返回真</p><p>为了简化多参数相等检测，eq（只有eq）可以接受2个或更多个参数，它会将第一个参数和其余参数依次比较，返回下式的结果：</p><p>{{eq arg1 arg2 arg3}}</p><p>比较函数只适用于基本类型（或重定义的基本类型，如”type Celsius float32”）。但是，整数和浮点数不能互相比较。</p><h3 id=自定义函数>自定义函数</h3><p>Go的模板支持自定义函数。</p><pre><code class=language-go>func sayHello(w http.ResponseWriter, r *http.Request) {
 	htmlByte, err := ioutil.ReadFile(&quot;./hello.tmpl&quot;)
 	if err != nil {
 		fmt.Println(&quot;read html failed, err:&quot;, err)
@@ -321,29 +77,20 @@ ge      如果arg1 &gt;= arg2则返回真</p>
 	// 使用user渲染模板，并将结果写入w
 	tmpl.Execute(w, user)
 }
-</code></pre>
-<p>我们可以在模板文件hello.tmpl中按照如下方式使用我们自定义的kua函数了。</p>
-<p>{{kua .Name}}</p>
-<h3 id="嵌套template">嵌套template</h3>
-<p>我们可以在template中嵌套其他的template。这个template可以是单独的文件，也可以是通过define定义的template。</p>
-<p>举个例子：t.tmpl文件内容如下：tmpl test</p>
-<p>测试嵌套template语法 {{template &ldquo;ul.tmpl&rdquo;}}</p>
-<pre><code>{{template &quot;ol.tmpl&quot;}}
+</code></pre><p>我们可以在模板文件hello.tmpl中按照如下方式使用我们自定义的kua函数了。</p><p>{{kua .Name}}</p><h3 id=嵌套template>嵌套template</h3><p>我们可以在template中嵌套其他的template。这个template可以是单独的文件，也可以是通过define定义的template。</p><p>举个例子：t.tmpl文件内容如下：tmpl test</p><p>测试嵌套template语法 {{template &ldquo;ul.tmpl&rdquo;}}</p><pre><code>{{template &quot;ol.tmpl&quot;}}
 
 {{ define &quot;ol.tmpl&quot;}}
 吃饭
 睡觉
 打豆豆
 {{end}}
-</code></pre>
-<p>ul.tmpl文件内容如下：
+</code></pre><p>ul.tmpl文件内容如下：
 注释
 日志
 测试
 我们注册一个templDemo路由处理函数.
-http.HandleFunc(&quot;/tmpl&quot;, tmplDemo)
-tmplDemo函数的具体内容如下：</p>
-<pre><code class="language-go">func tmplDemo(w http.ResponseWriter, r *http.Request) {
+http.HandleFunc("/tmpl", tmplDemo)
+tmplDemo函数的具体内容如下：</p><pre><code class=language-go>func tmplDemo(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles(&quot;./t.tmpl&quot;, &quot;./ul.tmpl&quot;)
 	if err != nil {
 		fmt.Println(&quot;create template failed, err:&quot;, err)
@@ -356,21 +103,11 @@ tmplDemo函数的具体内容如下：</p>
 	}
 	tmpl.Execute(w, user)
 }
-</code></pre>
-<p><strong>注意</strong>：在解析模板时，被嵌套的模板一定要在后面解析，例如上面的示例中t.tmpl模板中嵌套了ul.tmpl，所以ul.tmpl要在t.tmpl后进行解析。</p>
-<h3 id="block">block</h3>
-<p>{{block &ldquo;name&rdquo; pipeline}} T1 {{end}}</p>
-<p>block是定义模板{{define &ldquo;name&rdquo;}} T1 {{end}}和执行{{template &ldquo;name&rdquo; pipeline}}缩写，典型的用法是定义一组根模板，然后通过在其中重新定义块模板进行自定义。</p>
-<p>定义一个根模板templates/base.tmpl，内容如下：Go Templates</p>
-<p>{{block &ldquo;content&rdquo; . }}{{end}}</p>
-<p>然后定义一个templates/index.tmpl，”继承”base.tmpl：</p>
-<pre><code class="language-go">{{template &quot;base.tmpl&quot;}}
+</code></pre><p><strong>注意</strong>：在解析模板时，被嵌套的模板一定要在后面解析，例如上面的示例中t.tmpl模板中嵌套了ul.tmpl，所以ul.tmpl要在t.tmpl后进行解析。</p><h3 id=block>block</h3><p>{{block &ldquo;name&rdquo; pipeline}} T1 {{end}}</p><p>block是定义模板{{define &ldquo;name&rdquo;}} T1 {{end}}和执行{{template &ldquo;name&rdquo; pipeline}}缩写，典型的用法是定义一组根模板，然后通过在其中重新定义块模板进行自定义。</p><p>定义一个根模板templates/base.tmpl，内容如下：Go Templates</p><p>{{block &ldquo;content&rdquo; . }}{{end}}</p><p>然后定义一个templates/index.tmpl，”继承”base.tmpl：</p><pre><code class=language-go>{{template &quot;base.tmpl&quot;}}
 {{define &quot;content&quot;}}
     Hello world!
 {{end}}
-</code></pre>
-<p>然后使用template.ParseGlob按照正则匹配规则解析模板文件，然后通过ExecuteTemplate渲染指定的模板：</p>
-<pre><code class="language-go">func index(w http.ResponseWriter, r *http.Request){
+</code></pre><p>然后使用template.ParseGlob按照正则匹配规则解析模板文件，然后通过ExecuteTemplate渲染指定的模板：</p><pre><code class=language-go>func index(w http.ResponseWriter, r *http.Request){
 	tmpl, err := template.ParseGlob(&quot;templates/*.tmpl&quot;)
 	if err != nil {
 		fmt.Println(&quot;create template failed, err:&quot;, err)
@@ -382,24 +119,9 @@ tmplDemo函数的具体内容如下：</p>
 		return
 	}
 }
-</code></pre>
-<p>如果我们的模板名称冲突了，例如不同业务线下都定义了一个index.tmpl模板，我们可以通过下面两种方法来解决。</p>
-<ol>
-<li>在模板文件开头使用{{define 模板名}}语句显式的为模板命名。</li>
-<li>可以把模板文件存放在templates文件夹下面的不同目录中，然后使用template.ParseGlob(&ldquo;templates/**/*.tmpl&rdquo;)解析模板。</li>
-</ol>
-<h3 id="修改默认的标识符">修改默认的标识符</h3>
-<p>Go标准库的模板引擎使用的花括号{{和}}作为标识，而许多前端框架（如Vue和AngularJS）也使用{{和}}作为标识符，所以当我们同时使用Go语言模板引擎和以上前端框架时就会出现冲突，这个时候我们需要修改标识符，修改前端的或者修改Go语言的。这里演示如何修改Go语言模板引擎默认的标识符：</p>
-<p>template.New(&ldquo;test&rdquo;).Delims(&quot;{[&quot;, &ldquo;]}&rdquo;).ParseFiles(&quot;./t.tmpl&quot;)</p>
-<h2 id="texttemplate与htmltempalte的区别">text/template与html/tempalte的区别</h2>
-<p>html/template针对的是需要返回HTML内容的场景，在模板渲染过程中会对一些有风险的内容进行转义，以此来防范跨站脚本攻击。</p>
-<p>例如，我定义下面的模板文件：</p>
-<pre><code class="language-go">Hello
+</code></pre><p>如果我们的模板名称冲突了，例如不同业务线下都定义了一个index.tmpl模板，我们可以通过下面两种方法来解决。</p><ol><li>在模板文件开头使用{{define 模板名}}语句显式的为模板命名。</li><li>可以把模板文件存放在templates文件夹下面的不同目录中，然后使用template.ParseGlob(&ldquo;templates/**/*.tmpl&rdquo;)解析模板。</li></ol><h3 id=修改默认的标识符>修改默认的标识符</h3><p>Go标准库的模板引擎使用的花括号{{和}}作为标识，而许多前端框架（如Vue和AngularJS）也使用{{和}}作为标识符，所以当我们同时使用Go语言模板引擎和以上前端框架时就会出现冲突，这个时候我们需要修改标识符，修改前端的或者修改Go语言的。这里演示如何修改Go语言模板引擎默认的标识符：</p><p>template.New(&ldquo;test&rdquo;).Delims("{[", &ldquo;]}&rdquo;).ParseFiles("./t.tmpl")</p><h2 id=texttemplate与htmltempalte的区别>text/template与html/tempalte的区别</h2><p>html/template针对的是需要返回HTML内容的场景，在模板渲染过程中会对一些有风险的内容进行转义，以此来防范跨站脚本攻击。</p><p>例如，我定义下面的模板文件：</p><pre><code class=language-go>Hello
 {{.}}
-</code></pre>
-<p>这个时候传入一段JS代码并使用html/template去渲染该文件，会在页面上显示出转义后的JS内容。alert(&lsquo;嘿嘿嘿&rsquo;)这就是html/template为我们做的事。</p>
-<p>但是在某些场景下，我们如果相信用户输入的内容，不想转义的话，可以自行编写一个safe函数，手动返回一个template.HTML类型的内容。示例如下：</p>
-<pre><code class="language-go">func xss(w http.ResponseWriter, r *http.Request){
+</code></pre><p>这个时候传入一段JS代码并使用html/template去渲染该文件，会在页面上显示出转义后的JS内容。alert(&lsquo;嘿嘿嘿&rsquo;)这就是html/template为我们做的事。</p><p>但是在某些场景下，我们如果相信用户输入的内容，不想转义的话，可以自行编写一个safe函数，手动返回一个template.HTML类型的内容。示例如下：</p><pre><code class=language-go>func xss(w http.ResponseWriter, r *http.Request){
 	tmpl,err := template.New(&quot;xss.tmpl&quot;).Funcs(template.FuncMap{
 		&quot;safe&quot;: func(s string)template.HTML {
 			return template.HTML(s)
@@ -415,11 +137,7 @@ tmplDemo函数的具体内容如下：</p>
 		fmt.Println(err)
 	}
 }
-</code></pre>
-<p>这样我们只需要在模板文件不需要转义的内容后面使用我们定义好的safe函数就可以了。{{ . | safe }}</p>
-<h2 id="代码生成">代码生成</h2>
-<p><strong>生成代码用text/template包,模板语法和html/template一样</strong></p>
-<pre><code class="language-go">package main
+</code></pre><p>这样我们只需要在模板文件不需要转义的内容后面使用我们定义好的safe函数就可以了。{{ . | safe }}</p><h2 id=代码生成>代码生成</h2><p><strong>生成代码用text/template包,模板语法和html/template一样</strong></p><pre><code class=language-go>package main
 import (
 	&quot;fmt&quot;
 	&quot;html/template&quot;
@@ -455,9 +173,7 @@ func main() {
 	}
 	return
 }
-</code></pre>
-<p>生成的代码:</p>
-<pre><code class="language-go">package main
+</code></pre><p>生成的代码:</p><pre><code class=language-go>package main
 import &quot;fmt&quot;
 func main() {
 	str := &quot;zhaohaiyu&quot;
@@ -465,426 +181,50 @@ func main() {
 		fmt.Println(v)
 	}
 }
-</code></pre>
-<p>参考文章:</p>
-<ul>
-<li><a href="https://www.liwenzhou.com/posts/Go/go_template/#autoid-1-3-0" target="_blank">https://www.liwenzhou.com/posts/Go/go_template/#autoid-1-3-0</a></li>
-</ul>
-
-    </div>
-</article>
-
-
-<div class="license markdown-body">
-    <blockquote>
-        <p>除特殊注明部分，本站内容采用 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
-               target="_blank">CC BY-NC-SA 4.0</a> 进行许可。</p>
-    </blockquote>
-</div>
-
-
-<div class="post-comment" data-comment="utterances">
-    <span class="post-comment-notloaded">
-        <i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论
-    </span>
-    <script>
-        function loadComment() {
-            var commentArea = document.querySelector('.post-comment');
-            var utterancesTheme = document.body.getAttribute('data-theme');
-            if (utterancesTheme === 'auto') {
-                utterancesTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'photon-dark' :
-                    'github-light';
-            } else {
-                utterancesTheme = utterancesTheme === 'dark' ? 'photon-dark' : 'github-light';
-            }
-            var s = document.createElement('script');
-            s.src = 'https://utteranc.es/client.js';
-            s.setAttribute('repo', 'haiyux\/haiyux.github.io');
-            s.setAttribute('issue-term', 'pathname');
-            s.setAttribute('theme', utterancesTheme);
-            s.setAttribute('crossorigin', 'anonymous');
-            s.setAttribute('async', '');
-            document.querySelector('.post-comment').appendChild(s);
-            document.querySelector('span.post-comment-notloaded').setAttribute('style', 'display: none;');
-        }
-    </script>
-</div>
-
-
-            </div>
-            <aside class="col-12 col-md-3 float-left sidebar">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3><nav id="TableOfContents">
-  <ul>
-    <li><a href="#html模板生成">html模板生成:</a></li>
-    <li><a href="#模板语法">模板语法</a>
-      <ul>
-        <li><a href="#heading">{{.}}</a></li>
-        <li><a href="#注释">注释</a></li>
-        <li><a href="#pipeline">pipeline</a></li>
-        <li><a href="#变量">变量</a></li>
-        <li><a href="#移除空格">移除空格</a></li>
-        <li><a href="#条件判断">条件判断</a></li>
-        <li><a href="#range">range</a></li>
-        <li><a href="#with">with</a></li>
-        <li><a href="#预定义函数">预定义函数</a></li>
-        <li><a href="#比较函数">比较函数</a></li>
-        <li><a href="#自定义函数">自定义函数</a></li>
-        <li><a href="#嵌套template">嵌套template</a></li>
-        <li><a href="#block">block</a></li>
-        <li><a href="#修改默认的标识符">修改默认的标识符</a></li>
-      </ul>
-    </li>
-    <li><a href="#texttemplate与htmltempalte的区别">text/template与html/tempalte的区别</a></li>
-    <li><a href="#代码生成">代码生成</a></li>
-  </ul>
-</nav></div>
-</aside>
-
-        </div>
-        <div class="btn">
-    <div class="btn-menu" id="btn-menu">
-        <i class="iconfont icon-grid-sharp"></i>
-    </div>
-    <div class="btn-toggle-mode">
-        <i class="iconfont icon-contrast-sharp"></i>
-    </div>
-    <div class="btn-scroll-top">
-        <i class="iconfont icon-chevron-up-circle-sharp"></i>
-    </div>
-</div>
-<aside class="sidebar-mobile" style="display: none;">
-  <div class="sidebar-wrapper">
-    
-    <div class="sidebar-item sidebar-pages">
-        <h3>页面</h3>
-        <ul>
-            
-            <li>
-                <a href="/">主页</a>
-            </li>
-            
-            <li>
-                <a href="/archives/">文章</a>
-            </li>
-            
-            <li>
-                <a href="/about/">关于</a>
-            </li>
-            
-            <li>
-                <a href="/search/">搜索</a>
-            </li>
-            
-            <li>
-                <a href="/index.xml">RSS</a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-links">
-        <h3>链接</h3>
-        <ul>
-            
-            <li>
-                <a href="https://github.com/haiyux" target="_blank"><span>GitHub</span></a>
-            </li>
-            
-            <li>
-                <a href="https://go-kratos.dev" target="_blank"><span>Kratos</span></a>
-            </li>
-            
-            <li>
-                <a href="mailto:haiyux@foxmail.com" target="_blank"><span>Email</span></a>
-            </li>
-            
-        </ul>
-    </div>
-    
-    <div class="sidebar-item sidebar-tags">
-        <h3>标签</h3>
-        <div>
-            
-            <span>
-                <a href="/tags/ddd/">DDD</a>
-            </span>
-            
-            <span>
-                <a href="/tags/docker/">docker</a>
-            </span>
-            
-            <span>
-                <a href="/tags/golang/">golang</a>
-            </span>
-            
-            <span>
-                <a href="/tags/grpc/">grpc</a>
-            </span>
-            
-            <span>
-                <a href="/tags/http/">http</a>
-            </span>
-            
-            <span>
-                <a href="/tags/kratos/">kratos</a>
-            </span>
-            
-            <span>
-                <a href="/tags/makefile/">makefile</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mq/">mq</a>
-            </span>
-            
-            <span>
-                <a href="/tags/mysql/">mysql</a>
-            </span>
-            
-            <span>
-                <a href="/tags/nginx/">nginx</a>
-            </span>
-            
-            <span>
-                <a href="/tags/protobuf/">protobuf</a>
-            </span>
-            
-            <span>
-                <a href="/tags/raft/">raft</a>
-            </span>
-            
-            <span>
-                <a href="/tags/redis/">redis</a>
-            </span>
-            
-            <span>
-                <a href="/tags/thrift/">Thrift</a>
-            </span>
-            
-            <span>
-                <a href="/tags/traceing/">traceing</a>
-            </span>
-            
-            <span>
-                <a href="/tags/wire/">wire</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E6%B3%9B%E5%9E%8B/">泛型</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
-            </span>
-            
-            <span>
-                <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-            </span>
-            
-        </div>
-    </div>
-    
-    
-    
-    <div class="sidebar-item sidebar-toc">
-        <h3>目录</h3>
-        <nav id="TableOfContents">
-  <ul>
-    <li><a href="#html模板生成">html模板生成:</a></li>
-    <li><a href="#模板语法">模板语法</a>
-      <ul>
-        <li><a href="#heading">{{.}}</a></li>
-        <li><a href="#注释">注释</a></li>
-        <li><a href="#pipeline">pipeline</a></li>
-        <li><a href="#变量">变量</a></li>
-        <li><a href="#移除空格">移除空格</a></li>
-        <li><a href="#条件判断">条件判断</a></li>
-        <li><a href="#range">range</a></li>
-        <li><a href="#with">with</a></li>
-        <li><a href="#预定义函数">预定义函数</a></li>
-        <li><a href="#比较函数">比较函数</a></li>
-        <li><a href="#自定义函数">自定义函数</a></li>
-        <li><a href="#嵌套template">嵌套template</a></li>
-        <li><a href="#block">block</a></li>
-        <li><a href="#修改默认的标识符">修改默认的标识符</a></li>
-      </ul>
-    </li>
-    <li><a href="#texttemplate与htmltempalte的区别">text/template与html/tempalte的区别</a></li>
-    <li><a href="#代码生成">代码生成</a></li>
-  </ul>
-</nav>
-    </div>
-    
-    
-  </div>
-</aside>
-    </main>
-
-    <footer>
-    <div class="container-lg clearfix">
-        <div class="col-12 footer">
-            
-            <span>&copy; 2019-2022
-                <a href="https://www.zhaohaiyu.com">haiyux</a>
-                 | <a href="https://www.zhaohaiyu.com">Source code</a> 
-                | 基于 <a href="https://github.com/dsrkafuu/hugo-theme-fuji/"
-                   target="_blank">Fuji-v2</a> &amp; <a href="https://gohugo.io/"
-                                                    target="_blank">Hugo</a> 构建
-            </span>
-        </div>
-    </div>
-</footer>
-
-    
-<script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js"></script>
-
-
-
-<script defer src="/assets/js/fuji.min.js"></script>
-
-
-
-</body>
-
-</html>
+</code></pre><p>参考文章:</p><ul><li><a href=https://www.liwenzhou.com/posts/Go/go_template/#autoid-1-3-0 target=_blank>https://www.liwenzhou.com/posts/Go/go_template/#autoid-1-3-0</a></li></ul></div></article><div class="license markdown-body"><blockquote><p>除特殊注明部分，本站内容采用 <a rel=license href=http://creativecommons.org/licenses/by-nc-sa/4.0/ target=_blank>CC BY-NC-SA 4.0</a> 进行许可。</p></blockquote></div><div class=post-comment data-comment=utterances><span class=post-comment-notloaded><i class="iconfont icon-chatbox-ellipses-sharp"></i>&nbsp;查看评论</span>
+<script>function loadComment(){var e,n=document.querySelector('.post-comment'),t=document.body.getAttribute('data-theme');t==='auto'?t=window.matchMedia('(prefers-color-scheme: dark)').matches?'photon-dark':'github-light':t=t==='dark'?'photon-dark':'github-light',e=document.createElement('script'),e.src='https://utteranc.es/client.js',e.setAttribute('repo','haiyux/haiyux.github.io'),e.setAttribute('issue-term','pathname'),e.setAttribute('theme',t),e.setAttribute('crossorigin','anonymous'),e.setAttribute('async',''),document.querySelector('.post-comment').appendChild(e),document.querySelector('span.post-comment-notloaded').setAttribute('style','display: none;')}</script></div></div><aside class="col-12 col-md-3 float-left sidebar"><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#html模板生成>html模板生成:</a></li><li><a href=#模板语法>模板语法</a><ul><li><a href=#heading>{{.}}</a></li><li><a href=#注释>注释</a></li><li><a href=#pipeline>pipeline</a></li><li><a href=#变量>变量</a></li><li><a href=#移除空格>移除空格</a></li><li><a href=#条件判断>条件判断</a></li><li><a href=#range>range</a></li><li><a href=#with>with</a></li><li><a href=#预定义函数>预定义函数</a></li><li><a href=#比较函数>比较函数</a></li><li><a href=#自定义函数>自定义函数</a></li><li><a href=#嵌套template>嵌套template</a></li><li><a href=#block>block</a></li><li><a href=#修改默认的标识符>修改默认的标识符</a></li></ul></li><li><a href=#texttemplate与htmltempalte的区别>text/template与html/tempalte的区别</a></li><li><a href=#代码生成>代码生成</a></li></ul></nav></div></aside></div><div class=btn><div class=btn-menu id=btn-menu><i class="iconfont icon-grid-sharp"></i></div><div class=btn-toggle-mode><i class="iconfont icon-contrast-sharp"></i></div><div class=btn-scroll-top><i class="iconfont icon-chevron-up-circle-sharp"></i></div></div><aside class=sidebar-mobile style=display:none><div class=sidebar-wrapper><div class="sidebar-item sidebar-pages"><h3>页面</h3><ul><li><a href=/>主页</a></li><li><a href=/archives/>文章</a></li><li><a href=/about/>关于</a></li><li><a href=/search/>搜索</a></li><li><a href=/index.xml>RSS</a></li></ul></div><div class="sidebar-item sidebar-links"><h3>链接</h3><ul><li><a href=https://github.com/haiyux target=_blank><span>GitHub</span></a></li><li><a href=https://go-kratos.dev target=_blank><span>Kratos</span></a></li><li><a href=mailto:haiyux@foxmail.com target=_blank><span>Email</span></a></li></ul></div><div class="sidebar-item sidebar-tags"><h3>标签</h3><div><span><a href=/tags/ddd/>DDD</a></span>
+<span><a href=/tags/docker/>docker</a></span>
+<span><a href=/tags/golang/>golang</a></span>
+<span><a href=/tags/grpc/>grpc</a></span>
+<span><a href=/tags/http/>http</a></span>
+<span><a href=/tags/kratos/>kratos</a></span>
+<span><a href=/tags/makefile/>makefile</a></span>
+<span><a href=/tags/mq/>mq</a></span>
+<span><a href=/tags/mysql/>mysql</a></span>
+<span><a href=/tags/nginx/>nginx</a></span>
+<span><a href=/tags/protobuf/>protobuf</a></span>
+<span><a href=/tags/raft/>raft</a></span>
+<span><a href=/tags/redis/>redis</a></span>
+<span><a href=/tags/thrift/>Thrift</a></span>
+<span><a href=/tags/traceing/>traceing</a></span>
+<span><a href=/tags/wire/>wire</a></span>
+<span><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/>微服务</a></span>
+<span><a href=/tags/%E6%B3%9B%E5%9E%8B/>泛型</a></span>
+<span><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/>设计模式</a></span>
+<span><a href=/tags/%E8%BF%90%E7%BB%B4/>运维</a></span></div></div><div class="sidebar-item sidebar-toc"><h3>目录</h3><nav id=TableOfContents><ul><li><a href=#html模板生成>html模板生成:</a></li><li><a href=#模板语法>模板语法</a><ul><li><a href=#heading>{{.}}</a></li><li><a href=#注释>注释</a></li><li><a href=#pipeline>pipeline</a></li><li><a href=#变量>变量</a></li><li><a href=#移除空格>移除空格</a></li><li><a href=#条件判断>条件判断</a></li><li><a href=#range>range</a></li><li><a href=#with>with</a></li><li><a href=#预定义函数>预定义函数</a></li><li><a href=#比较函数>比较函数</a></li><li><a href=#自定义函数>自定义函数</a></li><li><a href=#嵌套template>嵌套template</a></li><li><a href=#block>block</a></li><li><a href=#修改默认的标识符>修改默认的标识符</a></li></ul></li><li><a href=#texttemplate与htmltempalte的区别>text/template与html/tempalte的区别</a></li><li><a href=#代码生成>代码生成</a></li></ul></nav></div></div></aside></main><footer><div class="container-lg clearfix"><div class="col-12 footer"><span>&copy; 2019-2022
+<a href=https://www.zhaohaiyu.com>haiyux</a>
+| <a href=https://www.zhaohaiyu.com>Source code</a>
+| 基于 <a href=https://github.com/dsrkafuu/hugo-theme-fuji/ target=_blank>Fuji-v2</a> & <a href=https://gohugo.io/ target=_blank>Hugo</a> 构建</span></div></div></footer><script defer src=https://cdn.jsdelivr.net/npm/medium-zoom@1.0.6/dist/medium-zoom.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/components/prism-core.min.js></script>
+<script defer src=https://cdn.jsdelivr.net/npm/prismjs@1.27.0/plugins/autoloader/prism-autoloader.min.js></script>
+<script defer src=/assets/js/fuji.min.js></script></body></html>
