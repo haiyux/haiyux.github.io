@@ -145,9 +145,13 @@ name = "Kratos"
 url = "https://go-kratos.dev"
 weight = 2
 [[menu.link]]
-name = "Email"
-url = "mailto:haiyux@foxmail.com"
+name = "Windfarer"
+url = "https://farer.org/"
 weight = 3
+[[menu.link]]
+name = "李文周"
+url = "https://www.liwenzhou.com/"
+weight = 4
 
 [build]
 noJSConfigInAssets = true
