@@ -36,7 +36,7 @@ subTitle = "路漫漫其修远兮,吾将上下而求索。"
 defaultTheme = "auto"              # default theme when first visit (auto|dark|light)
 
 # Source URL of the website, will appear in the footer
-sourceURL = "https://github.com/haiyux/haiyu.github.io"
+sourceURL = "https://github.com/haiyux/haiyux.github.io"
 
 # Use CloudFlare Workers to accelerate the Google Analytics
 # If you are using this please comment the googleAnalytics above
